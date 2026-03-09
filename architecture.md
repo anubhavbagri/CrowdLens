@@ -9,9 +9,10 @@
 | **Single Responsibility** | Each class does one thing: `RedditApiClient` fetches, `AIAnalysisEngine` analyzes, `CacheService` caches |
 | **Open/Closed** | New platforms via `PlatformProvider` interface — extend, don't modify core |
 | **Dependency Inversion** | Services depend on interfaces (`PlatformProvider`, `ChatModel`) not implementations |
-| **Clean Architecture** | Controllers → Services → Providers/Repositories — dependencies point inward |
+| **Layered/N-Tier Architecture** | Controllers → Services → Providers/Repositories — dependencies point inward |
 | **12-Factor App** | Config via env vars, stateless backend, backing services as attached resources |
 | **Fail Gracefully** | Circuit breaker on Reddit API; partial results > no results |
+| **API-First Documentation** | SpringDoc OpenAPI (Swagger UI) — interactive docs at `/swagger-ui.html` |
 
 ---
 
@@ -252,6 +253,8 @@ graph TB
     subgraph Presentation["Presentation Layer"]
         SC[SearchController]
         HC[HealthController]
+        GEH[GlobalExceptionHandler]
+        SW[Swagger UI — SpringDoc OpenAPI]
     end
 
     subgraph Orchestration["Orchestration Layer"]

@@ -1,4 +1,4 @@
-# CrowdLens — Implementation Plan (Final)
+# CrowdLens — Implementation Plan
 
 > *Real People, Real Opinions* — A platform-agnostic search engine that aggregates authentic user opinions from social platforms and uses AI to produce structured, actionable analysis.
 
@@ -158,13 +158,14 @@ CREATE TABLE social_posts (
 
 | Layer | Technology |
 |-------|-----------|
-| **Backend** | Java 21, Spring Boot 3.2, Maven |
+| **Backend** | Java 17, Spring Boot 3.2, Maven |
 | **Frontend** | Next.js 14 (App Router), TypeScript, Tailwind CSS v4 |
 | **Database** | PostgreSQL 16 (Supabase managed) |
 | **Cache** | DynamoDB (TTL-based key-value) |
 | **AI** | Spring AI (model-agnostic: OpenAI, Anthropic, Gemini, Ollama) |
 | **Rate Limiting** | Bucket4j |
 | **Resilience** | Resilience4j (circuit breaker) |
+| **API Docs** | SpringDoc OpenAPI (Swagger UI) |
 | **Local Dev** | Docker Compose (Postgres + DynamoDB Local + Backend + Frontend) |
 
 ---
@@ -201,9 +202,11 @@ crowdlens/
 ├── backend/                           # Spring Boot 3.2
 │   ├── src/main/java/com/crowdlens/
 │   │   ├── CrowdLensApplication.java
-│   │   ├── config/                    # DynamoDB, AI, Reddit, RateLimit
+│   │   ├── config/                    # DynamoDB, AI, Reddit, RateLimit, OpenAPI
 │   │   ├── controller/
-│   │   │   └── SearchController.java
+│   │   │   ├── SearchController.java
+│   │   │   ├── HealthController.java
+│   │   │   └── GlobalExceptionHandler.java
 │   │   ├── service/
 │   │   │   ├── SearchOrchestrator.java
 │   │   │   ├── AIAnalysisEngine.java
@@ -216,11 +219,12 @@ crowdlens/
 │   │   │       ├── RedditProvider.java
 │   │   │       ├── RedditApiClient.java
 │   │   │       ├── RedditJsonScraper.java
+│   │   │       ├── RedditDataAggregator.java
 │   │   │       └── RedditRateLimiter.java
 │   │   ├── model/                     # DTOs + JPA entities
 │   │   └── repository/               # Spring Data JPA
 │   ├── pom.xml
-│   └── Dockerfile
+│   └── Dockerfile                     # Multi-stage build (Maven + JRE)
 │
 ├── docker-compose.yml                 # Local: Postgres + DynamoDB Local + Backend + Frontend
 ├── .env.example
@@ -231,21 +235,22 @@ crowdlens/
 
 ## Phases — Local First, Cloud Later
 
-### Phase 1 — Backend Foundation (Local Docker)
-1. Spring Boot 3.2 project init (Java 21, Maven)
-2. Docker Compose: PostgreSQL + DynamoDB Local + Spring Boot
+### Phase 1 — Backend Foundation (Local Docker) ✅
+1. Spring Boot 3.2 project init (Java 17, Maven)
+2. Docker Compose: PostgreSQL + DynamoDB Local + Spring Boot (multi-stage Dockerfile)
 3. Reddit OAuth2 client (script-type auth) + `.json` fallback
 4. Token bucket rate limiting (Bucket4j) + circuit breaker (Resilience4j)
 5. `PlatformProvider` interface + `PlatformRegistry` + `RedditProvider`
-6. Incremental cursor for deduplication
-7. Data filtering (bots, deleted, AutoMod, min length)
+6. `RedditDataAggregator` (dedup, filter bots/deleted/AutoMod)
+7. Database schema (JPA entities + Flyway migrations)
 
-### Phase 2 — AI Analysis Pipeline (Local)
+### Phase 2 — AI Analysis Pipeline (Local) ✅
 8. Spring AI integration (OpenAI, model-agnostic)
 9. `PromptBuilder` with query-type auto-detection + dynamic categories
 10. `CacheService` with DynamoDB Local
 11. `SearchOrchestrator` (end-to-end pipeline)
-12. REST endpoint: `POST /api/search`
+12. REST endpoints: `POST /api/search`, `GET /api/health`
+13. API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
 
 ### Phase 3 — Frontend (Minimal, Modular)
 13. Next.js 14 + TypeScript + Tailwind CSS v4
