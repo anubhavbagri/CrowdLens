@@ -1,0 +1,88 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: crowdlens-backend
+
+  # PostgreSQL
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:crowdlens}
+    username: ${DB_USERNAME:crowdlens}
+    password: ${DB_PASSWORD:crowdlens}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: ${SHOW_SQL:false}
+
+  # Flyway
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  # Spring AI — OpenAI (swap model via env var)
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: ${AI_MODEL:gpt-4o-mini}
+          temperature: 0.3
+
+# Reddit API credentials
+reddit:
+  client-id: ${REDDIT_CLIENT_ID:}
+  client-secret: ${REDDIT_CLIENT_SECRET:}
+  username: ${REDDIT_USERNAME:}
+  password: ${REDDIT_PASSWORD:}
+  user-agent: ${REDDIT_USER_AGENT:crowdlens:v1.0}
+
+# DynamoDB cache
+dynamodb:
+  endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+  region: ${AWS_REGION:us-east-1}
+  table-name: ${DYNAMODB_TABLE:crowdlens-cache}
+  ttl-hours: ${CACHE_TTL_HOURS:24}
+
+# Rate limiting
+rate-limit:
+  reddit-api:
+    capacity: 60
+    refill-tokens: 60
+    refill-duration-seconds: 60
+  reddit-scraper:
+    capacity: 20
+    refill-tokens: 20
+    refill-duration-seconds: 60
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      redditApi:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+      openAi:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+        permitted-number-of-calls-in-half-open-state: 2
+        minimum-number-of-calls: 3
+
+# Logging
+logging:
+  level:
+    com.crowdlens: DEBUG
+    org.springframework.web: INFO
