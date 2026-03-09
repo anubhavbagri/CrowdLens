@@ -1,0 +1,35 @@
+# CrowdLens
+
+## Dependencies
+*.jar
+*.class
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+## IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Environment
+.env
+*.env.local
+
+## Node
+node_modules/
+.next/
+out/
+
+## Docker
+docker-compose.override.yml
+
+## Logs
+logs/
+*.log
