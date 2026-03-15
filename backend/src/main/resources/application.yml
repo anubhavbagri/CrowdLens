@@ -5,27 +5,24 @@ spring:
   application:
     name: crowdlens-backend
 
-  # PostgreSQL
+  # SQLite config
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:crowdlens}
-    username: ${DB_USERNAME:crowdlens}
-    password: ${DB_PASSWORD:crowdlens}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:sqlite:./data/crowdlens.db
+    driver-class-name: org.sqlite.JDBC
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.community.dialect.SQLiteDialect
         format_sql: true
     show-sql: ${SHOW_SQL:false}
 
-  # Flyway
+  # Flyway disabled for SQLite
   flyway:
-    enabled: true
-    locations: classpath:db/migration
+    enabled: false
 
   # Spring AI — OpenAI (swap model via env var)
   ai:

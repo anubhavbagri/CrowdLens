@@ -18,6 +18,9 @@ WORKDIR /app
 
 COPY --from=build /app/target/crowdlens-backend-*.jar app.jar
 
+# Create directory for SQLite DB volume
+RUN mkdir -p /app/data
+
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

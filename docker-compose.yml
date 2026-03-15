@@ -1,21 +1,5 @@
 services:
-  # PostgreSQL database
-  postgres:
-    image: postgres:16-alpine
-    container_name: crowdlens-postgres
-    environment:
-      POSTGRES_DB: crowdlens
-      POSTGRES_USER: crowdlens
-      POSTGRES_PASSWORD: crowdlens
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U crowdlens"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  # PostgreSQL removed in favor of SQLite
 
   # DynamoDB Local (cache)
   dynamodb-local:
@@ -39,16 +23,11 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
-        condition: service_healthy
       dynamodb-local:
         condition: service_healthy
+    volumes:
+      - sqlite_data:/app/data
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: crowdlens
-      DB_USERNAME: crowdlens
-      DB_PASSWORD: crowdlens
       DYNAMODB_ENDPOINT: http://dynamodb-local:8000
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: dummy
@@ -63,4 +42,4 @@ services:
       SHOW_SQL: ${SHOW_SQL:-false}
 
 volumes:
-  postgres_data:
+  sqlite_data:
