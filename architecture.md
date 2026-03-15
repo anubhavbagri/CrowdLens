@@ -90,23 +90,20 @@ Spring's `ApplicationEventPublisher` for decoupled side-effects:
 
 ## 3. Database Design
 
-### 3.1 SQL vs NoSQL — Why PostgreSQL?
+### 3.1 SQL vs NoSQL — Why SQLite?
 
-| Criteria | PostgreSQL (SQL) | MongoDB (NoSQL) | DynamoDB (NoSQL) |
+| Criteria | SQLite (Relational) | PostgreSQL (SQL) | DynamoDB (NoSQL) |
 |----------|:---:|:---:|:---:|
-| **Structured analysis data** | ✅ JSONB gives NoSQL flexibility inside SQL | ⚠️ Schema-less can lead to inconsistency | ⚠️ Limited query patterns |
-| **Complex queries** | ✅ JOIN, GROUP BY, full-text search | ⚠️ Aggregation pipelines less intuitive | ❌ Single-table design required |
-| **Relationships** | ✅ Foreign keys, referential integrity | ❌ Manual reference management | ❌ No native relationships |
-| **ACID transactions** | ✅ Full ACID | ⚠️ Multi-doc transactions are newer | ⚠️ Transaction support limited |
-| **Free hosting** | ✅ Supabase 500MB forever | ⚠️ Atlas 512MB free | ✅ 25GB AWS always-free |
-| **Spring Data support** | ✅ Spring Data JPA (mature) | ✅ Spring Data MongoDB | ✅ AWS SDK |
-| **Schema evolution** | ✅ Alembic/Flyway migrations | ⚠️ Schema-less = harder to track | ⚠️ Manual migration |
+| **Structured analysis data** | ✅ JSON functions provide flexibility | ✅ JSONB gives NoSQL flexibility | ⚠️ Limited query patterns |
+| **Complex queries** | ✅ JOIN, GROUP BY | ✅ JOIN, GROUP BY, full-text search | ❌ Single-table design required |
+| **Resource Footprint** | ✅ **Extremely Low** (<10MB RAM) | ❌ High overhead (~200MB+ RAM) | ✅ Fully Managed APIs |
+| **ACID transactions** | ✅ Full ACID | ✅ Full ACID | ⚠️ Transaction support limited |
+| **Hosting Strategy** | ✅ Best for 1GB Ubuntu VM (OCI) | ⚠️ Too heavy for 1GB VM | ✅ AWS always-free |
 
-**Verdict**: PostgreSQL wins because:
-- Our data **is relational** — search results have many social posts, posts belong to platforms
-- **JSONB** gives us NoSQL flexibility for the AI analysis blob (variable structure per query type) while keeping relational integrity for everything else
-- Supabase offers **500MB free forever** with a managed PostgreSQL instance, built-in connection pooling, and a dashboard
-- Spring Data JPA is the most mature, documented ORM in the Java ecosystem
+**Verdict**: SQLite wins because:
+- We are running the backend on a small **1GB Ubuntu Cloud VM** (Oracle OCI or Railway). PostgreSQL carries too much CPU/Memory overhead for this footprint.
+- Our data is relational, but the scale per-user is small and easily handled by a robust embedded database. 
+- Using Docker volumes (`/app/data`), we persist the `crowdlens.db` file securely without managing a separate heavy database server.
 
 ### 3.2 DynamoDB for Caching — Why Not PostgreSQL for Both?
 
@@ -171,23 +168,25 @@ erDiagram
 
 ### 3.4 Table Schemas + Indexes
 
+### 3.4 Table Schemas
+
+*Note: Hibernate `ddl-auto: update` manages these schemas internally utilizing `SQLiteDialect`.*
+
 ```sql
--- Primary data store (Supabase PostgreSQL)
+-- Conceptual SQLite Schema
 
 CREATE TABLE search_results (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    query           VARCHAR(500) NOT NULL,
-    query_normalized VARCHAR(500) NOT NULL,
-    overall_score   INTEGER CHECK (overall_score BETWEEN 0 AND 100),
+    id              TEXT PRIMARY KEY,
+    query           TEXT NOT NULL,
+    query_normalized TEXT NOT NULL,
+    overall_score   INTEGER,
     overall_verdict TEXT,
-    analysis        JSONB NOT NULL,              -- Full AI response (variable structure)
-    source_platforms TEXT[] DEFAULT '{}',         -- {'reddit', 'twitter'}
+    analysis        TEXT NOT NULL,              -- JSON serialized
+    source_platforms TEXT,                      -- Serialized array
     post_count      INTEGER DEFAULT 0,
-    created_at      TIMESTAMP DEFAULT NOW(),
-    expires_at      TIMESTAMP DEFAULT NOW() + INTERVAL '7 days'
+    created_at      TIMESTAMP,
+    expires_at      TIMESTAMP
 );
-CREATE INDEX idx_search_query_norm ON search_results(query_normalized);
-CREATE INDEX idx_search_created ON search_results(created_at DESC);
 
 CREATE TABLE social_posts (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -238,12 +237,12 @@ CREATE INDEX idx_cursor_lookup ON scrape_cursors(platform, query_normalized);
 ```mermaid
 graph TB
     User([User]) -->|Search query| FE[Next.js Frontend<br/>Vercel]
-    FE -->|REST API| BE[Spring Boot Backend<br/>AWS Lambda]
+    FE -->|REST API| BE[Spring Boot Backend<br/>Ubuntu VM / Railway]
     BE -->|OAuth2 API| Reddit[(Reddit API)]
     BE -->|JSON fallback| RedditJSON[(old.reddit.com)]
     BE -->|Structured analysis| AI[(OpenAI / Claude / Gemini)]
-    BE -->|Read/Write| DB[(PostgreSQL<br/>Supabase)]
-    BE -->|Cache lookup| Cache[(DynamoDB<br/>AWS Always-Free)]
+    BE -->|Read/Write| DB[(SQLite<br/>Embedded Volume)]
+    BE -->|Cache lookup| Cache[(DynamoDB<br/>AWS Hosted)]
 ```
 
 ### Component Diagram
@@ -384,7 +383,7 @@ sequenceDiagram
     participant PR as PlatformRegistry
     participant RP as RedditProvider
     participant AI as AIAnalysisEngine
-    participant DB as PostgreSQL
+    participant DB as SQLite SQLiteDialect
 
     User->>FE: Enter search query
     FE->>SC: POST /api/search {query}

@@ -51,14 +51,13 @@ graph TB
     end
 
     subgraph Cloud["☁️ Permanently Free Cloud"]
-        M["Supabase — PostgreSQL"]
-        N["AWS DynamoDB — Cache"]
-        L["AWS Lambda — Backend"]
+        M["SQLite — Embedded Volume"]
+        D["AWS DynamoDB Cache"]
+        L["Spring Boot Backend — Ubuntu VM / Railway"]
         V["Vercel — Frontend"]
     end
 
     A -->|POST /api/search| D
-    H --> N
     E --> M
 ```
 
@@ -144,8 +143,8 @@ CREATE TABLE social_posts (
 
 | Layer | Service | Always-Free Limits |
 |-------|---------|-------------------|
-| **Backend** | AWS Lambda + API Gateway | 1M req/mo, 400K GB-sec |
-| **Database** | Supabase (managed PostgreSQL) | 500MB, 50K MAU |
+| **Backend** | Spring Boot Docker Container | Best for Ubuntu VM/Railway |
+| **Database** | SQLite (Embedded) | < 10MB memory footprint |
 | **Cache** | AWS DynamoDB | 25GB storage, 200M req/mo |
 | **Frontend** | Vercel | Unlimited hobby deploys |
 
@@ -160,7 +159,7 @@ CREATE TABLE social_posts (
 |-------|-----------|
 | **Backend** | Java 17, Spring Boot 3.2, Maven |
 | **Frontend** | Next.js 14 (App Router), TypeScript, Tailwind CSS v4 |
-| **Database** | PostgreSQL 16 (Supabase managed) |
+| **Database** | SQLite (Embedded file) |
 | **Cache** | DynamoDB (TTL-based key-value) |
 | **AI** | Spring AI (model-agnostic: OpenAI, Anthropic, Gemini, Ollama) |
 | **Rate Limiting** | Bucket4j |
@@ -252,7 +251,7 @@ crowdlens/
 12. REST endpoints: `POST /api/search`, `GET /api/health`
 13. API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
 
-### Phase 3 — Frontend (Minimal, Modular)
+### Phase 3 — Frontend (Minimal, Modular) ✅
 13. Next.js 14 + TypeScript + Tailwind CSS v4
 14. Search home page (clean, centered search bar)
 15. Analysis results page (modular component structure)
@@ -260,8 +259,8 @@ crowdlens/
 17. Basic but extensible component library
 
 ### Phase 4 — Cloud Deployment
-18. AWS Lambda packaging (Spring Cloud Function)
-19. Supabase PostgreSQL + DynamoDB production setup
+18. Ubuntu VM / Railway server provisioning
+19. AWS DynamoDB production setup
 20. Vercel frontend deploy
 21. README with full setup guide
 
@@ -283,7 +282,7 @@ curl -X POST localhost:8080/api/search \
 open http://localhost:3000                 # Search UI works end-to-end
 
 # Phase 4
-curl https://your-lambda-url/api/health   # Cloud deploy works
+curl https://your-backend-url/api/health   # Cloud deploy works
 ```
 
 ---

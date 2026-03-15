@@ -12,13 +12,13 @@ Search any product, service, or experience — CrowdLens scrapes Reddit for real
 |-------|-----------|
 | **Backend** | Java 17, Spring Boot 3.2, Maven |
 | **AI** | Spring AI (model-agnostic: OpenAI, Anthropic, Gemini, Ollama) |
-| **Database** | PostgreSQL 16 |
+| **Database** | SQLite (Embedded) |
 | **Cache** | DynamoDB (TTL-based key-value) |
 | **Rate Limiting** | Bucket4j (token bucket) |
 | **Resilience** | Resilience4j (circuit breaker) |
 | **API Docs** | SpringDoc OpenAPI (Swagger UI) |
 | **Local Dev** | Docker Compose |
-| **Frontend** | Next.js 14, TypeScript, Tailwind CSS v4 *(coming soon)* |
+| **Frontend** | Next.js 14, TypeScript, Tailwind CSS v4 |
 
 ---
 
@@ -162,11 +162,10 @@ POST /api/search
 
 ### Querying Databases Locally
 
-**PostgreSQL:**
+**SQLite:**
 ```bash
-docker exec -it crowdlens-postgres psql -U crowdlens -d crowdlens
-
-# Connection string: postgresql://crowdlens:crowdlens@localhost:5432/crowdlens
+# SQLite DB is stored locally in the mounted /data volume or backend directory
+sqlite3 backend/data/crowdlens.db
 ```
 
 **DynamoDB Local:**
@@ -185,19 +184,17 @@ aws dynamodb scan --table-name crowdlens-cache \
 | `REDDIT_PASSWORD` | ✅ | — | Reddit account password |
 | `OPENAI_API_KEY` | ✅ | — | OpenAI API key |
 | `AI_MODEL` | | `gpt-4o-mini` | AI model to use |
-| `DB_HOST` | | `localhost` | PostgreSQL host |
-| `DB_PORT` | | `5432` | PostgreSQL port |
-| `DB_NAME` | | `crowdlens` | Database name |
-| `DB_USERNAME` | | `crowdlens` | Database user |
-| `DB_PASSWORD` | | `crowdlens` | Database password |
-| `DYNAMODB_ENDPOINT` | | `http://localhost:8000` | DynamoDB endpoint |
+| `DYNAMODB_ENDPOINT` | | `http://localhost:8000` | DynamoDB endpoint (use AWS URL in prod) |
+| `AWS_ACCESS_KEY_ID` | | — | AWS IAM Access Key for DynamoDB |
+| `AWS_SECRET_ACCESS_KEY` | | — | AWS IAM Secret Key for DynamoDB |
+| `AWS_REGION` | | `us-east-1` | AWS Region for DynamoDB |
 | `CACHE_TTL_HOURS` | | `24` | Cache expiry in hours |
 
 ---
 
 ## Frontend
 
-*Coming soon — Next.js 14 + TypeScript + Tailwind CSS v4*
+Built with Next.js 14, TypeScript, and Tailwind CSS v4. Features a tally.shop-inspired clean UI with micro-animations, glassmorphism, and a seamless single-page search experience.
 
 ---
 

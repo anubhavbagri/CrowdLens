@@ -27,15 +27,15 @@
 - [x] API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
 - [x] `GlobalExceptionHandler` (structured JSON error responses)
 
-## Phase 3: Frontend (Minimal, Modular)
-- [ ] Next.js 14 + TypeScript + Tailwind CSS v4
-- [ ] Search home page (centered search bar, tagline)
-- [ ] Analysis results page (score circle, verdict, categories, testimonials)
-- [ ] API client + loading/error states
+## Phase 3: Frontend (Minimal, Modular) ✅
+- [x] Next.js 14 + TypeScript + Tailwind CSS v4
+- [x] Search home page (centered search bar, tagline)
+- [x] Analysis results page (score circle, verdict, categories, testimonials)
+- [x] API client + loading/error states
 
 ## Phase 4: Cloud Deployment
-- [ ] AWS Lambda packaging (Spring Cloud Function)
-- [ ] Supabase PostgreSQL setup
-- [ ] DynamoDB production table
+- [ ] Provision Ubuntu VM (Oracle Cloud Infrastructure 1GB or Railway.app)
+- [ ] Deploy Spring Boot backend via Docker (SQLite for storage)
+- [ ] Provision AWS DynamoDB production table (IAM User/Keys)
 - [ ] Vercel frontend deploy
 - [ ] README with full setup guide
