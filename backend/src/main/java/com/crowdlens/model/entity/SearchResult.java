@@ -59,8 +59,7 @@ public class SearchResult {
     @Builder.Default
     private List<SocialPost> socialPosts = new ArrayList<>();
 
-    @OneToOne(mappedBy = "searchResult", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private ScrapeCursor scrapeCursor;
+
 
     @PrePersist
     private void prePersist() {
