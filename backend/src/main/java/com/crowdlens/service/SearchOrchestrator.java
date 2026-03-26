@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Central orchestrator for the search pipeline.
@@ -97,7 +98,7 @@ public class SearchOrchestrator {
 
                 searchResult = searchResultRepo.save(searchResult);
 
-                // Save social posts (skip duplicates that already exist in DB)
+                // 4. Persist to database asynchronously (non-blocking — return response faster)
                 SearchResult finalSearchResult = searchResult;
                 List<SocialPost> socialPosts = posts.stream()
                                 .filter(dto -> !socialPostRepo.existsByPlatformId(dto.platformId()))
@@ -117,7 +118,11 @@ public class SearchOrchestrator {
                         log.info("Skipped {} duplicate posts (already in DB), saving {} new",
                                         posts.size() - socialPosts.size(), socialPosts.size());
                 }
-                socialPostRepo.saveAll(socialPosts);
+                CompletableFuture.runAsync(() -> socialPostRepo.saveAll(socialPosts))
+                        .exceptionally(ex -> {
+                            log.warn("Async DB persist failed: {}", ex.getMessage());
+                            return null;
+                        });
 
                 // 5. Build response
                 SearchResponse response = SearchResponse.builder()

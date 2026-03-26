@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Reddit platform provider — implements the PlatformProvider strategy interface.
@@ -113,9 +114,9 @@ public class RedditProvider implements PlatformProvider {
     }
 
     /**
-     * Fetches top comments from the highest-scored posts.
-     * Comments often contain the most valuable, detailed opinions.
-     * Deduplication is handled in-memory within this request.
+     * Fetches comments from the highest-scored posts in parallel.
+     * Each post's comments are fetched concurrently via CompletableFuture,
+     * reducing total time from O(n*latency) to O(max_single_latency).
      */
     private List<SocialPostDto> fetchCommentsFromTopPosts(List<JsonNode> rawPosts, String query, int maxComments) {
         if (rawPosts.isEmpty()) return Collections.emptyList();
@@ -126,69 +127,81 @@ public class RedditProvider implements PlatformProvider {
                 .limit(TOP_POSTS_FOR_COMMENTS)
                 .toList();
 
-        log.info("Fetching comments from top {} posts (by score)...", topPosts.size());
+        log.info("Fetching comments from top {} posts in parallel...", topPosts.size());
 
+        // Fan-out: fetch all posts' comments concurrently
+        record PostComments(JsonNode post, List<JsonNode> comments) {}
+
+        List<CompletableFuture<PostComments>> futures = topPosts.stream()
+                .filter(post -> !post.path("id").asText("").isEmpty())
+                .map(post -> CompletableFuture.supplyAsync(() -> {
+                    String postId = post.path("id").asText();
+                    try {
+                        List<JsonNode> comments = apiClient.fetchComments(postId, COMMENTS_PER_POST);
+                        log.info("  → Post '{}' — {} comments fetched",
+                                truncate(post.path("title").asText("untitled"), 60), comments.size());
+                        return new PostComments(post, comments);
+                    } catch (Exception e) {
+                        log.debug("Failed to fetch comments for post {}: {}", postId, e.getMessage());
+                        return new PostComments(post, Collections.emptyList());
+                    }
+                }))
+                .toList();
+
+        // Wait for all fetches to complete
+        List<PostComments> results = futures.stream()
+                .map(CompletableFuture::join)
+                .toList();
+
+        // Collect and filter comments
         List<SocialPostDto> commentPosts = new ArrayList<>();
-        Set<String> seenCommentIds = new HashSet<>(); // in-memory dedup for this request
+        Set<String> seenCommentIds = new HashSet<>();
 
-        for (JsonNode post : topPosts) {
+        for (PostComments pc : results) {
             if (commentPosts.size() >= maxComments) break;
 
-            String postId = post.path("id").asText();
-            String postTitle = post.path("title").asText("untitled");
-            String subreddit = post.path("subreddit_name_prefixed").asText(
-                    "r/" + post.path("subreddit").asText("unknown"));
-            String permalink = post.path("permalink").asText("");
+            String postTitle = pc.post().path("title").asText("untitled");
+            String subreddit = pc.post().path("subreddit_name_prefixed").asText(
+                    "r/" + pc.post().path("subreddit").asText("unknown"));
+            String postPermalink = pc.post().path("permalink").asText("");
 
-            if (postId.isEmpty()) continue;
+            for (JsonNode comment : pc.comments()) {
+                if (commentPosts.size() >= maxComments) break;
 
-            try {
-                List<JsonNode> comments = apiClient.fetchComments(postId, COMMENTS_PER_POST);
-                log.info("  → Post '{}' ({}) — {} comments fetched",
-                        truncate(postTitle, 60), subreddit, comments.size());
+                String commentId = comment.path("id").asText("");
+                if (commentId.isEmpty() || seenCommentIds.contains(commentId)) continue;
 
-                for (JsonNode comment : comments) {
-                    if (commentPosts.size() >= maxComments) break;
+                String body = comment.path("body").asText("");
+                String author = comment.path("author").asText("");
+                int score = comment.path("score").asInt(0);
 
-                    String commentId = comment.path("id").asText("");
-                    if (commentId.isEmpty() || seenCommentIds.contains(commentId)) continue;
+                if (body.length() < 30 || "[deleted]".equals(body) || "[removed]".equals(body)) continue;
+                if ("[deleted]".equals(author) || "AutoModerator".equals(author)) continue;
 
-                    String body = comment.path("body").asText("");
-                    String author = comment.path("author").asText("");
-                    int score = comment.path("score").asInt(0);
+                double createdUtc = comment.path("created_utc").asDouble(0);
+                Instant postedAt = createdUtc > 0 ? Instant.ofEpochSecond((long) createdUtc) : null;
 
-                    // Skip low-quality comments
-                    if (body.length() < 30 || "[deleted]".equals(body) || "[removed]".equals(body)) continue;
-                    if ("[deleted]".equals(author) || "AutoModerator".equals(author)) continue;
-
-                    double createdUtc = comment.path("created_utc").asDouble(0);
-                    Instant postedAt = createdUtc > 0 ? Instant.ofEpochSecond((long) createdUtc) : null;
-
-                    String commentPermalink = comment.path("permalink").asText(permalink);
-                    if (!commentPermalink.startsWith("http")) {
-                        commentPermalink = "https://reddit.com" + commentPermalink;
-                    }
-
-                    commentPosts.add(SocialPostDto.builder()
-                            .platformId("reddit_comment_" + commentId)
-                            .platform("reddit")
-                            .source(subreddit)
-                            .title("Re: " + postTitle)
-                            .body(body)
-                            .score(score)
-                            .permalink(commentPermalink)
-                            .postedAt(postedAt)
-                            .build());
-
-                    seenCommentIds.add(commentId);
-                    log.debug("    Comment by u/{} (score: {}): {}", author, score, truncate(body, 100));
+                String commentPermalink = comment.path("permalink").asText(postPermalink);
+                if (!commentPermalink.startsWith("http")) {
+                    commentPermalink = "https://reddit.com" + commentPermalink;
                 }
-            } catch (Exception e) {
-                log.debug("Failed to fetch comments for post {}: {}", postId, e.getMessage());
+
+                commentPosts.add(SocialPostDto.builder()
+                        .platformId("reddit_comment_" + commentId)
+                        .platform("reddit")
+                        .source(subreddit)
+                        .title("Re: " + postTitle)
+                        .body(body)
+                        .score(score)
+                        .permalink(commentPermalink)
+                        .postedAt(postedAt)
+                        .build());
+
+                seenCommentIds.add(commentId);
             }
         }
 
-        log.info("Collected {} quality comments from {} posts", commentPosts.size(), topPosts.size());
+        log.info("Collected {} quality comments from {} posts (parallel fetch)", commentPosts.size(), topPosts.size());
         return commentPosts;
     }
 
