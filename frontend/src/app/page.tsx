@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import SearchBar from '@/components/SearchBar';
 import Navbar from '@/components/Navbar';
-import { searchCrowdLens, SearchResponse } from '@/lib/api';
+import { searchCrowdLens, SearchResponse, JobStatus } from '@/lib/api';
 import { ShimmerResults } from '@/components/ShimmerSkeleton';
 import ResultsView from '@/components/ResultsView';
 import { AlertTriangle } from 'lucide-react';
@@ -14,20 +14,31 @@ export default function Home() {
   const [query, setQuery] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [results, setResults] = useState<SearchResponse | null>(null);
+  const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const handleSearch = async (newQuery: string) => {
     setQuery(newQuery);
     setAppState('loading');
     setErrorMsg('');
+    setJobStatus(null);
+    setElapsedSeconds(0);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    const startTime = Date.now();
+    const timer = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
     try {
-      const data = await searchCrowdLens({ query: newQuery });
+      const data = await searchCrowdLens({ query: newQuery }, setJobStatus);
       setResults(data);
       setAppState('results');
     } catch (err: any) {
       setErrorMsg(err.message || 'An unexpected error occurred.');
       setAppState('error');
+    } finally {
+      clearInterval(timer);
     }
   };
 
@@ -95,11 +106,7 @@ export default function Home() {
         {/* Loading State */}
         {appState === 'loading' && (
           <div className="w-full animate-fade-in py-12">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="text-2xl font-semibold text-gray-700">Analyzing thousands of discussions...</h2>
-              <p className="text-gray-500 animate-pulse">This usually takes about 5-10 seconds.</p>
-            </div>
-            <ShimmerResults />
+            <ShimmerResults jobStatus={jobStatus} elapsedSeconds={elapsedSeconds} />
           </div>
         )}
 

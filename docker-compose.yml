@@ -1,6 +1,19 @@
 services:
   # PostgreSQL removed in favor of SQLite
 
+  # Redis (job queue backing store for rqueue — pure in-memory, no persistence)
+  redis:
+    image: redis:7-alpine
+    container_name: crowdlens-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   # DynamoDB Local (cache)
   dynamodb-local:
     image: amazon/dynamodb-local:latest
@@ -23,11 +36,15 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      redis:
+        condition: service_healthy
       dynamodb-local:
         condition: service_healthy
     volumes:
       - sqlite_data:/app/data
     environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       DYNAMODB_ENDPOINT: http://dynamodb-local:8000
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: dummy
