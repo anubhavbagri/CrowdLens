@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import SearchBar from '@/components/SearchBar';
 import Navbar from '@/components/Navbar';
-import { searchCrowdLens, SearchResponse, JobStatus } from '@/lib/api';
+import { searchCrowdLens, SearchResponse } from '@/lib/api';
 import { ShimmerResults } from '@/components/ShimmerSkeleton';
 import ResultsView from '@/components/ResultsView';
 import { AlertTriangle } from 'lucide-react';
@@ -14,17 +14,15 @@ export default function Home() {
   const [query, setQuery] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [results, setResults] = useState<SearchResponse | null>(null);
-  const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
 
   const handleSearch = async (newQuery: string) => {
     setQuery(newQuery);
     setAppState('loading');
-    setJobStatus(null);
     setErrorMsg('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
-      const data = await searchCrowdLens({ query: newQuery }, setJobStatus);
+      const data = await searchCrowdLens({ query: newQuery });
       setResults(data);
       setAppState('results');
     } catch (err: any) {
@@ -97,7 +95,11 @@ export default function Home() {
         {/* Loading State */}
         {appState === 'loading' && (
           <div className="w-full animate-fade-in py-12">
-            <ShimmerResults status={jobStatus} />
+            <div className="text-center space-y-4 mb-12">
+              <h2 className="text-2xl font-semibold text-gray-700">Analyzing thousands of discussions...</h2>
+              <p className="text-gray-500 animate-pulse">This usually takes about 5-10 seconds.</p>
+            </div>
+            <ShimmerResults />
           </div>
         )}
 

@@ -1,34 +1,6 @@
-import { JobStatus } from '@/lib/api';
-
-interface ShimmerResultsProps {
-  status?: JobStatus | null;
-}
-
-const STATUS_LABEL: Record<JobStatus, { heading: string; sub: string }> = {
-  PENDING:     { heading: 'Queued — waiting to start…',        sub: 'Your request is in the queue.' },
-  IN_PROGRESS: { heading: 'Analyzing Reddit discussions…',     sub: 'Scraping posts, running AI analysis.' },
-  COMPLETED:   { heading: 'Done! Loading your results…',       sub: '' },
-  FAILED:      { heading: 'Something went wrong.',             sub: '' },
-};
-
-const DEFAULT_LABEL = { heading: 'Analyzing thousands of discussions…', sub: 'This may take a little while.' };
-
-export function ShimmerResults({ status }: ShimmerResultsProps) {
-  const label = status ? STATUS_LABEL[status] : DEFAULT_LABEL;
-
+export function ShimmerResults() {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8 animate-fade-in">
-
-      {/* Status label */}
-      <div className="text-center space-y-2 mb-4">
-        <h2 className="text-2xl font-semibold text-gray-700 transition-all duration-500">
-          {label.heading}
-        </h2>
-        {label.sub && (
-          <p className="text-gray-500 animate-pulse text-sm">{label.sub}</p>
-        )}
-      </div>
-
       {/* Top Section: Score & Verdict */}
       <div className="flex flex-col md:flex-row gap-8 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
         <div className="flex-shrink-0 flex items-center justify-center">
@@ -47,7 +19,7 @@ export function ShimmerResults({ status }: ShimmerResultsProps) {
 
       {/* Two Column Layout for the rest */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
+        
         {/* Main Content (Categories + Personas) */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-64 skeleton-shimmer opacity-80"></div>

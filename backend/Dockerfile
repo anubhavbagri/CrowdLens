@@ -11,8 +11,8 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn package -DskipTests -B
 
-# Stage 2: Run with lightweight Alpine JRE (~90MB vs ~250MB for the full JRE image)
-FROM eclipse-temurin:17-jre-alpine
+# Stage 2: Run with slim JRE
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Reddit platform provider — implements the PlatformProvider strategy interface.
@@ -113,8 +114,9 @@ public class RedditProvider implements PlatformProvider {
     }
 
     /**
-     * Fetches top comments from the highest-scored posts sequentially.
-     * One post at a time — minimal thread and memory footprint.
+     * Fetches comments from the highest-scored posts in parallel.
+     * Each post's comments are fetched concurrently via CompletableFuture,
+     * reducing total time from O(n*latency) to O(max_single_latency).
      */
     private List<SocialPostDto> fetchCommentsFromTopPosts(List<JsonNode> rawPosts, String query, int maxComments) {
         if (rawPosts.isEmpty()) return Collections.emptyList();
@@ -125,33 +127,45 @@ public class RedditProvider implements PlatformProvider {
                 .limit(TOP_POSTS_FOR_COMMENTS)
                 .toList();
 
-        log.info("Fetching comments from top {} posts sequentially...", topPosts.size());
+        log.info("Fetching comments from top {} posts in parallel...", topPosts.size());
 
+        // Fan-out: fetch all posts' comments concurrently
+        record PostComments(JsonNode post, List<JsonNode> comments) {}
+
+        List<CompletableFuture<PostComments>> futures = topPosts.stream()
+                .filter(post -> !post.path("id").asText("").isEmpty())
+                .map(post -> CompletableFuture.supplyAsync(() -> {
+                    String postId = post.path("id").asText();
+                    try {
+                        List<JsonNode> comments = apiClient.fetchComments(postId, COMMENTS_PER_POST);
+                        log.info("  → Post '{}' — {} comments fetched",
+                                truncate(post.path("title").asText("untitled"), 60), comments.size());
+                        return new PostComments(post, comments);
+                    } catch (Exception e) {
+                        log.debug("Failed to fetch comments for post {}: {}", postId, e.getMessage());
+                        return new PostComments(post, Collections.emptyList());
+                    }
+                }))
+                .toList();
+
+        // Wait for all fetches to complete
+        List<PostComments> results = futures.stream()
+                .map(CompletableFuture::join)
+                .toList();
+
+        // Collect and filter comments
         List<SocialPostDto> commentPosts = new ArrayList<>();
         Set<String> seenCommentIds = new HashSet<>();
 
-        for (JsonNode post : topPosts) {
+        for (PostComments pc : results) {
             if (commentPosts.size() >= maxComments) break;
 
-            String postId = post.path("id").asText("");
-            if (postId.isEmpty()) continue;
+            String postTitle = pc.post().path("title").asText("untitled");
+            String subreddit = pc.post().path("subreddit_name_prefixed").asText(
+                    "r/" + pc.post().path("subreddit").asText("unknown"));
+            String postPermalink = pc.post().path("permalink").asText("");
 
-            String postTitle = post.path("title").asText("untitled");
-            String subreddit = post.path("subreddit_name_prefixed").asText(
-                    "r/" + post.path("subreddit").asText("unknown"));
-            String postPermalink = post.path("permalink").asText("");
-
-            List<JsonNode> comments;
-            try {
-                comments = apiClient.fetchComments(postId, COMMENTS_PER_POST);
-                log.info("  → Post '{}' — {} comments fetched",
-                        truncate(postTitle, 60), comments.size());
-            } catch (Exception e) {
-                log.debug("Failed to fetch comments for post {}: {}", postId, e.getMessage());
-                continue;
-            }
-
-            for (JsonNode comment : comments) {
+            for (JsonNode comment : pc.comments()) {
                 if (commentPosts.size() >= maxComments) break;
 
                 String commentId = comment.path("id").asText("");
@@ -187,7 +201,7 @@ public class RedditProvider implements PlatformProvider {
             }
         }
 
-        log.info("Collected {} quality comments from {} posts (sequential)", commentPosts.size(), topPosts.size());
+        log.info("Collected {} quality comments from {} posts (parallel fetch)", commentPosts.size(), topPosts.size());
         return commentPosts;
     }
 
