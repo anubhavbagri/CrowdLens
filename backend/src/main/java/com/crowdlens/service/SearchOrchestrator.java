@@ -2,179 +2,105 @@ package com.crowdlens.service;
 
 import com.crowdlens.model.dto.SearchRequest;
 import com.crowdlens.model.dto.SearchResponse;
-import com.crowdlens.model.dto.SocialPostDto;
-import com.crowdlens.model.entity.SearchResult;
-import com.crowdlens.model.entity.SocialPost;
-import com.crowdlens.provider.PlatformRegistry;
-import com.crowdlens.repository.SearchResultRepository;
-import com.crowdlens.repository.SocialPostRepository;
+import com.crowdlens.model.entity.SearchJob;
+import com.crowdlens.repository.SearchJobRepository;
+import com.github.sonus21.rqueue.core.RqueueMessageEnqueuer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.UUID;
 
 /**
- * Central orchestrator for the search pipeline.
- * Coordinates: Cache → Platform search → AI analysis → Persist → Return.
+ * Orchestrates search job lifecycle: cache check, job creation, queue enqueue, and status lookup.
+ * Actual pipeline execution (scrape → AI → persist → cache) is handled by SearchJobListener.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SearchOrchestrator {
 
-        private final PlatformRegistry platformRegistry;
-        private final AIAnalysisEngine aiEngine;
-        private final CacheService cacheService;
-        private final SearchResultRepository searchResultRepo;
-        private final SocialPostRepository socialPostRepo;
+    private static final String QUEUE = "search-jobs";
 
-        /**
-         * Executes the full search pipeline.
-         */
-        @Transactional
-        public SearchResponse executeSearch(SearchRequest request) {
-                String query = request.query();
-                String normalizedQuery = normalizeQuery(query);
-                log.info("Executing search for query: '{}' (normalized: '{}')", query, normalizedQuery);
+    private final CacheService cacheService;
+    private final SearchJobRepository searchJobRepo;
+    private final RqueueMessageEnqueuer rqueueMessageEnqueuer;
 
-                // 1. Check cache
-                Optional<String> cached = cacheService.get(normalizedQuery);
-                if (cached.isPresent()) {
-                        log.info("Returning cached result for query: '{}'", query);
-                        SearchResponse cachedResponse = cacheService.deserialize(cached.get(), SearchResponse.class);
-                        // Return with cached flag
-                        return SearchResponse.builder()
-                                        .id(cachedResponse.id())
-                                        .query(cachedResponse.query())
-                                        .overallScore(cachedResponse.overallScore())
-                                        .overallVerdict(cachedResponse.overallVerdict())
-                                        .verdictSummary(cachedResponse.verdictSummary())
-                                        .categories(cachedResponse.categories())
-                                        .testimonials(cachedResponse.testimonials())
-                                        .personaAnalysis(cachedResponse.personaAnalysis())
-                                        .postCount(cachedResponse.postCount())
-                                        .sourcePlatforms(cachedResponse.sourcePlatforms())
-                                        .analyzedAt(cachedResponse.analyzedAt())
-                                        .cached(true)
-                                        .build();
-                }
+    /**
+     * Cache fast-path: returns a cached SearchResponse (with cached=true) if DynamoDB has a hit.
+     */
+    public Optional<SearchResponse> getCachedResult(String query) {
+        String normalizedQuery = normalizeQuery(query);
+        return cacheService.get(normalizedQuery).map(json -> {
+            log.info("Cache HIT for query: '{}'", query);
+            SearchResponse cached = cacheService.deserialize(json, SearchResponse.class);
+            return SearchResponse.builder()
+                    .id(cached.id())
+                    .query(cached.query())
+                    .overallScore(cached.overallScore())
+                    .overallVerdict(cached.overallVerdict())
+                    .verdictSummary(cached.verdictSummary())
+                    .categories(cached.categories())
+                    .testimonials(cached.testimonials())
+                    .personaAnalysis(cached.personaAnalysis())
+                    .postCount(cached.postCount())
+                    .sourcePlatforms(cached.sourcePlatforms())
+                    .analyzedAt(cached.analyzedAt())
+                    .cached(true)
+                    .build();
+        });
+    }
 
-                // 2. Search all platforms
-                int postLimit = request.effectiveLimit();
-                int maxComments = request.effectiveMaxComments();
-                List<SocialPostDto> posts = platformRegistry.searchAll(query, postLimit, maxComments);
-                log.info("Using post limit: {}, max comments: {} (user-specified: {})",
-                                postLimit, maxComments, request.limit() != null);
-                log.info("Collected {} posts from {} platforms", posts.size(),
-                                platformRegistry.getEnabledPlatforms().size());
+    /**
+     * Persists a PENDING SearchJob to SQLite.
+     * Must be @Transactional so the row commits to DB before enqueueJob() sends the Redis message.
+     * This prevents a race where the listener dequeues the message before the row is visible.
+     */
+    @Transactional
+    public UUID persistJob(SearchRequest request) {
+        String normalizedQuery = normalizeQuery(request.query());
+        SearchJob job = SearchJob.builder()
+                .query(request.query())
+                .queryNormalized(normalizedQuery)
+                .limit(request.effectiveLimit())
+                .maxComments(request.effectiveMaxComments())
+                .status(SearchJob.Status.PENDING)
+                .build();
+        UUID jobId = searchJobRepo.save(job).getId();
+        log.info("Persisted job {} for query: '{}'", jobId, request.query());
+        return jobId;
+    }
 
-                if (posts.isEmpty()) {
-                        log.warn("No posts found for query: '{}'", query);
-                        return buildEmptyResponse(query);
-                }
+    /**
+     * Publishes the job message to Redis via rqueue.
+     * Called AFTER persistJob() returns (and its transaction has committed).
+     */
+    public void enqueueJob(UUID jobId) {
+        rqueueMessageEnqueuer.enqueue(QUEUE, new SearchJobMessage(jobId));
+        log.info("Enqueued job {} to queue '{}'", jobId, QUEUE);
+    }
 
-                // 3. AI analysis
-                log.info("━━━ Sending {} posts+comments to AI for analysis ━━━", posts.size());
-                AIAnalysisEngine.AnalysisResult analysis = aiEngine.analyze(posts, query);
+    /**
+     * Looks up a job by ID for the polling endpoint.
+     */
+    public Optional<SearchJob> getJob(UUID jobId) {
+        return searchJobRepo.findById(jobId);
+    }
 
-                // 4. Persist to database
-                SearchResult searchResult = SearchResult.builder()
-                                .query(query)
-                                .queryNormalized(normalizedQuery)
-                                .overallScore(analysis.overallScore())
-                                .overallVerdict(analysis.overallVerdict())
-                                .analysis(analysis.rawJson())
-                                .sourcePlatforms(platformRegistry.getEnabledPlatforms().toArray(new String[0]))
-                                .postCount(posts.size())
-                                .createdAt(Instant.now())
-                                .expiresAt(Instant.now().plusSeconds(7 * 24 * 3600))
-                                .build();
+    /**
+     * Deserializes the stored result from a COMPLETED job.
+     * The result JSON is written by SearchJobListener on completion and is always available
+     * regardless of DynamoDB TTL or availability.
+     */
+    public Optional<SearchResponse> getResultForJob(SearchJob job) {
+        if (job.getResultJson() == null) return Optional.empty();
+        return Optional.of(cacheService.deserialize(job.getResultJson(), SearchResponse.class));
+    }
 
-                searchResult = searchResultRepo.save(searchResult);
-
-                // 4. Persist to database asynchronously (non-blocking — return response faster)
-                SearchResult finalSearchResult = searchResult;
-                List<SocialPost> socialPosts = posts.stream()
-                                .filter(dto -> !socialPostRepo.existsByPlatformId(dto.platformId()))
-                                .map(dto -> SocialPost.builder()
-                                                .platform(dto.platform())
-                                                .platformId(dto.platformId())
-                                                .searchResult(finalSearchResult)
-                                                .source(dto.source())
-                                                .title(dto.title())
-                                                .body(dto.body())
-                                                .score(dto.score())
-                                                .permalink(dto.permalink())
-                                                .postedAt(dto.postedAt())
-                                                .build())
-                                .toList();
-                if (socialPosts.size() < posts.size()) {
-                        log.info("Skipped {} duplicate posts (already in DB), saving {} new",
-                                        posts.size() - socialPosts.size(), socialPosts.size());
-                }
-                CompletableFuture.runAsync(() -> socialPostRepo.saveAll(socialPosts))
-                        .exceptionally(ex -> {
-                            log.warn("Async DB persist failed: {}", ex.getMessage());
-                            return null;
-                        });
-
-                // 5. Build response
-                SearchResponse response = SearchResponse.builder()
-                                .id(searchResult.getId())
-                                .query(query)
-                                .overallScore(analysis.overallScore())
-                                .overallVerdict(analysis.overallVerdict())
-                                .verdictSummary(analysis.verdictSummary())
-                                .categories(analysis.categories())
-                                .testimonials(analysis.testimonials())
-                                .personaAnalysis(analysis.personaAnalysis())
-                                .postCount(posts.size())
-                                .sourcePlatforms(platformRegistry.getEnabledPlatforms())
-                                .analyzedAt(Instant.now())
-                                .cached(false)
-                                .build();
-
-                // 6. Only cache successful AI results (not failures)
-                if (!"AI Unavailable".equals(analysis.overallVerdict())) {
-                        cacheService.put(normalizedQuery, cacheService.serialize(response));
-                } else {
-                        log.warn("Skipping cache — AI analysis failed, retry will re-attempt");
-                }
-
-                log.info("Search completed for '{}': score={}, verdict={}, posts={}",
-                                query, analysis.overallScore(), analysis.overallVerdict(), posts.size());
-
-                return response;
-        }
-
-        private SearchResponse buildEmptyResponse(String query) {
-                return SearchResponse.builder()
-                                .query(query)
-                                .overallScore(0)
-                                .overallVerdict("No Data")
-                                .verdictSummary("No social media posts found for this query. Try a different search term.")
-                                .categories(List.of())
-                                .testimonials(List.of())
-                                .postCount(0)
-                                .sourcePlatforms(platformRegistry.getEnabledPlatforms())
-                                .analyzedAt(Instant.now())
-                                .cached(false)
-                                .build();
-        }
-
-        /**
-         * Normalizes query for cache key consistency.
-         * Lowercases, trims, collapses whitespace.
-         */
-        private String normalizeQuery(String query) {
-                return query.trim()
-                                .toLowerCase(Locale.ROOT)
-                                .replaceAll("\\s+", " ");
-        }
+    private String normalizeQuery(String query) {
+        return query.trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
+    }
 }

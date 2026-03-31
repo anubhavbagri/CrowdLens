@@ -5,6 +5,9 @@ spring:
   application:
     name: crowdlens-backend
 
+  main:
+    lazy-initialization: true
+
   # SQLite config
   datasource:
     url: jdbc:sqlite:./data/crowdlens.db
@@ -24,6 +27,13 @@ spring:
   flyway:
     enabled: false
 
+  # Redis (backing store for rqueue job queue)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
   # Spring AI — OpenAI (swap model via env var)
   ai:
     openai:
@@ -32,6 +42,11 @@ spring:
         options:
           model: ${AI_MODEL:gpt-4o-mini}
           temperature: 0.3
+
+# rqueue job queue (sequential: one job at a time via concurrency=1 on listener)
+rqueue:
+  web:
+    enable: false
 
 # Reddit API credentials
 reddit:
