@@ -8,10 +8,12 @@ spring:
   main:
     lazy-initialization: true
 
-  # SQLite config
+  # SQLite config (WAL mode + busy timeout for concurrency)
   datasource:
-    url: jdbc:sqlite:./data/crowdlens.db
+    url: jdbc:sqlite:./data/crowdlens.db?journal_mode=WAL&busy_timeout=5000&_txlock=immediate
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
 
   jpa:
     hibernate:

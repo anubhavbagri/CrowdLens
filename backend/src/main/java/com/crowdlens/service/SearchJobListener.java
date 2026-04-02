@@ -13,7 +13,7 @@ import com.github.sonus21.rqueue.annotation.RqueueListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
 import java.util.List;
@@ -33,6 +33,7 @@ public class SearchJobListener {
     private final PlatformRegistry platformRegistry;
     private final AIAnalysisEngine aiEngine;
     private final CacheService cacheService;
+    private final TransactionTemplate txTemplate;
 
     /**
      * Dequeues and processes one search job at a time.
@@ -41,7 +42,6 @@ public class SearchJobListener {
      * numRetries="0"   → do NOT retry; we handle all errors internally and mark FAILED
      */
     @RqueueListener(value = "search-jobs", concurrency = "1", numRetries = "0")
-    @Transactional
     public void onMessage(SearchJobMessage message) {
         SearchJob job = searchJobRepo.findById(message.jobId()).orElse(null);
         if (job == null) {
@@ -71,64 +71,68 @@ public class SearchJobListener {
             // 2. AI analysis
             AIAnalysisEngine.AnalysisResult analysis = aiEngine.analyze(posts, job.getQuery());
 
-            // 3. Persist SearchResult to SQLite
-            SearchResult searchResult = SearchResult.builder()
-                    .query(job.getQuery())
-                    .queryNormalized(job.getQueryNormalized())
-                    .overallScore(analysis.overallScore())
-                    .overallVerdict(analysis.overallVerdict())
-                    .analysis(analysis.rawJson())
-                    .sourcePlatforms(platformRegistry.getEnabledPlatforms().toArray(new String[0]))
-                    .postCount(posts.size())
-                    .createdAt(Instant.now())
-                    .expiresAt(Instant.now().plusSeconds(7 * 24 * 3600))
-                    .build();
-            searchResult = searchResultRepo.save(searchResult);
+            // 3–6. Persist results and mark COMPLETED in a single transaction
+            txTemplate.executeWithoutResult(status -> {
+                // Persist SearchResult
+                SearchResult searchResult = searchResultRepo.save(SearchResult.builder()
+                        .query(job.getQuery())
+                        .queryNormalized(job.getQueryNormalized())
+                        .overallScore(analysis.overallScore())
+                        .overallVerdict(analysis.overallVerdict())
+                        .analysis(analysis.rawJson())
+                        .sourcePlatforms(platformRegistry.getEnabledPlatforms().toArray(new String[0]))
+                        .postCount(posts.size())
+                        .createdAt(Instant.now())
+                        .expiresAt(Instant.now().plusSeconds(7 * 24 * 3600))
+                        .build());
 
-            // 4. Persist SocialPosts to SQLite (synchronous, deduplicated by platformId)
-            SearchResult finalResult = searchResult;
-            List<SocialPost> socialPosts = posts.stream()
-                    .filter(dto -> !socialPostRepo.existsByPlatformId(dto.platformId()))
-                    .map(dto -> SocialPost.builder()
-                            .platform(dto.platform())
-                            .platformId(dto.platformId())
-                            .searchResult(finalResult)
-                            .source(dto.source())
-                            .title(dto.title())
-                            .body(dto.body())
-                            .score(dto.score())
-                            .permalink(dto.permalink())
-                            .postedAt(dto.postedAt())
-                            .build())
-                    .toList();
-            if (socialPosts.size() < posts.size()) {
-                log.info("Job {} — skipped {} duplicate posts, saving {} new",
-                        job.getId(), posts.size() - socialPosts.size(), socialPosts.size());
-            }
-            socialPostRepo.saveAll(socialPosts);
+                // Persist SocialPosts (deduplicated by platformId)
+                List<SocialPost> socialPosts = posts.stream()
+                        .filter(dto -> !socialPostRepo.existsByPlatformId(dto.platformId()))
+                        .map(dto -> SocialPost.builder()
+                                .platform(dto.platform())
+                                .platformId(dto.platformId())
+                                .searchResult(searchResult)
+                                .source(dto.source())
+                                .title(dto.title())
+                                .body(dto.body())
+                                .score(dto.score())
+                                .permalink(dto.permalink())
+                                .postedAt(dto.postedAt())
+                                .build())
+                        .toList();
+                if (socialPosts.size() < posts.size()) {
+                    log.info("Job {} — skipped {} duplicate posts, saving {} new",
+                            job.getId(), posts.size() - socialPosts.size(), socialPosts.size());
+                }
+                socialPostRepo.saveAll(socialPosts);
 
-            // 5. Build response and cache in DynamoDB (skip if AI failed)
-            SearchResponse response = buildResponse(job, searchResult, analysis, posts.size());
-            if (!"AI Unavailable".equals(analysis.overallVerdict())) {
-                cacheService.put(job.getQueryNormalized(), cacheService.serialize(response));
-            } else {
-                log.warn("Job {} — skipping DynamoDB cache, AI analysis failed", job.getId());
-            }
+                // Build response and cache in DynamoDB (skip if AI failed)
+                SearchResponse response = buildResponse(job, searchResult, analysis, posts.size());
+                if (!"AI Unavailable".equals(analysis.overallVerdict())) {
+                    cacheService.put(job.getQueryNormalized(), cacheService.serialize(response));
+                } else {
+                    log.warn("Job {} — skipping DynamoDB cache, AI analysis failed", job.getId());
+                }
 
-            // 6. Mark COMPLETED — store serialized result in job row for reliable polling
-            job.setStatus(SearchJob.Status.COMPLETED);
-            job.setSearchResultId(searchResult.getId());
-            job.setResultJson(cacheService.serialize(response));
-            searchJobRepo.save(job);
+                // Mark COMPLETED
+                job.setStatus(SearchJob.Status.COMPLETED);
+                job.setSearchResultId(searchResult.getId());
+                job.setResultJson(cacheService.serialize(response));
+                searchJobRepo.save(job);
+            });
 
-            log.info("Job {} COMPLETED — score={}, verdict='{}', posts={}",
-                    job.getId(), analysis.overallScore(), analysis.overallVerdict(), posts.size());
+            log.info("Job {} COMPLETED", job.getId());
 
         } catch (Exception e) {
             log.error("Job {} FAILED: {}", job.getId(), e.getMessage(), e);
-            job.setStatus(SearchJob.Status.FAILED);
-            job.setErrorMessage(e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            searchJobRepo.save(job);
+            // Save FAILED status in a separate transaction — the success transaction
+            // may have been rolled back, but this must still persist.
+            txTemplate.executeWithoutResult(status -> {
+                job.setStatus(SearchJob.Status.FAILED);
+                job.setErrorMessage(e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+                searchJobRepo.save(job);
+            });
             // Do NOT rethrow — rqueue must ACK (remove) this message, not retry.
             // The job is marked FAILED in SQLite; the client will see it on next poll.
         }

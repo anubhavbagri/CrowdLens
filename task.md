@@ -34,8 +34,8 @@
 - [x] API client + loading/error states
 
 ## Phase 4: Cloud Deployment
-- [ ] Provision Ubuntu VM (Oracle Cloud Infrastructure 1GB or Railway.app)
-- [ ] Deploy Spring Boot backend via Docker (SQLite for storage)
-- [ ] Provision AWS DynamoDB production table (IAM User/Keys)
-- [ ] Vercel frontend deploy
-- [ ] README with full setup guide
+- [x] Provision Ubuntu VM (Oracle Cloud Infrastructure 1GB or Railway.app)
+- [x] Deploy Spring Boot backend via Docker (SQLite for storage)
+- [x] Provision AWS DynamoDB production table (IAM User/Keys)
+- [x] Vercel frontend deploy
+- [x] README with full setup guide
