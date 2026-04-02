@@ -56,9 +56,10 @@ reddit:
   password: ${REDDIT_PASSWORD:}
   user-agent: ${REDDIT_USER_AGENT:crowdlens:v1.0}
 
-# DynamoDB cache
+# DynamoDB cache (AWS production — no endpoint override needed)
+# Set DYNAMODB_ENDPOINT only for local DynamoDB dev/testing
 dynamodb:
-  endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+  endpoint: ${DYNAMODB_ENDPOINT:}
   region: ${AWS_REGION:us-east-1}
   table-name: ${DYNAMODB_TABLE:crowdlens-cache}
   ttl-hours: ${CACHE_TTL_HOURS:24}

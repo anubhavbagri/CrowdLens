@@ -40,10 +40,15 @@ public class AppConfig {
 
     @Bean
     public DynamoDbClient dynamoDbClient(DynamoDbProperties dynamoProps) {
-        return DynamoDbClient.builder()
-                .endpointOverride(URI.create(dynamoProps.endpoint()))
+        var builder = DynamoDbClient.builder()
                 .region(Region.of(dynamoProps.region()))
-                .credentialsProvider(DefaultCredentialsProvider.create())
-                .build();
+                .credentialsProvider(DefaultCredentialsProvider.create());
+
+        // Only override endpoint for local DynamoDB (dev/testing)
+        if (dynamoProps.endpoint() != null && !dynamoProps.endpoint().isBlank()) {
+            builder.endpointOverride(URI.create(dynamoProps.endpoint()));
+        }
+
+        return builder.build();
     }
 }

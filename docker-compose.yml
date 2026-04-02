@@ -14,19 +14,6 @@ services:
       timeout: 3s
       retries: 5
 
-  # DynamoDB Local (cache)
-  dynamodb-local:
-    image: amazon/dynamodb-local:latest
-    container_name: crowdlens-dynamodb
-    ports:
-      - "8000:8000"
-    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:8000/shell/ || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   # Spring Boot backend
   backend:
     build:
@@ -38,18 +25,15 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      dynamodb-local:
-        condition: service_healthy
     volumes:
       - sqlite_data:/app/data
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
 
-      AWS_REGION: us-east-1
-      AWS_ACCESS_KEY_ID: dummy
-      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID}
       REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET}
       REDDIT_USERNAME: ${REDDIT_USERNAME}
