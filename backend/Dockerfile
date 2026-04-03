@@ -23,4 +23,4 @@ RUN mkdir -p /app/data
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-Xms128m", "-Xmx512m", "-XX:+UseSerialGC", "-XX:+UseContainerSupport","-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xms128m", "-Xmx512m", "-XX:+UseSerialGC", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:ActiveProcessorCount=2", "-Xss512k", "-jar", "app.jar"]
