@@ -72,15 +72,15 @@ export default function Home() {
 
         {/* Hero Search View */}
         {appState === 'idle' && (
-          <div className="w-full text-center max-w-4xl mx-auto animate-fade-in space-y-10">
+          <div className="w-full text-center max-w-4xl mx-auto animate-fade-in space-y-6">
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm">
-                Real People,<br />
+              <h1 className="grid gap-y-2 text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm">
+                Real People, 
                 <span>
                   Real Opinions.
                 </span>
               </h1>
-              <p className="text-xl text-gray-700 max-w-2xl mx-auto font-medium">
+              <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto font-medium">
                 Search millions of authentic Reddit discussions to get unbiased insights on any product, service, or experience.
               </p>
             </div>

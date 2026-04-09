@@ -1,16 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
 import { SearchResponse } from '@/lib/api';
-import { Download, Share2, Check } from 'lucide-react';
-import html2canvas from 'html2canvas';
 
 interface ShareCardProps {
   results: SearchResponse;
 }
 
-// The visual card — this exact div is what gets screenshot'd
-export function ShareCardVisual({ results }: { results: SearchResponse }) {
+// The visual card — rendered off-screen and captured by html-to-image in VerdictCard
+export function ShareCardVisual({ results }: ShareCardProps) {
   const scoreColor =
     results.overallScore >= 75
       ? '#14b8a6'
@@ -57,24 +54,62 @@ export function ShareCardVisual({ results }: { results: SearchResponse }) {
         </div>
 
         <div style={{ flex: 1, paddingTop: 4 }}>
-          {results.productSubCategory && (
-            <div
+          {/* Badges: subcategory + source platforms + discussions count */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 5, marginBottom: 8 }}>
+            {results.productSubCategory && (
+              <span
+                style={{
+                  display: 'inline-block',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  lineHeight: '16px',
+                  color: '#0d9488',
+                  background: '#f0fdfa',
+                  padding: '2px 8px',
+                  borderRadius: 20,
+                  letterSpacing: 0.5,
+                  textTransform: 'uppercase',
+                }}
+              >
+                {results.productSubCategory}
+              </span>
+            )}
+            {results.sourcePlatforms?.map((p) => (
+              <span
+                key={p}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontSize: 9,
+                  fontWeight: 600,
+                  lineHeight: '16px',
+                  color: '#6b7280',
+                  background: '#f3f4f6',
+                  padding: '2px 8px',
+                  borderRadius: 20,
+                  textTransform: 'capitalize',
+                }}
+              >
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#f97316', display: 'inline-block', flexShrink: 0 }} />
+                {p}
+              </span>
+            ))}
+            <span
               style={{
                 display: 'inline-block',
-                fontSize: 10,
-                fontWeight: 700,
-                color: '#0d9488',
-                background: '#f0fdfa',
-                padding: '2px 10px',
+                fontSize: 9,
+                fontWeight: 600,
+                lineHeight: '16px',
+                color: '#6b7280',
+                background: '#f3f4f6',
+                padding: '2px 8px',
                 borderRadius: 20,
-                letterSpacing: 0.5,
-                marginBottom: 6,
-                textTransform: 'uppercase',
               }}
             >
-              {results.productSubCategory}
-            </div>
-          )}
+              {results.postCount} discussions
+            </span>
+          </div>
           <div style={{ fontSize: 20, fontWeight: 800, color: '#111827', lineHeight: 1.25 }}>
             {results.query}
           </div>
@@ -93,7 +128,7 @@ export function ShareCardVisual({ results }: { results: SearchResponse }) {
           marginBottom: 20,
         }}
       >
-        "{results.verdictSentence}"
+        &ldquo;{results.verdictSentence}&rdquo;
       </div>
 
       {/* 4 metrics */}
@@ -164,92 +199,6 @@ export function ShareCardVisual({ results }: { results: SearchResponse }) {
           CrowdLens
         </span>
       </div>
-    </div>
-  );
-}
-
-export default function ShareCard({ results }: ShareCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [copied, setCopied] = useState(false);
-  const [downloading, setDownloading] = useState(false);
-
-  const captureCard = async (): Promise<HTMLCanvasElement> => {
-    const element = document.getElementById('share-card-visual');
-    if (!element) throw new Error('Card element not found');
-    return html2canvas(element, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      useCORS: true,
-    });
-  };
-
-  const handleDownload = async () => {
-    setDownloading(true);
-    try {
-      const canvas = await captureCard();
-      const link = document.createElement('a');
-      link.download = `crowdlens-${results.query.replace(/\s+/g, '-').toLowerCase()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch (e) {
-      console.error('Download failed', e);
-    } finally {
-      setDownloading(false);
-    }
-  };
-
-  const handleCopy = async () => {
-    try {
-      const canvas = await captureCard();
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob }),
-        ]);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    } catch (e) {
-      console.error('Copy failed', e);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-gray-900">Share Verdict</h3>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors shadow-sm"
-          >
-            {copied ? (
-              <><Check className="w-4 h-4 text-green-500" /> Copied!</>
-            ) : (
-              <><Share2 className="w-4 h-4" /> Copy Image</>
-            )}
-          </button>
-          <button
-            onClick={handleDownload}
-            disabled={downloading}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-brand-600 rounded-full hover:bg-brand-700 transition-colors shadow-sm disabled:opacity-60"
-          >
-            <Download className="w-4 h-4" />
-            {downloading ? 'Saving…' : 'Download'}
-          </button>
-        </div>
-      </div>
-
-      {/* The card preview */}
-      <div ref={cardRef} className="overflow-x-auto">
-        <div className="inline-block rounded-[1.5rem] shadow-lg ring-1 ring-gray-100">
-          <ShareCardVisual results={results} />
-        </div>
-      </div>
-
-      <p className="text-xs text-gray-400 text-center">
-        Download as PNG to share on WhatsApp, Instagram, X, or LinkedIn
-      </p>
     </div>
   );
 }
