@@ -20,6 +20,8 @@ import java.util.Map;
 /**
  * AI analysis engine powered by Spring AI's ChatModel interface.
  * Model-agnostic: swap OpenAI → Anthropic → Gemini → Ollama via config.
+ *
+ * Parses the new dynamic-metric response shape introduced in V2.
  */
 @Slf4j
 @Service
@@ -36,7 +38,7 @@ public class AIAnalysisEngine {
     }
 
     /**
-     * Analyzes social media posts and produces a structured SearchResponse.
+     * Analyzes social media posts and produces a structured AnalysisResult.
      */
     @CircuitBreaker(name = "openAi", fallbackMethod = "analyzeFallback")
     public AnalysisResult analyze(List<SocialPostDto> posts, String query) {
@@ -60,24 +62,22 @@ public class AIAnalysisEngine {
             return parseAiResponse(aiOutput, query);
 
         } catch (Exception e) {
-            log.error("AI analysis failed for query '{}': {} — {}", query, e.getClass().getSimpleName(),
-                    e.getMessage());
+            log.error("AI analysis failed for query '{}': {} — {}", query, e.getClass().getSimpleName(), e.getMessage());
 
-            // Provide specific error guidance
-            if (e.getMessage() != null && (e.getMessage().contains("authentication") ||
+            if (e.getMessage() != null && (
+                    e.getMessage().contains("authentication") ||
                     e.getMessage().contains("401") ||
                     e.getMessage().contains("Unauthorized") ||
                     e.getMessage().contains("invalid_api_key"))) {
-                log.error("🔑 OpenAI API key appears to be INVALID or EXPIRED. " +
-                        "Check OPENAI_API_KEY in your .env file.");
-            } else if (e.getMessage() != null && (e.getMessage().contains("429") ||
+                log.error("🔑 OpenAI API key appears INVALID or EXPIRED. Check OPENAI_API_KEY in your .env file.");
+            } else if (e.getMessage() != null && (
+                    e.getMessage().contains("429") ||
                     e.getMessage().contains("rate_limit") ||
                     e.getMessage().contains("quota"))) {
-                log.error("⚠️ OpenAI rate limit or quota exceeded. " +
-                        "Check your usage at https://platform.openai.com/usage");
+                log.error("⚠️ OpenAI rate limit or quota exceeded. Check usage at https://platform.openai.com/usage");
             }
 
-            throw e; // Let circuit breaker handle it
+            throw e;
         }
     }
 
@@ -115,34 +115,41 @@ public class AIAnalysisEngine {
         }
     }
 
-    public record HealthStatus(boolean healthy, String message, String hint) {
-    }
+    public record HealthStatus(boolean healthy, String message, String hint) {}
+
+    // ─── Parsing ────────────────────────────────────────────────────────────────
 
     private AnalysisResult parseAiResponse(String aiOutput, String query) {
         try {
             // Strip markdown code fences if present
             String json = aiOutput;
-            if (json.startsWith("```")) {
-                json = json.replaceAll("^```\\w*\\n?", "").replaceAll("\\n?```$", "");
+            if (json != null && json.contains("```")) {
+                json = json.replaceAll("(?s)```\\w*\\n?", "").replaceAll("```", "");
             }
+            if (json == null) throw new IllegalStateException("AI returned null output");
             json = json.trim();
 
             JsonNode root = objectMapper.readTree(json);
 
-            int overallScore = root.path("overallScore").asInt(50);
-            String overallVerdict = root.path("overallVerdict").asText("Mixed");
-            String verdictSummary = root.path("verdictSummary").asText("");
+            String productCategory    = root.path("productCategory").asText(null);
+            String productSubCategory = root.path("productSubCategory").asText(null);
+            int overallScore          = root.path("overallScore").asInt(50);
+            String verdictSentence    = root.path("verdictSentence").asText("");
 
-            List<SearchResponse.CategoryAnalysis> categories = parseCategories(root.path("categories"));
-            List<SearchResponse.Testimonial> testimonials = parseTestimonials(root.path("testimonials"));
-            SearchResponse.PersonaAnalysis personaAnalysis = parsePersonaAnalysis(root.path("personaAnalysis"));
+            List<SearchResponse.Metric>          metrics          = parseMetrics(root.path("metrics"));
+            List<String>                         positives        = parseStringArray(root.path("positives"));
+            List<String>                         complaints       = parseStringArray(root.path("complaints"));
+            List<String>                         bestFor          = parseStringArray(root.path("bestFor"));
+            List<String>                         avoid            = parseStringArray(root.path("avoid"));
+            List<SearchResponse.EvidenceSnippet> evidenceSnippets = parseEvidenceSnippets(root.path("evidenceSnippets"));
 
-            log.info("AI analysis parsed — score: {}, verdict: '{}', categories: {}, testimonials: {}",
-                    overallScore, overallVerdict, categories.size(), testimonials.size());
+            log.info("AI parsed — category: '{}', score: {}, metrics: {}, positives: {}, complaints: {}",
+                    productCategory, overallScore, metrics.size(), positives.size(), complaints.size());
 
             return new AnalysisResult(
-                    overallScore, overallVerdict, verdictSummary,
-                    categories, testimonials, personaAnalysis, json);
+                    productCategory, productSubCategory, overallScore, verdictSentence,
+                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json
+            );
 
         } catch (Exception e) {
             log.error("Failed to parse AI response for query '{}': {}", query, e.getMessage());
@@ -151,104 +158,93 @@ public class AIAnalysisEngine {
         }
     }
 
-    private List<SearchResponse.CategoryAnalysis> parseCategories(JsonNode categoriesNode) {
-        if (categoriesNode.isMissingNode() || !categoriesNode.isArray())
-            return Collections.emptyList();
-
+    private List<SearchResponse.Metric> parseMetrics(JsonNode metricsNode) {
+        if (metricsNode.isMissingNode() || !metricsNode.isArray()) return Collections.emptyList();
         try {
             return objectMapper.readValue(
-                    categoriesNode.toString(),
-                    new TypeReference<List<Map<String, Object>>>() {
-                    }).stream().map(map -> SearchResponse.CategoryAnalysis.builder()
-                            .name((String) map.get("name"))
-                            .rating((String) map.get("rating"))
-                            .summary((String) map.get("summary"))
-                            .highlights(map.containsKey("highlights")
-                                    ? objectMapper.convertValue(map.get("highlights"),
-                                            new TypeReference<List<String>>() {
-                                            })
-                                    : Collections.emptyList())
-                            .build())
-                    .toList();
+                    metricsNode.toString(),
+                    new TypeReference<List<Map<String, Object>>>() {}
+            ).stream().map(map -> SearchResponse.Metric.builder()
+                    .label((String) map.get("label"))
+                    .score(toDouble(map.get("score")))
+                    .explanation((String) map.get("explanation"))
+                    .build()
+            ).toList();
         } catch (JsonProcessingException e) {
-            log.warn("Failed to parse categories: {}", e.getMessage());
+            log.warn("Failed to parse metrics: {}", e.getMessage());
             return Collections.emptyList();
         }
     }
 
-    private List<SearchResponse.Testimonial> parseTestimonials(JsonNode testimonialsNode) {
-        if (testimonialsNode.isMissingNode() || !testimonialsNode.isArray())
+    private List<String> parseStringArray(JsonNode node) {
+        if (node.isMissingNode() || !node.isArray()) return Collections.emptyList();
+        try {
+            return objectMapper.readValue(node.toString(), new TypeReference<List<String>>() {});
+        } catch (JsonProcessingException e) {
+            log.warn("Failed to parse string array: {}", e.getMessage());
             return Collections.emptyList();
+        }
+    }
 
+    private List<SearchResponse.EvidenceSnippet> parseEvidenceSnippets(JsonNode snippetsNode) {
+        if (snippetsNode.isMissingNode() || !snippetsNode.isArray()) return Collections.emptyList();
         try {
             return objectMapper.readValue(
-                    testimonialsNode.toString(),
-                    new TypeReference<List<Map<String, String>>>() {
-                    }).stream().map(map -> SearchResponse.Testimonial.builder()
-                            .text(map.get("text"))
-                            .sentiment(map.get("sentiment"))
-                            .source(map.get("source"))
-                            .platform(map.getOrDefault("platform", "reddit"))
-                            .permalink(map.get("permalink"))
-                            .build())
-                    .toList();
+                    snippetsNode.toString(),
+                    new TypeReference<List<Map<String, String>>>() {}
+            ).stream().map(map -> SearchResponse.EvidenceSnippet.builder()
+                    .text(map.get("text"))
+                    .source(map.get("source"))
+                    .permalink(map.get("permalink"))
+                    .build()
+            ).toList();
         } catch (JsonProcessingException e) {
-            log.warn("Failed to parse testimonials: {}", e.getMessage());
+            log.warn("Failed to parse evidenceSnippets: {}", e.getMessage());
             return Collections.emptyList();
         }
     }
 
-    private SearchResponse.PersonaAnalysis parsePersonaAnalysis(JsonNode personaNode) {
-        if (personaNode.isMissingNode())
-            return null;
-
-        String question = personaNode.path("question").asText("Is this right for you?");
-        List<SearchResponse.PersonaFit> fits;
-
-        try {
-            fits = objectMapper.readValue(
-                    personaNode.path("fits").toString(),
-                    new TypeReference<List<Map<String, String>>>() {
-                    }).stream().map(map -> SearchResponse.PersonaFit.builder()
-                            .persona(map.get("persona"))
-                            .verdict(map.get("verdict"))
-                            .reason(map.get("reason"))
-                            .build())
-                    .toList();
-        } catch (Exception e) {
-            fits = Collections.emptyList();
-        }
-
-        return SearchResponse.PersonaAnalysis.builder()
-                .question(question)
-                .fits(fits)
-                .build();
+    private double toDouble(Object value) {
+        if (value == null) return 0.0;
+        if (value instanceof Number n) return n.doubleValue();
+        try { return Double.parseDouble(value.toString()); }
+        catch (NumberFormatException e) { return 0.0; }
     }
+
+    // ─── Result record ──────────────────────────────────────────────────────────
 
     /**
-     * Structured result from AI analysis.
+     * Structured result from AI analysis — maps 1:1 to the new SearchResponse shape.
      */
     public record AnalysisResult(
+            String productCategory,
+            String productSubCategory,
             int overallScore,
-            String overallVerdict,
-            String verdictSummary,
-            List<SearchResponse.CategoryAnalysis> categories,
-            List<SearchResponse.Testimonial> testimonials,
-            SearchResponse.PersonaAnalysis personaAnalysis,
-            String rawJson) {
+            String verdictSentence,
+            List<SearchResponse.Metric> metrics,
+            List<String> positives,
+            List<String> complaints,
+            List<String> bestFor,
+            List<String> avoid,
+            List<SearchResponse.EvidenceSnippet> evidenceSnippets,
+            String rawJson
+    ) {
         public static AnalysisResult empty(String query) {
             return new AnalysisResult(
-                    0, "No Data",
-                    "No social media posts found for this query.",
-                    Collections.emptyList(), Collections.emptyList(), null, "{}");
+                    null, null, 0,
+                    "No social media posts found for this query — try a different search term.",
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}"
+            );
         }
 
         public static AnalysisResult error(String query, String errorMessage) {
             return new AnalysisResult(
-                    0, "AI Unavailable",
-                    "AI analysis failed: " + errorMessage
-                            + ". Reddit data was collected successfully — retry may work.",
-                    Collections.emptyList(), Collections.emptyList(), null, "{}");
+                    null, null, 0,
+                    "AI analysis temporarily unavailable — Reddit data was collected. Retry shortly.",
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}"
+            );
         }
     }
 }

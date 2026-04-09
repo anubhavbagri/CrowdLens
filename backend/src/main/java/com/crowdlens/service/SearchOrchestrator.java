@@ -31,6 +31,7 @@ public class SearchOrchestrator {
 
     /**
      * Cache fast-path: returns a cached SearchResponse (with cached=true) if DynamoDB has a hit.
+     * Uses the new dynamic-metrics response shape (Phase 5).
      */
     public Optional<SearchResponse> getCachedResult(String query) {
         String normalizedQuery = normalizeQuery(query);
@@ -40,12 +41,16 @@ public class SearchOrchestrator {
             return SearchResponse.builder()
                     .id(cached.id())
                     .query(cached.query())
+                    .productCategory(cached.productCategory())
+                    .productSubCategory(cached.productSubCategory())
                     .overallScore(cached.overallScore())
-                    .overallVerdict(cached.overallVerdict())
-                    .verdictSummary(cached.verdictSummary())
-                    .categories(cached.categories())
-                    .testimonials(cached.testimonials())
-                    .personaAnalysis(cached.personaAnalysis())
+                    .verdictSentence(cached.verdictSentence())
+                    .metrics(cached.metrics())
+                    .positives(cached.positives())
+                    .complaints(cached.complaints())
+                    .bestFor(cached.bestFor())
+                    .avoid(cached.avoid())
+                    .evidenceSnippets(cached.evidenceSnippets())
                     .postCount(cached.postCount())
                     .sourcePlatforms(cached.sourcePlatforms())
                     .analyzedAt(cached.analyzedAt())

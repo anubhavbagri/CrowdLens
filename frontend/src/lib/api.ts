@@ -1,38 +1,28 @@
-export interface CategoryAnalysis {
-  name: string;
-  rating: string;
-  summary: string;
-  highlights: string[];
+export interface Metric {
+  label: string;
+  score: number;        // 0.0 – 10.0
+  explanation: string;
 }
 
-export interface Testimonial {
+export interface EvidenceSnippet {
   text: string;
-  sentiment: string;
-  source: string;
-  platform: string;
+  source: string;       // e.g. "r/malegrooming"
   permalink: string;
-}
-
-export interface PersonaFit {
-  persona: string;
-  verdict: string;
-  reason: string;
-}
-
-export interface PersonaAnalysis {
-  question: string;
-  fits: PersonaFit[];
 }
 
 export interface SearchResponse {
   id: string;
   query: string;
-  overallScore: number;
-  overallVerdict: string;
-  verdictSummary: string;
-  categories: CategoryAnalysis[];
-  testimonials: Testimonial[];
-  personaAnalysis: PersonaAnalysis;
+  productCategory?: string;       // e.g. "Grooming"
+  productSubCategory?: string;    // e.g. "Electric Trimmer"
+  overallScore: number;           // 0–100
+  verdictSentence: string;        // Single crafted sentence
+  metrics: Metric[];              // Exactly 4 dynamic metrics
+  positives: string[];            // Most praised themes
+  complaints: string[];           // Most complained themes
+  bestFor: string[];              // Persona descriptors
+  avoid: string[];                // Persona descriptors
+  evidenceSnippets: EvidenceSnippet[];
   postCount: number;
   sourcePlatforms: string[];
   analyzedAt: string;
@@ -41,8 +31,8 @@ export interface SearchResponse {
 
 export interface SearchRequest {
   query: string;
-  limit?: number;
-  maxComments?: number;
+  limit?: number;        // default: 10, max: 50
+  maxComments?: number;  // default: 50, max: 100
 }
 
 export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';

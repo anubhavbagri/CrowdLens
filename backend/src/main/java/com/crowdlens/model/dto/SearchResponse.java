@@ -1,6 +1,7 @@
 package com.crowdlens.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -9,47 +10,70 @@ import java.util.UUID;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Structured crowd opinion analysis for a product query")
 public record SearchResponse(
         UUID id,
         String query,
+
+        @Schema(description = "Detected product category, e.g. Grooming, Audio, Footwear")
+        String productCategory,
+
+        @Schema(description = "Detected product sub-category, e.g. Electric Trimmer")
+        String productSubCategory,
+
+        @Schema(description = "Overall score out of 100 based on blended sentiment, repetition, and confidence")
         int overallScore,
-        String overallVerdict,
-        String verdictSummary,
-        List<CategoryAnalysis> categories,
-        List<Testimonial> testimonials,
-        PersonaAnalysis personaAnalysis,
+
+        @Schema(description = "Single crafted sentence verdict, e.g. \"Good buy if you want strong battery, but not ideal for thick beards.\"")
+        String verdictSentence,
+
+        @Schema(description = "Exactly 4 dynamic metrics relevant to this product, derived from discussion themes")
+        List<Metric> metrics,
+
+        @Schema(description = "Most repeated positive themes from community discussion")
+        List<String> positives,
+
+        @Schema(description = "Most repeated complaints from community discussion")
+        List<String> complaints,
+
+        @Schema(description = "User personas this product is best suited for")
+        List<String> bestFor,
+
+        @Schema(description = "User personas who should avoid this product")
+        List<String> avoid,
+
+        @Schema(description = "Paraphrased evidence snippets from actual community posts")
+        List<EvidenceSnippet> evidenceSnippets,
+
         int postCount,
         List<String> sourcePlatforms,
         Instant analyzedAt,
-        boolean cached) {
+        boolean cached
+) {
 
     @Builder
-    public record CategoryAnalysis(
-            String name,
-            String rating,
-            String summary,
-            List<String> highlights) {
-    }
+    @Schema(description = "A single dynamic metric for this product derived from community discussion themes")
+    public record Metric(
+            @Schema(description = "Clean label for the metric, e.g. Battery Life, Skin Comfort, Sound Quality")
+            String label,
+
+            @Schema(description = "Score out of 10 for this metric based on sentiment")
+            double score,
+
+            @Schema(description = "Short explanation of the score based on what users said")
+            String explanation
+    ) {}
 
     @Builder
-    public record Testimonial(
+    @Schema(description = "A paraphrased evidence snippet from a community post")
+    public record EvidenceSnippet(
+            @Schema(description = "Paraphrased summary of what the user said")
             String text,
-            String sentiment,
+
+            @Schema(description = "Subreddit or community source, e.g. r/malegrooming")
             String source,
-            String platform,
-            String permalink) {
-    }
 
-    @Builder
-    public record PersonaAnalysis(
-            String question,
-            List<PersonaFit> fits) {
-    }
-
-    @Builder
-    public record PersonaFit(
-            String persona,
-            String verdict,
-            String reason) {
-    }
+            @Schema(description = "Direct link to the original post or comment")
+            String permalink
+    ) {}
 }
