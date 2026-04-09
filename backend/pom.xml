@@ -114,6 +114,19 @@
             <version>${resilience4j.version}</version>
         </dependency>
 
+        <!-- Redis: required by rqueue as backing store -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- rqueue: Redis-backed job queue (Spring Boot 3.x = rqueue 3.x) -->
+        <dependency>
+            <groupId>com.github.sonus21</groupId>
+            <artifactId>rqueue-spring-boot-starter</artifactId>
+            <version>3.2.0-RELEASE</version>
+        </dependency>
+
         <!-- WebClient for Reddit API calls -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

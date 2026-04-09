@@ -155,7 +155,8 @@ public class CacheService {
     }
 
     /**
-     * Creates the DynamoDB table if it doesn't exist (for local dev).
+     * Creates the DynamoDB table if it doesn't exist.
+     * Degrades gracefully — app starts even if DynamoDB is unreachable.
      */
     private void ensureTableExists() {
         try {
@@ -192,6 +193,8 @@ public class CacheService {
             } catch (Exception ex) {
                 log.warn("Failed to create DynamoDB table: {}", ex.getMessage());
             }
+        } catch (Exception e) {
+            log.warn("DynamoDB unavailable at startup (cache will be skipped): {}", e.getMessage());
         }
     }
 }

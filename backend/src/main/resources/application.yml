@@ -1,14 +1,24 @@
 server:
   port: 8080
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 2
+    accept-count: 5
 
 spring:
   application:
     name: crowdlens-backend
 
-  # SQLite config
+  main:
+    lazy-initialization: true
+
+  # SQLite config (WAL mode + busy timeout for concurrency)
   datasource:
-    url: jdbc:sqlite:./data/crowdlens.db
+    url: jdbc:sqlite:./data/crowdlens.db?journal_mode=WAL&busy_timeout=5000&_txlock=immediate
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
 
   jpa:
     hibernate:
@@ -24,6 +34,13 @@ spring:
   flyway:
     enabled: false
 
+  # Redis (backing store for rqueue job queue)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
   # Spring AI — OpenAI (swap model via env var)
   ai:
     openai:
@@ -33,6 +50,11 @@ spring:
           model: ${AI_MODEL:gpt-4o-mini}
           temperature: 0.3
 
+# rqueue job queue (sequential: one job at a time via concurrency=1 on listener)
+rqueue:
+  web:
+    enable: false
+
 # Reddit API credentials
 reddit:
   client-id: ${REDDIT_CLIENT_ID:}
@@ -41,9 +63,10 @@ reddit:
   password: ${REDDIT_PASSWORD:}
   user-agent: ${REDDIT_USER_AGENT:crowdlens:v1.0}
 
-# DynamoDB cache
+# DynamoDB cache (AWS production — no endpoint override needed)
+# Set DYNAMODB_ENDPOINT only for local DynamoDB dev/testing
 dynamodb:
-  endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+  endpoint: ${DYNAMODB_ENDPOINT:}
   region: ${AWS_REGION:us-east-1}
   table-name: ${DYNAMODB_TABLE:crowdlens-cache}
   ttl-hours: ${CACHE_TTL_HOURS:24}

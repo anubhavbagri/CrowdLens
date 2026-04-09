@@ -61,4 +61,3 @@
 - [x] `ShareCard.tsx` — pixel-perfect 480px card; Download PNG + Copy to clipboard (html2canvas)
 - [x] `ResultsView.tsx` — rewired to new component chain; old CategoryCard/TestimonialCard/PersonaSection retired
 
-

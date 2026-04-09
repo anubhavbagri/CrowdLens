@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -41,6 +43,20 @@ public class RedditApiClient {
                 .build();
         this.props = props;
         this.rateLimiter = rateLimiter;
+    }
+
+    /**
+     * Eagerly refresh the OAuth token at startup so the first user request
+     * doesn't pay the ~10s authentication cost.
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void warmUpToken() {
+        try {
+            log.info("Warming up Reddit OAuth2 token at startup...");
+            ensureAuthenticated();
+        } catch (Exception e) {
+            log.warn("Reddit OAuth2 token warmup failed (will retry on first request): {}", e.getMessage());
+        }
     }
 
     /**
