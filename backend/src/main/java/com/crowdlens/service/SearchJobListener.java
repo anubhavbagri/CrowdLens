@@ -78,7 +78,8 @@ public class SearchJobListener {
                         .query(job.getQuery())
                         .queryNormalized(job.getQueryNormalized())
                         .overallScore(analysis.overallScore())
-                        .overallVerdict(analysis.overallVerdict())
+                        .verdictSentence(analysis.verdictSentence())
+                        .productCategory(analysis.productCategory())
                         .analysis(analysis.rawJson())
                         .sourcePlatforms(platformRegistry.getEnabledPlatforms().toArray(new String[0]))
                         .postCount(posts.size())
@@ -107,12 +108,13 @@ public class SearchJobListener {
                 }
                 socialPostRepo.saveAll(socialPosts);
 
-                // Build response and cache in DynamoDB (skip if AI failed)
+                // Build response and cache in DynamoDB (skip if AI produced no metrics)
                 SearchResponse response = buildResponse(job, searchResult, analysis, posts.size());
-                if (!"AI Unavailable".equals(analysis.overallVerdict())) {
+                boolean aiSucceeded = analysis.metrics() != null && !analysis.metrics().isEmpty();
+                if (aiSucceeded) {
                     cacheService.put(job.getQueryNormalized(), cacheService.serialize(response));
                 } else {
-                    log.warn("Job {} — skipping DynamoDB cache, AI analysis failed", job.getId());
+                    log.warn("Job {} — skipping DynamoDB cache, AI analysis produced no metrics", job.getId());
                 }
 
                 // Mark COMPLETED
@@ -143,12 +145,16 @@ public class SearchJobListener {
         return SearchResponse.builder()
                 .id(sr.getId())
                 .query(job.getQuery())
+                .productCategory(analysis.productCategory())
+                .productSubCategory(analysis.productSubCategory())
                 .overallScore(analysis.overallScore())
-                .overallVerdict(analysis.overallVerdict())
-                .verdictSummary(analysis.verdictSummary())
-                .categories(analysis.categories())
-                .testimonials(analysis.testimonials())
-                .personaAnalysis(analysis.personaAnalysis())
+                .verdictSentence(analysis.verdictSentence())
+                .metrics(analysis.metrics())
+                .positives(analysis.positives())
+                .complaints(analysis.complaints())
+                .bestFor(analysis.bestFor())
+                .avoid(analysis.avoid())
+                .evidenceSnippets(analysis.evidenceSnippets())
                 .postCount(postCount)
                 .sourcePlatforms(platformRegistry.getEnabledPlatforms())
                 .analyzedAt(Instant.now())
