@@ -51,12 +51,16 @@ public class SearchOrchestrator {
                         return SearchResponse.builder()
                                         .id(cachedResponse.id())
                                         .query(cachedResponse.query())
+                                        .productCategory(cachedResponse.productCategory())
+                                        .productSubCategory(cachedResponse.productSubCategory())
                                         .overallScore(cachedResponse.overallScore())
-                                        .overallVerdict(cachedResponse.overallVerdict())
-                                        .verdictSummary(cachedResponse.verdictSummary())
-                                        .categories(cachedResponse.categories())
-                                        .testimonials(cachedResponse.testimonials())
-                                        .personaAnalysis(cachedResponse.personaAnalysis())
+                                        .verdictSentence(cachedResponse.verdictSentence())
+                                        .metrics(cachedResponse.metrics())
+                                        .positives(cachedResponse.positives())
+                                        .complaints(cachedResponse.complaints())
+                                        .bestFor(cachedResponse.bestFor())
+                                        .avoid(cachedResponse.avoid())
+                                        .evidenceSnippets(cachedResponse.evidenceSnippets())
                                         .postCount(cachedResponse.postCount())
                                         .sourcePlatforms(cachedResponse.sourcePlatforms())
                                         .analyzedAt(cachedResponse.analyzedAt())
@@ -87,7 +91,8 @@ public class SearchOrchestrator {
                                 .query(query)
                                 .queryNormalized(normalizedQuery)
                                 .overallScore(analysis.overallScore())
-                                .overallVerdict(analysis.overallVerdict())
+                                .verdictSentence(analysis.verdictSentence())
+                                .productCategory(analysis.productCategory())
                                 .analysis(analysis.rawJson())
                                 .sourcePlatforms(platformRegistry.getEnabledPlatforms().toArray(new String[0]))
                                 .postCount(posts.size())
@@ -123,27 +128,33 @@ public class SearchOrchestrator {
                 SearchResponse response = SearchResponse.builder()
                                 .id(searchResult.getId())
                                 .query(query)
+                                .productCategory(analysis.productCategory())
+                                .productSubCategory(analysis.productSubCategory())
                                 .overallScore(analysis.overallScore())
-                                .overallVerdict(analysis.overallVerdict())
-                                .verdictSummary(analysis.verdictSummary())
-                                .categories(analysis.categories())
-                                .testimonials(analysis.testimonials())
-                                .personaAnalysis(analysis.personaAnalysis())
+                                .verdictSentence(analysis.verdictSentence())
+                                .metrics(analysis.metrics())
+                                .positives(analysis.positives())
+                                .complaints(analysis.complaints())
+                                .bestFor(analysis.bestFor())
+                                .avoid(analysis.avoid())
+                                .evidenceSnippets(analysis.evidenceSnippets())
                                 .postCount(posts.size())
                                 .sourcePlatforms(platformRegistry.getEnabledPlatforms())
                                 .analyzedAt(Instant.now())
                                 .cached(false)
                                 .build();
 
-                // 6. Only cache successful AI results (not failures)
-                if (!"AI Unavailable".equals(analysis.overallVerdict())) {
+                // 6. Only cache successful AI results (not when AI failed)
+                boolean aiSucceeded = analysis.metrics() != null && !analysis.metrics().isEmpty();
+                if (aiSucceeded) {
                         cacheService.put(normalizedQuery, cacheService.serialize(response));
                 } else {
-                        log.warn("Skipping cache — AI analysis failed, retry will re-attempt");
+                        log.warn("Skipping cache — AI analysis produced no metrics, retry will re-attempt");
                 }
 
-                log.info("Search completed for '{}': score={}, verdict={}, posts={}",
-                                query, analysis.overallScore(), analysis.overallVerdict(), posts.size());
+                log.info("Search completed for '{}': category='{}', score={}, metrics={}, posts={}",
+                                query, analysis.productCategory(), analysis.overallScore(),
+                                analysis.metrics().size(), posts.size());
 
                 return response;
         }
@@ -152,10 +163,13 @@ public class SearchOrchestrator {
                 return SearchResponse.builder()
                                 .query(query)
                                 .overallScore(0)
-                                .overallVerdict("No Data")
-                                .verdictSummary("No social media posts found for this query. Try a different search term.")
-                                .categories(List.of())
-                                .testimonials(List.of())
+                                .verdictSentence("No social media posts found for this query. Try a different search term.")
+                                .metrics(List.of())
+                                .positives(List.of())
+                                .complaints(List.of())
+                                .bestFor(List.of())
+                                .avoid(List.of())
+                                .evidenceSnippets(List.of())
                                 .postCount(0)
                                 .sourcePlatforms(platformRegistry.getEnabledPlatforms())
                                 .analyzedAt(Instant.now())

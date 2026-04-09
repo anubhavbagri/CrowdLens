@@ -33,9 +33,29 @@
 - [x] Analysis results page (score circle, verdict, categories, testimonials)
 - [x] API client + loading/error states
 
-## Phase 4: Cloud Deployment
-- [ ] Provision Ubuntu VM (Oracle Cloud Infrastructure 1GB or Railway.app)
-- [ ] Deploy Spring Boot backend via Docker (SQLite for storage)
-- [ ] Provision AWS DynamoDB production table (IAM User/Keys)
-- [ ] Vercel frontend deploy
-- [ ] README with full setup guide
+## Phase 4: Cloud Deployment ✅
+- [x] Provision Ubuntu VM (Oracle Cloud Infrastructure)
+- [x] Deploy Spring Boot backend via Docker (SQLite for storage)
+- [x] Vercel frontend deploy
+- [x] Custom domains: `crowdlens-api.anubhavbagri.com` (backend) + `crowdlens.anubhavbagri.com` (frontend)
+- [x] README with full setup guide
+
+## Phase 5: Dynamic Metrics Redesign ✅
+- [x] New `SearchResponse` shape: `Metric`, `EvidenceSnippet`, `verdictSentence`, `bestFor`, `avoid`
+- [x] Complete `PromptBuilder` rewrite — AI classifies product, extracts themes, selects 4 dynamic metrics
+- [x] Updated `AIAnalysisEngine` parser for new JSON shape
+- [x] Updated `SearchOrchestrator` mapping
+- [x] Flyway V2 migration: `overall_verdict` → `verdict_sentence`, added `product_category` column
+- [x] Updated `SearchResult` entity fields
+- [x] Updated frontend TypeScript types in `api.ts`
+- [x] Update frontend UI components to render new shape (Phase 6)
+- [x] Shareable verdict card component (Phase 6)
+
+## Phase 6: Frontend UI Update & Shareable Card ✅
+- [x] `VerdictCard.tsx` — shows verdictSentence + 4 inline metric bars + badges
+- [x] `MetricsGrid.tsx` — detailed 2-col metric cards with animated bars + score labels
+- [x] `OpinionBlocks.tsx` — positives/complaints + bestFor/avoid + evidence snippets
+- [x] `ShareCard.tsx` — pixel-perfect 480px card; Download PNG + Copy to clipboard (html2canvas)
+- [x] `ResultsView.tsx` — rewired to new component chain; old CategoryCard/TestimonialCard/PersonaSection retired
+
+

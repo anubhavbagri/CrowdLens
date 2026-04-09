@@ -34,7 +34,10 @@ public class SearchResult {
     private Integer overallScore;
 
     @Column(columnDefinition = "TEXT")
-    private String overallVerdict;
+    private String verdictSentence;
+
+    @Column(length = 100)
+    private String productCategory;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
