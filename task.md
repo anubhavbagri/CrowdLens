@@ -26,6 +26,9 @@
 - [x] REST endpoints: `POST /api/search`, `GET /api/health`
 - [x] API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
 - [x] `GlobalExceptionHandler` (structured JSON error responses)
+- [x] RQueue async job processing — `POST /api/search` returns 202 + jobId; `GET /api/search/{jobId}` polls status
+- [x] `SearchJobListener` — background worker (scrape → AI → persist → cache)
+- [x] `SearchJob` entity + `SearchJobRepository` (SQLite-backed job state)
 
 ## Phase 3: Frontend (Minimal, Modular) ✅
 - [x] Next.js 14 + TypeScript + Tailwind CSS v4
