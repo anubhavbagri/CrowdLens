@@ -11,8 +11,11 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * DynamoDB-backed cache service.
@@ -73,6 +76,54 @@ public class CacheService {
             log.warn("Cache GET failed for query '{}': {}", queryNormalized, e.getMessage());
             return Optional.empty();
         }
+    }
+
+    /**
+     * Scans cache for an entry with Jaccard word-set similarity >= similarityThreshold.
+     * Called as fallback when exact hash lookup misses.
+     *
+     * @param queryNormalized Normalized search query
+     * @return Cached JSON response of the most similar matching entry, if any
+     */
+    public Optional<String> findSimilar(String queryNormalized) {
+        Set<String> queryWords = new HashSet<>(Arrays.asList(queryNormalized.split(" ")));
+
+        try {
+            ScanResponse scanResponse = dynamoDbClient.scan(ScanRequest.builder()
+                    .tableName(props.tableName())
+                    .filterExpression("expires_at > :now")
+                    .expressionAttributeValues(Map.of(
+                            ":now", AttributeValue.builder()
+                                    .n(String.valueOf(Instant.now().getEpochSecond()))
+                                    .build()))
+                    .projectionExpression("query_normalized, response_json")
+                    .build());
+
+            String bestJson = null;
+            double bestScore = props.similarityThreshold();
+
+            for (Map<String, AttributeValue> item : scanResponse.items()) {
+                if (!item.containsKey("query_normalized") || !item.containsKey("response_json")) continue;
+
+                Set<String> cachedWords = new HashSet<>(Arrays.asList(item.get("query_normalized").s().split(" ")));
+                double score = jaccardSimilarity(queryWords, cachedWords);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestJson = item.get("response_json").s();
+                }
+            }
+
+            if (bestJson != null) {
+                log.info("Cache SIMILAR HIT (score={}) for query: '{}'", String.format("%.2f", bestScore), queryNormalized);
+                return Optional.of(bestJson);
+            }
+            log.debug("Cache SIMILAR MISS for query: '{}'", queryNormalized);
+
+        } catch (Exception e) {
+            log.warn("Cache SCAN failed for similarity lookup on query '{}': {}", queryNormalized, e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -152,6 +203,14 @@ public class CacheService {
         } catch (Exception e) {
             throw new RuntimeException("SHA-256 not available", e);
         }
+    }
+
+    private double jaccardSimilarity(Set<String> a, Set<String> b) {
+        Set<String> intersection = new HashSet<>(a);
+        intersection.retainAll(b);
+        Set<String> union = new HashSet<>(a);
+        union.addAll(b);
+        return union.isEmpty() ? 0.0 : (double) intersection.size() / union.size();
     }
 
     /**

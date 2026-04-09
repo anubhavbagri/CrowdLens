@@ -35,7 +35,16 @@ public class SearchOrchestrator {
      */
     public Optional<SearchResponse> getCachedResult(String query) {
         String normalizedQuery = normalizeQuery(query);
-        return cacheService.get(normalizedQuery).map(json -> {
+
+        // Tier 1: exact hash match
+        Optional<String> cachedJson = cacheService.get(normalizedQuery);
+
+        // Tier 2: on miss, fall back to Jaccard word-similarity scan
+        if (cachedJson.isEmpty()) {
+            cachedJson = cacheService.findSimilar(normalizedQuery);
+        }
+
+        return cachedJson.map(json -> {
             log.info("Cache HIT for query: '{}'", query);
             SearchResponse cached = cacheService.deserialize(json, SearchResponse.class);
             return SearchResponse.builder()

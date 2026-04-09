@@ -70,6 +70,7 @@ dynamodb:
   region: ${AWS_REGION:us-east-1}
   table-name: ${DYNAMODB_TABLE:crowdlens-cache}
   ttl-hours: ${CACHE_TTL_HOURS:24}
+  similarity-threshold: ${CACHE_SIMILARITY_THRESHOLD:0.75}
 
 # Rate limiting
 rate-limit:

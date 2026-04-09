@@ -7,5 +7,6 @@ public record DynamoDbProperties(
         String endpoint,
         String region,
         String tableName,
-        int ttlHours) {
+        int ttlHours,
+        double similarityThreshold) {
 }
