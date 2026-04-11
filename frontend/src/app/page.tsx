@@ -85,11 +85,11 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="w-full max-w-2xl mx-auto transform translate-y-4 hover:-translate-y-1 transition-transform duration-300">
+            <div className="relative z-10 w-full max-w-2xl mx-auto transform translate-y-4 hover:-translate-y-1 transition-transform duration-300">
               <SearchBar onSearch={handleSearch} isLoading={false} variant="hero" />
             </div>
 
-            <div className="pt-8 flex flex-wrap justify-center gap-3 opacity-90">
+            <div className="relative z-0 pt-8 flex flex-wrap justify-center gap-3 opacity-90">
               {['Pondicherry Trip', 'Triumph Scrambler 400', 'Sony WH-1000XM5', 'Notion vs Obsidian'].map((suggestion) => (
                 <button
                   key={suggestion}
