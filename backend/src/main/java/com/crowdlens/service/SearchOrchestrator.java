@@ -114,7 +114,31 @@ public class SearchOrchestrator {
         return Optional.of(cacheService.deserialize(job.getResultJson(), SearchResponse.class));
     }
 
+    /**
+     * Normalizes a search query for cache key consistency.
+     *
+     * Steps applied in order:
+     *  1. Lowercase
+     *  2. Strip punctuation except spaces and hyphens
+     *  3. Replace hyphens with spaces
+     *  4. Insert space between a lowercase letter and a digit (iphone11 → iphone 11)
+     *  5. Insert space between a digit and a lowercase letter (4k → 4 k, s21 → s 21)
+     *  6. Collapse multiple spaces and trim
+     *
+     * Examples:
+     *   "Iphone11"    → "iphone 11"
+     *   "iPhone 11"   → "iphone 11"
+     *   "Galaxy S23"  → "galaxy s 23"
+     *   "iPad-Pro"    → "ipad pro"
+     */
     private String normalizeQuery(String query) {
-        return query.trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
+        return query.trim()
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9\\s-]", "")   // strip punctuation except spaces & hyphens
+                .replace("-", " ")                   // treat hyphens as word separators
+                .replaceAll("([a-z])([0-9])", "$1 $2")  // iphone11 → iphone 11
+                .replaceAll("([0-9])([a-z])", "$1 $2")  // 4k → 4 k
+                .replaceAll("\\s+", " ")             // collapse multiple spaces
+                .trim();
     }
 }
