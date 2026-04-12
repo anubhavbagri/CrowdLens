@@ -21,6 +21,7 @@ Thumbs.db
 ## Environment
 .env
 *.env.local
+backend/data
 
 ## Node
 node_modules/

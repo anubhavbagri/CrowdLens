@@ -130,7 +130,7 @@ export default function Home() {
         {/* Results State */}
         {appState === 'results' && results && (
           <div className="w-full animate-slide-up mt-8">
-            <ResultsView results={results} />
+            <ResultsView results={results} onSearch={handleSearch} />
           </div>
         )}
 

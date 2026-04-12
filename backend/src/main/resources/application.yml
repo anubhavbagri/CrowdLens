@@ -15,7 +15,7 @@ spring:
 
   # SQLite config (WAL mode + busy timeout for concurrency)
   datasource:
-    url: jdbc:sqlite:./data/crowdlens.db?journal_mode=WAL&busy_timeout=5000&_txlock=immediate
+    url: jdbc:sqlite:./data/crowdlens.db?journal_mode=WAL&busy_timeout=5000
     driver-class-name: org.sqlite.JDBC
     hikari:
       maximum-pool-size: 1

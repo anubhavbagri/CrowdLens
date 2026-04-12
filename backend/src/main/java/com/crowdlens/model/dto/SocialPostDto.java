@@ -17,5 +17,7 @@ public record SocialPostDto(
         String body,
         int score,
         String permalink,
-        Instant postedAt) {
+        Instant postedAt,
+        /** Direct image URL found in this post (may be null). Used for product image resolution. */
+        String imageUrl) {
 }

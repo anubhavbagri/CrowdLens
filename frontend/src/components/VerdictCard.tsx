@@ -7,6 +7,23 @@ import { Zap, Download, Share2, Check } from 'lucide-react';
 import { toPng, toBlob as ht2iBlob } from 'html-to-image';
 import { ShareCardVisual } from './ShareCard';
 
+// Map product category → emoji placeholder for when an image is unavailable
+function categoryEmoji(category?: string | null, subCategory?: string | null): string {
+  const c = ((subCategory ?? category) ?? '').toLowerCase();
+  if (c.includes('audio') || c.includes('headphone') || c.includes('speaker') || c.includes('earphone')) return '🎧';
+  if (c.includes('groom') || c.includes('trimmer') || c.includes('shaver') || c.includes('razor')) return '🪒';
+  if (c.includes('skin') || c.includes('moistur') || c.includes('serum') || c.includes('beauty') || c.includes('cosmetic')) return '🧴';
+  if (c.includes('footwear') || c.includes('shoe') || c.includes('sneaker') || c.includes('boot')) return '👟';
+  if (c.includes('fitness') || c.includes('supplement') || c.includes('protein') || c.includes('sport')) return '🏋️';
+  if (c.includes('laptop') || c.includes('computer') || c.includes('pc') || c.includes('macbook')) return '💻';
+  if (c.includes('phone') || c.includes('smartphone') || c.includes('mobile')) return '📱';
+  if (c.includes('motorcycle') || c.includes('bike') || c.includes('scooter')) return '🏍️';
+  if (c.includes('travel') || c.includes('trip') || c.includes('experience')) return '✈️';
+  if (c.includes('food') || c.includes('nutrition') || c.includes('snack')) return '🥗';
+  if (c.includes('kitchen') || c.includes('appliance') || c.includes('cooker')) return '🍳';
+  return '📦';
+}
+
 interface VerdictCardProps {
   response: SearchResponse;
 }
@@ -117,6 +134,31 @@ export default function VerdictCard({ response }: VerdictCardProps) {
 
           {/* Score */}
           <div className="flex flex-col items-center flex-shrink-0">
+
+            {/* Product image — shown above score circle */}
+            <div className="mb-3 w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center">
+              {response.productImageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={response.productImageUrl}
+                  alt={response.query}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Hide broken image, show emoji placeholder
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement!.dataset.fallback = 'true';
+                    e.currentTarget.parentElement!.textContent =
+                      categoryEmoji(response.productCategory, response.productSubCategory);
+                    e.currentTarget.parentElement!.style.fontSize = '2rem';
+                  }}
+                />
+              ) : (
+                <span className="text-3xl" title={response.productCategory ?? 'Product'}>
+                  {categoryEmoji(response.productCategory, response.productSubCategory)}
+                </span>
+              )}
+            </div>
+
             <ScoreCircle score={response.overallScore} />
             <span className="mt-2 text-xs font-bold uppercase tracking-widest text-gray-400">
               Community Score

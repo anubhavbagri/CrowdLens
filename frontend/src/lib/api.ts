@@ -27,12 +27,39 @@ export interface SearchResponse {
   sourcePlatforms: string[];
   analyzedAt: string;
   cached: boolean;
+  /** Resolved product image URL (Reddit-validated or Amazon fallback). May be null. */
+  productImageUrl?: string | null;
+  /** Base64 data URI of the product image for share card embedding. May be null. */
+  productImageBase64?: string | null;
 }
 
 export interface SearchRequest {
   query: string;
   limit?: number;        // default: 10, max: 50
   maxComments?: number;  // default: 50, max: 100
+}
+
+export interface CompetitorDto {
+  name: string;
+  score: number | null;
+  real: boolean;              // true = actual Reddit analysis, false = AI estimate
+  verdictSentence?: string | null;
+  sourcePlatforms?: string | null;  // comma-separated e.g. "reddit"
+  postCount?: number | null;
+}
+
+export async function fetchCompetitors(
+  category: string,
+  subcategory: string | null | undefined,
+  exclude: string,
+  limit = 5
+): Promise<CompetitorDto[]> {
+  const params = new URLSearchParams({ category, exclude, limit: String(limit) });
+  if (subcategory) params.set('subcategory', subcategory);
+
+  const res = await fetch(`${API_BASE_URL}/competitors?${params}`);
+  if (!res.ok) return [];
+  return res.json();
 }
 
 export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';

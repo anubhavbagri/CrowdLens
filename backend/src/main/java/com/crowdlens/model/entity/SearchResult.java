@@ -77,6 +77,13 @@ public class SearchResult {
     @Column
     private Integer postCount;
 
+    /**
+     * Resolved product image URL (may come from Reddit post or Amazon scrape).
+     * AI-validated for relevance. Null for AI-seeded placeholder rows.
+     */
+    @Column(length = 2048)
+    private String imageUrl;
+
     /** When this result was persisted. Used for ordering competitors by recency. */
     @Column
     @Builder.Default

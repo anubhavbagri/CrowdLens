@@ -23,10 +23,15 @@ public class PromptBuilder {
 
     /**
      * Builds the full analysis prompt for the AI model.
+     *
+     * @param posts  All social posts collected for this query
+     * @param query  The original search query
+     * @param candidateImageUrls Candidate image URLs extracted from Reddit posts for AI validation
      */
-    public String buildPrompt(List<SocialPostDto> posts, String query) {
+    public String buildPrompt(List<SocialPostDto> posts, String query, List<String> candidateImageUrls) {
         String postsContext = formatPosts(posts);
-        log.debug("Building prompt for query '{}' with {} posts", query, posts.size());
+        String imageContext = formatCandidateImages(candidateImageUrls);
+        log.debug("Building prompt for query '{}' with {} posts, {} candidate images", query, posts.size(), candidateImageUrls.size());
 
         return """
                 You are CrowdLens — an AI that turns real community opinions into structured product verdicts.
@@ -35,11 +40,23 @@ public class PromptBuilder {
                 PRODUCT QUERY: "%s"
                 TOTAL POSTS + COMMENTS: %d
 
+                %s
+
                 ─── COMMUNITY POSTS ───
                 %s
                 ─── END OF POSTS ───
 
                 ═══ YOUR TASK ═══
+
+                Step 0 — Product image selection:
+                You have been given a list of candidate image URLs found in the posts.
+                Pick the SINGLE image URL that most clearly shows the product being reviewed.
+                Criteria for a valid product image:
+                - Clean product photo (white/neutral background, studio-style OR clearly shows the named product)
+                - No memes, screenshots, unboxings of unrelated items, text-heavy images, or people selfies
+                - Clearly matches the product name in the query
+                If none of the URLs are a confident product match, return null.
+                If no candidate URLs were provided, return null.
 
                 Step 1 — Classify the product:
                 Detect the product category (e.g. Grooming, Audio, Footwear, Kitchen Appliance, Laptop, Skincare, Motorcycle, Supplement)
@@ -137,9 +154,22 @@ public class PromptBuilder {
                     { "name": "<competitor product name>", "estimatedScore": <0-100 integer> },
                     { "name": "<competitor product name>", "estimatedScore": <0-100 integer> },
                     { "name": "<competitor product name>", "estimatedScore": <0-100 integer> }
-                  ]
+                  ],
+                  "productImageUrl": "<chosen URL from candidate list, or null>"
                 }
-                """.formatted(query, posts.size(), postsContext);
+                """.formatted(query, posts.size(), imageContext, postsContext);
+    }
+
+    private String formatCandidateImages(List<String> urls) {
+        if (urls == null || urls.isEmpty()) {
+            return "─── CANDIDATE PRODUCT IMAGES ───\n(none found in posts)\n─── END OF IMAGES ───";
+        }
+        StringBuilder sb = new StringBuilder("─── CANDIDATE PRODUCT IMAGES ───\n");
+        for (int i = 0; i < urls.size(); i++) {
+            sb.append(i + 1).append(". ").append(urls.get(i)).append("\n");
+        }
+        sb.append("─── END OF IMAGES ───");
+        return sb.toString();
     }
 
     private String formatPosts(List<SocialPostDto> posts) {

@@ -31,6 +31,8 @@ public interface SearchResultRepository extends JpaRepository<SearchResult, UUID
           )
         ORDER BY sr.createdAt DESC
     """)
+    List<SearchResult> findCompetitors(String category, String subCategory, String excludeQuery);
+
     /**
      * Fetch the most recent SearchResult for each unique queryNormalized,
      * excluding the specified query. This provides a clean list of existing

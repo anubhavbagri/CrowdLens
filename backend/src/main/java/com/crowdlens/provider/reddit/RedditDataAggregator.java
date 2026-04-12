@@ -98,6 +98,9 @@ public class RedditDataAggregator {
         double createdUtc = post.path("created_utc").asDouble(0);
         Instant postedAt = createdUtc > 0 ? Instant.ofEpochSecond((long) createdUtc) : null;
 
+        // Extract product image URL if this post is a direct image
+        String imageUrl = extractImageUrl(post);
+
         return SocialPostDto.builder()
                 .platformId("reddit_" + post.path("id").asText())
                 .platform("reddit")
@@ -107,6 +110,44 @@ public class RedditDataAggregator {
                 .score(post.path("score").asInt(0))
                 .permalink(permalink.startsWith("http") ? permalink : "https://reddit.com" + permalink)
                 .postedAt(postedAt)
+                .imageUrl(imageUrl)
                 .build();
+    }
+
+    /**
+     * Attempts to extract a direct product image URL from a Reddit post's JSON.
+     * Priority:
+     *   1. post_hint == "image" → use the top-level url
+     *   2. preview.images[0].source.url (highest resolution Reddit-hosted preview)
+     * Only returns URLs from known image CDNs to avoid picking up external web pages.
+     */
+    private String extractImageUrl(JsonNode post) {
+        // Strategy 1: post is a direct image link
+        String postHint = post.path("post_hint").asText("");
+        if ("image".equals(postHint)) {
+            String url = post.path("url").asText("");
+            if (isDirectImageUrl(url)) return url;
+        }
+
+        // Strategy 2: Reddit-hosted preview image
+        JsonNode previewSource = post.path("preview").path("images").path(0).path("source");
+        if (!previewSource.isMissingNode()) {
+            // Reddit encodes & as &amp; in preview URLs
+            String url = previewSource.path("url").asText("").replace("&amp;", "&");
+            if (isDirectImageUrl(url)) return url;
+        }
+
+        return null;
+    }
+
+    private boolean isDirectImageUrl(String url) {
+        if (url == null || url.isBlank()) return false;
+        String lower = url.toLowerCase();
+        return lower.contains("i.redd.it") ||
+               lower.contains("preview.redd.it") ||
+               lower.contains("imgur.com") ||
+               lower.contains("i.imgur.com") ||
+               lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
+               lower.endsWith(".png") || lower.endsWith(".webp");
     }
 }

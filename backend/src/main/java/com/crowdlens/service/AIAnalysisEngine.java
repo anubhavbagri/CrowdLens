@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * AI analysis engine powered by Spring AI's ChatModel interface.
@@ -47,7 +48,15 @@ public class AIAnalysisEngine {
             return AnalysisResult.empty(query);
         }
 
-        String prompt = promptBuilder.buildPrompt(posts, query);
+        // Collect candidate image URLs from posts (up to 10, non-null only)
+        List<String> candidateImageUrls = posts.stream()
+                .map(SocialPostDto::imageUrl)
+                .filter(url -> url != null && !url.isBlank())
+                .distinct()
+                .limit(10)
+                .collect(Collectors.toList());
+
+        String prompt = promptBuilder.buildPrompt(posts, query, candidateImageUrls);
         log.info("Sending analysis request to AI for query '{}' ({} posts, prompt length: {} chars)",
                 query, posts.size(), prompt.length());
 
@@ -192,13 +201,16 @@ public class AIAnalysisEngine {
             List<String>                         avoid            = parseStringArray(root.path("avoid"));
             List<SearchResponse.EvidenceSnippet> evidenceSnippets = parseEvidenceSnippets(root.path("evidenceSnippets"));
             List<AnalysisResult.CompetitorSeed>  competitorSeeds  = parseCompetitorSeeds(root.path("competitorSuggestions"));
+            String                               productImageUrl  = root.path("productImageUrl").isNull() ? null
+                    : root.path("productImageUrl").asText(null);
 
-            log.info("AI parsed — category: '{}', subcategory: '{}', score: {}, metrics: {}, competitors suggested: {}",
-                    productCategory, productSubCategory, overallScore, metrics.size(), competitorSeeds.size());
+            log.info("AI parsed — category: '{}', subcategory: '{}', score: {}, metrics: {}, competitors: {}, imageUrl: {}",
+                    productCategory, productSubCategory, overallScore, metrics.size(), competitorSeeds.size(),
+                    productImageUrl != null ? "found" : "none");
 
             return new AnalysisResult(
                     productCategory, productSubCategory, overallScore, verdictSentence,
-                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json, competitorSeeds
+                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json, competitorSeeds, productImageUrl
             );
 
         } catch (Exception e) {
@@ -297,7 +309,9 @@ public class AIAnalysisEngine {
             List<String> avoid,
             List<SearchResponse.EvidenceSnippet> evidenceSnippets,
             String rawJson,
-            List<CompetitorSeed> competitorSeeds
+            List<CompetitorSeed> competitorSeeds,
+            /** AI-validated product image URL from Reddit posts. Null if none were suitable. */
+            String productImageUrl
     ) {
         /** AI-suggested competitor: name + estimated community score as placeholder. */
         public record CompetitorSeed(String name, int estimatedScore) {}
@@ -308,7 +322,7 @@ public class AIAnalysisEngine {
                     "No social media posts found for this query — try a different search term.",
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}",
-                    Collections.emptyList()
+                    Collections.emptyList(), null
             );
         }
 
@@ -318,7 +332,7 @@ public class AIAnalysisEngine {
                     "AI analysis temporarily unavailable — Reddit data was collected. Retry shortly.",
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}",
-                    Collections.emptyList()
+                    Collections.emptyList(), null
             );
         }
     }

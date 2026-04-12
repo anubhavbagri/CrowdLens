@@ -48,7 +48,13 @@ public record SearchResponse(
         int postCount,
         List<String> sourcePlatforms,
         Instant analyzedAt,
-        boolean cached
+        boolean cached,
+
+        @Schema(description = "Resolved product image URL (from Reddit or Amazon). May be null if no image was found.")
+        String productImageUrl,
+
+        @Schema(description = "Base64-encoded product image (data URI prefix included). Used for share card rendering. May be null.")
+        String productImageBase64
 ) {
 
     @Builder

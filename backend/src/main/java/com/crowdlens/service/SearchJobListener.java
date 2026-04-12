@@ -38,6 +38,7 @@ public class SearchJobListener {
     private final PlatformRegistry platformRegistry;
     private final AIAnalysisEngine aiEngine;
     private final CacheService cacheService;
+    private final ImageResolutionService imageResolutionService;
     private final TransactionTemplate txTemplate;
 
     @RqueueListener(value = "search-jobs", concurrency = "1", numRetries = "0")
@@ -70,8 +71,29 @@ public class SearchJobListener {
             // 2. AI analysis (includes competitor suggestions in response)
             AIAnalysisEngine.AnalysisResult analysis = aiEngine.analyze(posts, job.getQuery());
 
+            // 3. Resolve product image: Reddit (AI-validated) → Amazon fallback → null
+            String resolvedImageUrl = analysis.productImageUrl();
+            if (resolvedImageUrl == null || resolvedImageUrl.isBlank()) {
+                log.info("Job {} — no Reddit image from AI, trying Amazon fallback", job.getId());
+                resolvedImageUrl = imageResolutionService.fetchFromAmazon(job.getQuery()).orElse(null);
+            } else {
+                log.info("Job {} — using AI-validated Reddit image: {}", job.getId(), resolvedImageUrl);
+            }
+
+            // 4. Encode to base64 for reliable share card rendering (CORS-safe)
+            final String finalImageUrl = resolvedImageUrl;
+            final String imageBase64 = resolvedImageUrl != null
+                    ? imageResolutionService.toBase64DataUri(resolvedImageUrl).orElse(null)
+                    : null;
+
+            if (imageBase64 != null) {
+                log.info("Job {} — image base64 encoded successfully", job.getId());
+            } else if (resolvedImageUrl != null) {
+                log.warn("Job {} — image URL found but base64 encoding failed, URL will still be stored", job.getId());
+            }
+
             txTemplate.executeWithoutResult(status -> {
-                // 3. Save lean SearchResult to SQLite — query index + score only, no AI content
+                // 5. Save lean SearchResult to SQLite — query index + score + image URL only
                 SearchResult searchResult = searchResultRepo.save(SearchResult.builder()
                         .query(job.getQuery())
                         .queryNormalized(job.getQueryNormalized())
@@ -81,6 +103,7 @@ public class SearchJobListener {
                         .verdictSentence(analysis.verdictSentence())
                         .sourcePlatforms(String.join(",", platformRegistry.getEnabledPlatforms()))
                         .postCount(posts.size())
+                        .imageUrl(finalImageUrl)
                         .createdAt(Instant.now())
                         .build());
 
@@ -105,8 +128,8 @@ public class SearchJobListener {
                 }
                 socialPostRepo.saveAll(socialPosts);
 
-                // 5. Full AI JSON → DynamoDB cache only (not SQLite)
-                SearchResponse response = buildResponse(job, searchResult, analysis, posts.size());
+                // 7. Full AI JSON → DynamoDB cache only (not SQLite)
+                SearchResponse response = buildResponse(job, searchResult, analysis, posts.size(), finalImageUrl, imageBase64);
                 boolean aiSucceeded = analysis.metrics() != null && !analysis.metrics().isEmpty();
                 if (aiSucceeded) {
                     cacheService.put(job.getQueryNormalized(), cacheService.serialize(response));
@@ -187,7 +210,8 @@ public class SearchJobListener {
     }
 
     private SearchResponse buildResponse(SearchJob job, SearchResult sr,
-                                          AIAnalysisEngine.AnalysisResult analysis, int postCount) {
+                                          AIAnalysisEngine.AnalysisResult analysis, int postCount,
+                                          String imageUrl, String imageBase64) {
         return SearchResponse.builder()
                 .id(sr.getId())
                 .query(job.getQuery())
@@ -205,6 +229,8 @@ public class SearchJobListener {
                 .sourcePlatforms(platformRegistry.getEnabledPlatforms())
                 .analyzedAt(Instant.now())
                 .cached(false)
+                .productImageUrl(imageUrl)
+                .productImageBase64(imageBase64)
                 .build();
     }
 

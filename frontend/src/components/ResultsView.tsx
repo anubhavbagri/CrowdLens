@@ -2,12 +2,14 @@ import { SearchResponse } from '@/lib/api';
 import VerdictCard from './VerdictCard';
 import MetricsGrid from './MetricsGrid';
 import OpinionBlocks from './OpinionBlocks';
+import CompetitorCard from './CompetitorCard';
 
 interface ResultsViewProps {
   results: SearchResponse;
+  onSearch: (query: string) => void;
 }
 
-export default function ResultsView({ results }: ResultsViewProps) {
+export default function ResultsView({ results, onSearch }: ResultsViewProps) {
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 pb-20 animate-fade-in">
 
@@ -21,6 +23,9 @@ export default function ResultsView({ results }: ResultsViewProps) {
 
       {/* Positives / complaints / bestFor / avoid / evidence snippets */}
       <OpinionBlocks results={results} />
+
+      {/* Competitor comparison — only shown when productCategory is resolved */}
+      <CompetitorCard results={results} onSearch={onSearch} />
 
     </div>
   );
