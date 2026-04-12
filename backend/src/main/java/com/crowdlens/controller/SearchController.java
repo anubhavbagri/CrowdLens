@@ -4,6 +4,7 @@ import com.crowdlens.model.dto.JobStatusResponse;
 import com.crowdlens.model.dto.SearchRequest;
 import com.crowdlens.model.dto.SearchResponse;
 import com.crowdlens.model.entity.SearchJob;
+import com.crowdlens.service.LoadingHintsService;
 import com.crowdlens.service.SearchOrchestrator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +32,7 @@ import java.util.UUID;
 public class SearchController {
 
     private final SearchOrchestrator orchestrator;
+    private final LoadingHintsService loadingHintsService;
 
     @Operation(
         summary = "Analyze crowd opinions",
@@ -107,5 +111,26 @@ public class SearchController {
                             .error(job.getErrorMessage())
                             .build());
         };
+    }
+    @Operation(
+        summary = "Get contextual loading hints",
+        description = "Returns 4–5 short, AI-generated loading messages specific to the query. " +
+                      "Returns an empty list when Gemini is unavailable — the frontend handles degradation.")
+    @ApiResponse(responseCode = "200", description = "List of hint strings + source (gemini|none)")
+    @GetMapping("/loading-hints")
+    public ResponseEntity<Map<String, Object>> getLoadingHints(
+            @RequestParam(name = "q", defaultValue = "") String query) {
+
+        if (query.isBlank()) {
+            return ResponseEntity.ok(Map.of("hints", List.of(), "source", "none"));
+        }
+
+        List<String> hints = loadingHintsService.generateWithGemini(query);
+        if (hints != null) {
+            return ResponseEntity.ok(Map.of("hints", hints, "source", "gemini"));
+        }
+
+        // Gemini unavailable — return empty, frontend shows its own generic hints
+        return ResponseEntity.ok(Map.of("hints", List.of(), "source", "none"));
     }
 }

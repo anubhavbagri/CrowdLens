@@ -16,6 +16,9 @@ export default function Home() {
   const [results, setResults] = useState<SearchResponse | null>(null);
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [loadingHints, setLoadingHints] = useState<string[]>([]);
+
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
   const handleSearch = async (newQuery: string) => {
     setQuery(newQuery);
@@ -23,7 +26,16 @@ export default function Home() {
     setErrorMsg('');
     setJobStatus(null);
     setElapsedSeconds(0);
+    setLoadingHints([]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Fire hints fetch in parallel — don't await, just set state when it resolves
+    fetch(`${API_BASE}/loading-hints?q=${encodeURIComponent(newQuery)}`)
+      .then(r => r.ok ? r.json() : null)
+      .then((data: { hints: string[] } | null) => {
+        if (data?.hints?.length) setLoadingHints(data.hints);
+      })
+      .catch(() => {});
 
     const startTime = Date.now();
     const timer = setInterval(() => {
@@ -75,7 +87,7 @@ export default function Home() {
           <div className="w-full text-center max-w-4xl mx-auto animate-fade-in space-y-6">
             <div className="space-y-4">
               <h1 className="grid gap-y-2 text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm">
-                Real People, 
+                Real People,
                 <span>
                   Real Opinions.
                 </span>
@@ -106,7 +118,7 @@ export default function Home() {
         {/* Loading State */}
         {appState === 'loading' && (
           <div className="w-full animate-fade-in py-12">
-            <ShimmerResults jobStatus={jobStatus} elapsedSeconds={elapsedSeconds} />
+            <ShimmerResults hints={loadingHints} />
           </div>
         )}
 
