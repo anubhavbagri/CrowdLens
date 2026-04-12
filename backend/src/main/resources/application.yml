@@ -49,6 +49,11 @@ spring:
         options:
           model: ${AI_MODEL:}
           temperature: 0.3
+      # Explicit timeouts — prevents indefinite hangs when OpenAI is unreachable
+      # connect-timeout: time to establish TCP connection
+      # read-timeout: time to wait for first response byte (covers full AI inference time)
+      connect-timeout: 10000   # 10 seconds
+      read-timeout: 90000      # 90 seconds (gpt-4o-mini with large prompts can take ~30-60s)
 
     # Google GenAI / Gemini (secondary: loading hints, lightweight tasks)
     google:

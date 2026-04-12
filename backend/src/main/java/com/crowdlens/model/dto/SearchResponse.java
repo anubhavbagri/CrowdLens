@@ -54,7 +54,10 @@ public record SearchResponse(
         String productImageUrl,
 
         @Schema(description = "Base64-encoded product image (data URI prefix included). Used for share card rendering. May be null.")
-        String productImageBase64
+        String productImageBase64,
+
+        @Schema(description = "Competitor products in the same category, resolved from SQLite or AI-seeded.")
+        List<CompetitorDto> competitors
 ) {
 
     @Builder

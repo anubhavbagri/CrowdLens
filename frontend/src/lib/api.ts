@@ -31,6 +31,8 @@ export interface SearchResponse {
   productImageUrl?: string | null;
   /** Base64 data URI of the product image for share card embedding. May be null. */
   productImageBase64?: string | null;
+  /** Competitor products resolved by the backend alongside the main result. */
+  competitors?: CompetitorDto[] | null;
 }
 
 export interface SearchRequest {
@@ -48,19 +50,6 @@ export interface CompetitorDto {
   postCount?: number | null;
 }
 
-export async function fetchCompetitors(
-  category: string,
-  subcategory: string | null | undefined,
-  exclude: string,
-  limit = 5
-): Promise<CompetitorDto[]> {
-  const params = new URLSearchParams({ category, exclude, limit: String(limit) });
-  if (subcategory) params.set('subcategory', subcategory);
-
-  const res = await fetch(`${API_BASE_URL}/competitors?${params}`);
-  if (!res.ok) return [];
-  return res.json();
-}
 
 export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
 export type StatusCallback = (status: JobStatus) => void;

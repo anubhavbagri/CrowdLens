@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { CompetitorDto, fetchCompetitors, SearchResponse } from '@/lib/api';
-import { ArrowUpRight, Loader2 } from 'lucide-react';
+import { CompetitorDto, SearchResponse } from '@/lib/api';
+import { ArrowUpRight } from 'lucide-react';
 
 interface CompetitorCardProps {
   results: SearchResponse;
@@ -32,37 +31,21 @@ function deltaColor(competitor: number | null, current: number): string {
 }
 
 export default function CompetitorCard({ results, onSearch }: CompetitorCardProps) {
-  const [competitors, setCompetitors] = useState<CompetitorDto[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { productCategory, productSubCategory, query, overallScore, competitors } = results;
 
-  const { productCategory, productSubCategory, query, overallScore } = results;
-
-  useEffect(() => {
-    if (!productCategory) return;
-
-    // Clear old state explicitly to prevent duplicate key flashes during transition
-    setCompetitors([]);
-    setLoading(true);
-
-    fetchCompetitors(productCategory, productSubCategory, query, 5)
-      .then(setCompetitors)
-      .catch(() => setCompetitors([]))
-      .finally(() => setLoading(false));
-  }, [productCategory, productSubCategory, query]);
-
-  // Don't render section if no category resolved or no competitors found
-  if (!productCategory || (!loading && competitors.length === 0)) return null;
+  // Don't render if no category resolved or backend returned no competitors
+  if (!productCategory || !competitors || competitors.length === 0) return null;
 
   // Merge current product into the list for a unified comparison view
   const currentEntry: CompetitorDto = { name: query, score: overallScore, real: true };
   const combinedEntries = [...competitors, currentEntry];
-  
+
   // Deduplicate by normalized name to safely ignore transient overlap
   const uniqueEntriesMap = new Map<string, CompetitorDto>();
   combinedEntries.forEach(item => {
     uniqueEntriesMap.set(item.name.toLowerCase().trim(), item);
   });
-  
+
   const allEntries: CompetitorDto[] = Array.from(uniqueEntriesMap.values())
     .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
 
@@ -78,7 +61,6 @@ export default function CompetitorCard({ results, onSearch }: CompetitorCardProp
             </span>
           )}
         </div>
-        {loading && <Loader2 className="w-4 h-4 animate-spin text-gray-400" />}
       </div>
 
       {/* Competitor rows */}

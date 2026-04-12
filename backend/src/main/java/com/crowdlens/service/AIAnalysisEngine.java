@@ -34,8 +34,8 @@ public class AIAnalysisEngine {
     private final ObjectMapper objectMapper;
 
     public AIAnalysisEngine(@Qualifier("openAiChatModel") ChatModel chatModel,
-                            PromptBuilder promptBuilder,
-                            ObjectMapper objectMapper) {
+            PromptBuilder promptBuilder,
+            ObjectMapper objectMapper) {
         this.chatModel = chatModel;
         this.promptBuilder = promptBuilder;
         this.objectMapper = objectMapper;
@@ -74,16 +74,15 @@ public class AIAnalysisEngine {
             return parseAiResponse(aiOutput, query);
 
         } catch (Exception e) {
-            log.error("AI analysis failed for query '{}': {} — {}", query, e.getClass().getSimpleName(), e.getMessage());
+            log.error("AI analysis failed for query '{}': {} — {}", query, e.getClass().getSimpleName(),
+                    e.getMessage());
 
-            if (e.getMessage() != null && (
-                    e.getMessage().contains("authentication") ||
+            if (e.getMessage() != null && (e.getMessage().contains("authentication") ||
                     e.getMessage().contains("401") ||
                     e.getMessage().contains("Unauthorized") ||
                     e.getMessage().contains("invalid_api_key"))) {
                 log.error("🔑 OpenAI API key appears INVALID or EXPIRED. Check OPENAI_API_KEY in your .env file.");
-            } else if (e.getMessage() != null && (
-                    e.getMessage().contains("429") ||
+            } else if (e.getMessage() != null && (e.getMessage().contains("429") ||
                     e.getMessage().contains("rate_limit") ||
                     e.getMessage().contains("quota"))) {
                 log.error("⚠️ OpenAI rate limit or quota exceeded. Check usage at https://platform.openai.com/usage");
@@ -127,11 +126,13 @@ public class AIAnalysisEngine {
         }
     }
 
-    public record HealthStatus(boolean healthy, String message, String hint) {}
+    public record HealthStatus(boolean healthy, String message, String hint) {
+    }
 
     /**
      * Lightweight call — no Reddit posts needed.
-     * Asks the AI to suggest 3 direct competitors for a product in a given category/subcategory
+     * Asks the AI to suggest 3 direct competitors for a product in a given
+     * category/subcategory
      * and estimate their community scores from general knowledge.
      *
      * Used as a fallback by CompetitorService when no entries exist in SQLite.
@@ -141,15 +142,15 @@ public class AIAnalysisEngine {
 
         String prompt = """
                 You are a product expert with knowledge of consumer sentiment on Reddit.
-                
+
                 Product: "%s"
                 Category: %s
                 Sub-category: %s
-                
+
                 Suggest exactly 3 products that directly compete with the above product
                 in the SAME category AND sub-category. Do NOT include the product itself.
                 For each, estimate a Reddit community score (0–100) based on general public opinion.
-                
+
                 Return ONLY a JSON array. No explanation, no markdown:
                 [
                   { "name": "<product name>", "estimatedScore": <0-100> },
@@ -163,7 +164,8 @@ public class AIAnalysisEngine {
         try {
             ChatResponse response = chatModel.call(new Prompt(prompt));
             String output = response.getResult().getOutput().getText();
-            if (output == null || output.isBlank()) return Collections.emptyList();
+            if (output == null || output.isBlank())
+                return Collections.emptyList();
 
             // Strip markdown fences if present
             String json = output;
@@ -187,34 +189,38 @@ public class AIAnalysisEngine {
             if (json != null && json.contains("```")) {
                 json = json.replaceAll("(?s)```\\w*\\n?", "").replaceAll("```", "");
             }
-            if (json == null) throw new IllegalStateException("AI returned null output");
+            if (json == null)
+                throw new IllegalStateException("AI returned null output");
             json = json.trim();
 
             JsonNode root = objectMapper.readTree(json);
 
-            String productCategory    = root.path("productCategory").asText(null);
+            String productCategory = root.path("productCategory").asText(null);
             String productSubCategory = root.path("productSubCategory").asText(null);
-            int overallScore          = root.path("overallScore").asInt(50);
-            String verdictSentence    = root.path("verdictSentence").asText("");
+            int overallScore = root.path("overallScore").asInt(50);
+            String verdictSentence = root.path("verdictSentence").asText("");
 
-            List<SearchResponse.Metric>          metrics          = parseMetrics(root.path("metrics"));
-            List<String>                         positives        = parseStringArray(root.path("positives"));
-            List<String>                         complaints       = parseStringArray(root.path("complaints"));
-            List<String>                         bestFor          = parseStringArray(root.path("bestFor"));
-            List<String>                         avoid            = parseStringArray(root.path("avoid"));
-            List<SearchResponse.EvidenceSnippet> evidenceSnippets = parseEvidenceSnippets(root.path("evidenceSnippets"));
-            List<AnalysisResult.CompetitorSeed>  competitorSeeds  = parseCompetitorSeeds(root.path("competitorSuggestions"));
-            String                               productImageUrl  = root.path("productImageUrl").isNull() ? null
+            List<SearchResponse.Metric> metrics = parseMetrics(root.path("metrics"));
+            List<String> positives = parseStringArray(root.path("positives"));
+            List<String> complaints = parseStringArray(root.path("complaints"));
+            List<String> bestFor = parseStringArray(root.path("bestFor"));
+            List<String> avoid = parseStringArray(root.path("avoid"));
+            List<SearchResponse.EvidenceSnippet> evidenceSnippets = parseEvidenceSnippets(
+                    root.path("evidenceSnippets"));
+            List<AnalysisResult.CompetitorSeed> competitorSeeds = parseCompetitorSeeds(
+                    root.path("competitorSuggestions"));
+            String productImageUrl = root.path("productImageUrl").isNull() ? null
                     : root.path("productImageUrl").asText(null);
 
-            log.info("AI parsed — category: '{}', subcategory: '{}', score: {}, metrics: {}, competitors: {}, imageUrl: {}",
+            log.info(
+                    "AI parsed — category: '{}', subcategory: '{}', score: {}, metrics: {}, competitors: {}, imageUrl: {}",
                     productCategory, productSubCategory, overallScore, metrics.size(), competitorSeeds.size(),
                     productImageUrl != null ? "found" : "none");
 
             return new AnalysisResult(
                     productCategory, productSubCategory, overallScore, verdictSentence,
-                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json, competitorSeeds, productImageUrl
-            );
+                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json, competitorSeeds,
+                    productImageUrl);
 
         } catch (Exception e) {
             log.error("Failed to parse AI response for query '{}': {}", query, e.getMessage());
@@ -224,17 +230,18 @@ public class AIAnalysisEngine {
     }
 
     private List<SearchResponse.Metric> parseMetrics(JsonNode metricsNode) {
-        if (metricsNode.isMissingNode() || !metricsNode.isArray()) return Collections.emptyList();
+        if (metricsNode.isMissingNode() || !metricsNode.isArray())
+            return Collections.emptyList();
         try {
             return objectMapper.readValue(
                     metricsNode.toString(),
-                    new TypeReference<List<Map<String, Object>>>() {}
-            ).stream().map(map -> SearchResponse.Metric.builder()
-                    .label((String) map.get("label"))
-                    .score(toDouble(map.get("score")))
-                    .explanation((String) map.get("explanation"))
-                    .build()
-            ).toList();
+                    new TypeReference<List<Map<String, Object>>>() {
+                    }).stream().map(map -> SearchResponse.Metric.builder()
+                            .label((String) map.get("label"))
+                            .score(toDouble(map.get("score")))
+                            .explanation((String) map.get("explanation"))
+                            .build())
+                    .toList();
         } catch (JsonProcessingException e) {
             log.warn("Failed to parse metrics: {}", e.getMessage());
             return Collections.emptyList();
@@ -242,9 +249,11 @@ public class AIAnalysisEngine {
     }
 
     private List<String> parseStringArray(JsonNode node) {
-        if (node.isMissingNode() || !node.isArray()) return Collections.emptyList();
+        if (node.isMissingNode() || !node.isArray())
+            return Collections.emptyList();
         try {
-            return objectMapper.readValue(node.toString(), new TypeReference<List<String>>() {});
+            return objectMapper.readValue(node.toString(), new TypeReference<List<String>>() {
+            });
         } catch (JsonProcessingException e) {
             log.warn("Failed to parse string array: {}", e.getMessage());
             return Collections.emptyList();
@@ -252,17 +261,18 @@ public class AIAnalysisEngine {
     }
 
     private List<SearchResponse.EvidenceSnippet> parseEvidenceSnippets(JsonNode snippetsNode) {
-        if (snippetsNode.isMissingNode() || !snippetsNode.isArray()) return Collections.emptyList();
+        if (snippetsNode.isMissingNode() || !snippetsNode.isArray())
+            return Collections.emptyList();
         try {
             return objectMapper.readValue(
                     snippetsNode.toString(),
-                    new TypeReference<List<Map<String, String>>>() {}
-            ).stream().map(map -> SearchResponse.EvidenceSnippet.builder()
-                    .text(map.get("text"))
-                    .source(map.get("source"))
-                    .permalink(map.get("permalink"))
-                    .build()
-            ).toList();
+                    new TypeReference<List<Map<String, String>>>() {
+                    }).stream().map(map -> SearchResponse.EvidenceSnippet.builder()
+                            .text(map.get("text"))
+                            .source(map.get("source"))
+                            .permalink(map.get("permalink"))
+                            .build())
+                    .toList();
         } catch (JsonProcessingException e) {
             log.warn("Failed to parse evidenceSnippets: {}", e.getMessage());
             return Collections.emptyList();
@@ -270,24 +280,29 @@ public class AIAnalysisEngine {
     }
 
     private double toDouble(Object value) {
-        if (value == null) return 0.0;
-        if (value instanceof Number n) return n.doubleValue();
-        try { return Double.parseDouble(value.toString()); }
-        catch (NumberFormatException e) { return 0.0; }
+        if (value == null)
+            return 0.0;
+        if (value instanceof Number n)
+            return n.doubleValue();
+        try {
+            return Double.parseDouble(value.toString());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 
     private List<AnalysisResult.CompetitorSeed> parseCompetitorSeeds(JsonNode node) {
-        if (node.isMissingNode() || !node.isArray()) return Collections.emptyList();
+        if (node.isMissingNode() || !node.isArray())
+            return Collections.emptyList();
         try {
             return objectMapper.readValue(
                     node.toString(),
-                    new TypeReference<List<Map<String, Object>>>() {}
-            ).stream()
+                    new TypeReference<List<Map<String, Object>>>() {
+                    }).stream()
                     .filter(map -> map.get("name") != null)
                     .map(map -> new AnalysisResult.CompetitorSeed(
                             (String) map.get("name"),
-                            (int) toDouble(map.get("estimatedScore"))
-                    ))
+                            (int) toDouble(map.get("estimatedScore"))))
                     .toList();
         } catch (JsonProcessingException e) {
             log.warn("Failed to parse competitorSuggestions: {}", e.getMessage());
@@ -298,7 +313,8 @@ public class AIAnalysisEngine {
     // ─── Result record ──────────────────────────────────────────────────────────
 
     /**
-     * Structured result from AI analysis — maps 1:1 to the new SearchResponse shape.
+     * Structured result from AI analysis — maps 1:1 to the new SearchResponse
+     * shape.
      */
     public record AnalysisResult(
             String productCategory,
@@ -313,11 +329,13 @@ public class AIAnalysisEngine {
             List<SearchResponse.EvidenceSnippet> evidenceSnippets,
             String rawJson,
             List<CompetitorSeed> competitorSeeds,
-            /** AI-validated product image URL from Reddit posts. Null if none were suitable. */
-            String productImageUrl
-    ) {
+            /**
+             * AI-validated product image URL from Reddit posts. Null if none were suitable.
+             */
+            String productImageUrl) {
         /** AI-suggested competitor: name + estimated community score as placeholder. */
-        public record CompetitorSeed(String name, int estimatedScore) {}
+        public record CompetitorSeed(String name, int estimatedScore) {
+        }
 
         public static AnalysisResult empty(String query) {
             return new AnalysisResult(
@@ -325,18 +343,16 @@ public class AIAnalysisEngine {
                     "No social media posts found for this query — try a different search term.",
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}",
-                    Collections.emptyList(), null
-            );
+                    Collections.emptyList(), null);
         }
 
         public static AnalysisResult error(String query, String errorMessage) {
             return new AnalysisResult(
                     null, null, 0,
-                    "AI analysis temporarily unavailable — Reddit data was collected. Retry shortly.",
+                    "AI analysis temporarily unavailable - Reddit data was collected. Retry shortly.",
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}",
-                    Collections.emptyList(), null
-            );
+                    Collections.emptyList(), null);
         }
     }
 }

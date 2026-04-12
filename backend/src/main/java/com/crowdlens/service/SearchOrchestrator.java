@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,8 +25,10 @@ import java.util.UUID;
 public class SearchOrchestrator {
 
     private static final String QUEUE = "search-jobs";
+    private static final int COMPETITOR_LIMIT = 3;
 
     private final CacheService cacheService;
+    private final CompetitorService competitorService;
     private final SearchJobRepository searchJobRepo;
     private final RqueueMessageEnqueuer rqueueMessageEnqueuer;
 
@@ -47,7 +50,7 @@ public class SearchOrchestrator {
         return cachedJson.map(json -> {
             log.info("Cache HIT for query: '{}'", query);
             SearchResponse cached = cacheService.deserialize(json, SearchResponse.class);
-            return SearchResponse.builder()
+            SearchResponse base = SearchResponse.builder()
                     .id(cached.id())
                     .query(cached.query())
                     .productCategory(cached.productCategory())
@@ -65,6 +68,7 @@ public class SearchOrchestrator {
                     .analyzedAt(cached.analyzedAt())
                     .cached(true)
                     .build();
+            return enrichWithCompetitors(base);
         });
     }
 
@@ -111,7 +115,43 @@ public class SearchOrchestrator {
      */
     public Optional<SearchResponse> getResultForJob(SearchJob job) {
         if (job.getResultJson() == null) return Optional.empty();
-        return Optional.of(cacheService.deserialize(job.getResultJson(), SearchResponse.class));
+        SearchResponse result = cacheService.deserialize(job.getResultJson(), SearchResponse.class);
+        return Optional.of(enrichWithCompetitors(result));
+    }
+
+    /**
+     * Resolves competitors for a SearchResponse and returns a new instance with the
+     * competitors field populated. Called on both the cache-hit path and the
+     * job-completed (cache-miss) path so the field is always present.
+     */
+    private SearchResponse enrichWithCompetitors(SearchResponse r) {
+        List<com.crowdlens.model.dto.CompetitorDto> competitors =
+                competitorService.getCompetitors(
+                        r.productCategory(),
+                        r.productSubCategory(),
+                        r.query(),
+                        COMPETITOR_LIMIT);
+        return SearchResponse.builder()
+                .id(r.id())
+                .query(r.query())
+                .productCategory(r.productCategory())
+                .productSubCategory(r.productSubCategory())
+                .overallScore(r.overallScore())
+                .verdictSentence(r.verdictSentence())
+                .metrics(r.metrics())
+                .positives(r.positives())
+                .complaints(r.complaints())
+                .bestFor(r.bestFor())
+                .avoid(r.avoid())
+                .evidenceSnippets(r.evidenceSnippets())
+                .postCount(r.postCount())
+                .sourcePlatforms(r.sourcePlatforms())
+                .analyzedAt(r.analyzedAt())
+                .cached(r.cached())
+                .productImageUrl(r.productImageUrl())
+                .productImageBase64(r.productImageBase64())
+                .competitors(competitors.isEmpty() ? null : competitors)
+                .build();
     }
 
     /**
