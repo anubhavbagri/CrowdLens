@@ -47,19 +47,10 @@ spring:
       api-key: ${OPENAI_API_KEY:}
       chat:
         options:
-          model: ${AI_MODEL:gpt-4o-mini}
+          model: ${AI_MODEL:}
           temperature: 0.3
 
-    # Google Gemini (secondary: lightweight tasks — image validation, competitor hints)
-    # Uses the Gemini Developer API (not Vertex AI) — only requires GEMINI_API_KEY
-    vertex:
-      ai:
-        gemini:
-          api-key: ${GEMINI_API_KEY:}
-          chat:
-            options:
-              model: ${GEMINI_MODEL:gemini-2.0-flash}
-              temperature: 0.2
+
 
 # rqueue job queue (sequential: one job at a time via concurrency=1 on listener)
 rqueue:
@@ -72,13 +63,13 @@ reddit:
   client-secret: ${REDDIT_CLIENT_SECRET:}
   username: ${REDDIT_USERNAME:}
   password: ${REDDIT_PASSWORD:}
-  user-agent: ${REDDIT_USER_AGENT:crowdlens:v1.0}
+  user-agent: ${REDDIT_USER_AGENT:}
 
 # DynamoDB cache (AWS production — no endpoint override needed)
 # Set DYNAMODB_ENDPOINT only for local DynamoDB dev/testing
 dynamodb:
   endpoint: ${DYNAMODB_ENDPOINT:}
-  region: ${AWS_REGION:us-east-1}
+  region: ${AWS_REGION:}
   table-name: ${DYNAMODB_TABLE:crowdlens-cache}
   ttl-hours: ${CACHE_TTL_HOURS:24}
   similarity-threshold: ${CACHE_SIMILARITY_THRESHOLD:0.75}

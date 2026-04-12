@@ -49,7 +49,13 @@ public class LoadingHintsService {
      */
     public List<String> generateWithGemini(String query) {
         String prompt = PROMPT_TEMPLATE.formatted(query);
-        String raw = geminiChatService.call(prompt);
+        String raw;
+        try {
+            raw = geminiChatService.call(prompt);
+        } catch (Exception e) {
+            log.warn("Gemini call failed for query '{}': {}", query, e.getMessage());
+            return null;
+        }
 
         if (raw == null || raw.isBlank()) {
             log.debug("Gemini returned null/empty for loading hints query '{}'", query);
