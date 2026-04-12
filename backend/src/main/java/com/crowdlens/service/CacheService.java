@@ -106,7 +106,7 @@ public class CacheService {
                 if (!item.containsKey("query_normalized") || !item.containsKey("response_json")) continue;
 
                 Set<String> cachedWords = new HashSet<>(Arrays.asList(item.get("query_normalized").s().split(" ")));
-                double score = jaccardSimilarity(queryWords, cachedWords);
+                double score = com.crowdlens.util.JaccardUtils.calculateSimilarity(queryWords, cachedWords);
                 if (score > bestScore) {
                     bestScore = score;
                     bestJson = item.get("response_json").s();
@@ -203,14 +203,6 @@ public class CacheService {
         } catch (Exception e) {
             throw new RuntimeException("SHA-256 not available", e);
         }
-    }
-
-    private double jaccardSimilarity(Set<String> a, Set<String> b) {
-        Set<String> intersection = new HashSet<>(a);
-        intersection.retainAll(b);
-        Set<String> union = new HashSet<>(a);
-        union.addAll(b);
-        return union.isEmpty() ? 0.0 : (double) intersection.size() / union.size();
     }
 
     /**

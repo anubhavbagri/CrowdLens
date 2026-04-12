@@ -17,10 +17,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Processes search jobs from the rqueue "search-jobs" queue one at a time.
  * concurrency="1" ensures sequential execution — no parallel jobs on this low-powered server.
+ *
+ * Data split:
+ *  - SQLite (SearchResult): lightweight permanent index — query, category, subcategory, score only
+ *  - DynamoDB: full AI-generated JSON (verdict, metrics, positives, snippets etc.)
  */
 @Slf4j
 @Service
@@ -35,18 +40,12 @@ public class SearchJobListener {
     private final CacheService cacheService;
     private final TransactionTemplate txTemplate;
 
-    /**
-     * Dequeues and processes one search job at a time.
-     *
-     * concurrency="1"  → exactly one job processed at a time (critical for 2CPU/1GB server)
-     * numRetries="0"   → do NOT retry; we handle all errors internally and mark FAILED
-     */
     @RqueueListener(value = "search-jobs", concurrency = "1", numRetries = "0")
     public void onMessage(SearchJobMessage message) {
         SearchJob job = searchJobRepo.findById(message.jobId()).orElse(null);
         if (job == null) {
             log.error("SearchJob {} not found in DB — discarding message", message.jobId());
-            return; // return (not throw) to ACK the message; throwing triggers rqueue retry
+            return;
         }
         if (job.getStatus() != SearchJob.Status.PENDING) {
             log.warn("Job {} is {} — expected PENDING, discarding duplicate message",
@@ -63,31 +62,29 @@ public class SearchJobListener {
         searchJobRepo.save(job);
 
         try {
-            // 1. Scrape all platforms (synchronous — no CompletableFuture)
+            // 1. Scrape all platforms
             List<SocialPostDto> posts = platformRegistry.searchAll(
                     job.getQuery(), job.getLimit(), job.getMaxComments());
             log.info("Job {} — {} posts collected", job.getId(), posts.size());
 
-            // 2. AI analysis
+            // 2. AI analysis (includes competitor suggestions in response)
             AIAnalysisEngine.AnalysisResult analysis = aiEngine.analyze(posts, job.getQuery());
 
-            // 3–6. Persist results and mark COMPLETED in a single transaction
             txTemplate.executeWithoutResult(status -> {
-                // Persist SearchResult
+                // 3. Save lean SearchResult to SQLite — query index + score only, no AI content
                 SearchResult searchResult = searchResultRepo.save(SearchResult.builder()
                         .query(job.getQuery())
                         .queryNormalized(job.getQueryNormalized())
                         .overallScore(analysis.overallScore())
-                        .verdictSentence(analysis.verdictSentence())
                         .productCategory(analysis.productCategory())
-                        .analysis(analysis.rawJson())
-                        .sourcePlatforms(platformRegistry.getEnabledPlatforms().toArray(new String[0]))
+                        .productSubCategory(analysis.productSubCategory())
+                        .verdictSentence(analysis.verdictSentence())
+                        .sourcePlatforms(String.join(",", platformRegistry.getEnabledPlatforms()))
                         .postCount(posts.size())
                         .createdAt(Instant.now())
-                        .expiresAt(Instant.now().plusSeconds(7 * 24 * 3600))
                         .build());
 
-                // Persist SocialPosts (deduplicated by platformId)
+                // 4. Persist SocialPosts (deduplicated by platformId)
                 List<SocialPost> socialPosts = posts.stream()
                         .filter(dto -> !socialPostRepo.existsByPlatformId(dto.platformId()))
                         .map(dto -> SocialPost.builder()
@@ -108,7 +105,7 @@ public class SearchJobListener {
                 }
                 socialPostRepo.saveAll(socialPosts);
 
-                // Build response and cache in DynamoDB (skip if AI produced no metrics)
+                // 5. Full AI JSON → DynamoDB cache only (not SQLite)
                 SearchResponse response = buildResponse(job, searchResult, analysis, posts.size());
                 boolean aiSucceeded = analysis.metrics() != null && !analysis.metrics().isEmpty();
                 if (aiSucceeded) {
@@ -117,7 +114,10 @@ public class SearchJobListener {
                     log.warn("Job {} — skipping DynamoDB cache, AI analysis produced no metrics", job.getId());
                 }
 
-                // Mark COMPLETED
+                // 6. Seed competitor rows to SQLite if none exist for this subcategory yet
+                seedCompetitorsIfNeeded(analysis, job.getQueryNormalized());
+
+                // 7. Mark COMPLETED
                 job.setStatus(SearchJob.Status.COMPLETED);
                 job.setSearchResultId(searchResult.getId());
                 job.setResultJson(cacheService.serialize(response));
@@ -128,15 +128,61 @@ public class SearchJobListener {
 
         } catch (Exception e) {
             log.error("Job {} FAILED: {}", job.getId(), e.getMessage(), e);
-            // Save FAILED status in a separate transaction — the success transaction
-            // may have been rolled back, but this must still persist.
             txTemplate.executeWithoutResult(status -> {
                 job.setStatus(SearchJob.Status.FAILED);
                 job.setErrorMessage(e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
                 searchJobRepo.save(job);
             });
-            // Do NOT rethrow — rqueue must ACK (remove) this message, not retry.
-            // The job is marked FAILED in SQLite; the client will see it on next poll.
+        }
+    }
+
+    /**
+     * Seeds AI-suggested competitors into SQLite if no existing competitors are found
+     * for the detected subcategory. This ensures CompetitorCard always has data to show,
+     * even before users search for those competitors directly.
+     *
+     * Seeds are PERMANENT entries — they act as placeholders until a real search replaces them.
+     * A real search inserts a newer row; the competitor query picks MAX(createdAt) so
+     * real scores always win over estimates.
+     */
+    private void seedCompetitorsIfNeeded(AIAnalysisEngine.AnalysisResult analysis,
+                                          String currentQueryNormalized) {
+        if (analysis.productSubCategory() == null || analysis.competitorSeeds().isEmpty()) {
+            return;
+        }
+
+        List<SearchResult> existing = searchResultRepo.findCompetitors(
+                analysis.productCategory(), analysis.productSubCategory(), currentQueryNormalized);
+
+        if (!existing.isEmpty()) {
+            log.debug("Competitors already exist for subcategory '{}' — skipping seed",
+                    analysis.productSubCategory());
+            return;
+        }
+
+        log.info("No competitors found for subcategory '{}' — seeding {} AI-suggested competitors",
+                analysis.productSubCategory(), analysis.competitorSeeds().size());
+
+        for (AIAnalysisEngine.AnalysisResult.CompetitorSeed seed : analysis.competitorSeeds()) {
+            String normalizedName = normalize(seed.name());
+
+            // Skip if this product is already in the index (from a previous search)
+            if (searchResultRepo.findTopByQueryNormalizedOrderByCreatedAtDesc(normalizedName).isPresent()) {
+                log.debug("Competitor '{}' already indexed — skipping", seed.name());
+                continue;
+            }
+
+            searchResultRepo.save(SearchResult.builder()
+                    .query(seed.name())
+                    .queryNormalized(normalizedName)
+                    .overallScore(seed.estimatedScore())
+                    .productCategory(analysis.productCategory())
+                    .productSubCategory(analysis.productSubCategory())
+                    .createdAt(Instant.now())
+                    .build());
+
+            log.info("Seeded competitor '{}' with AI-estimated score {} [{}]",
+                    seed.name(), seed.estimatedScore(), analysis.productSubCategory());
         }
     }
 
@@ -160,5 +206,13 @@ public class SearchJobListener {
                 .analyzedAt(Instant.now())
                 .cached(false)
                 .build();
+    }
+
+    private String normalize(String s) {
+        if (s == null) return "";
+        return s.trim().toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9\\s]", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 }

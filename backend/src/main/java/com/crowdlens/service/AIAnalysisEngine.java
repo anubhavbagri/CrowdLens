@@ -117,6 +117,55 @@ public class AIAnalysisEngine {
 
     public record HealthStatus(boolean healthy, String message, String hint) {}
 
+    /**
+     * Lightweight call — no Reddit posts needed.
+     * Asks the AI to suggest 3 direct competitors for a product in a given category/subcategory
+     * and estimate their community scores from general knowledge.
+     *
+     * Used as a fallback by CompetitorService when no entries exist in SQLite.
+     */
+    public List<AnalysisResult.CompetitorSeed> suggestCompetitors(
+            String productQuery, String category, String subCategory) {
+
+        String prompt = """
+                You are a product expert with knowledge of consumer sentiment on Reddit.
+                
+                Product: "%s"
+                Category: %s
+                Sub-category: %s
+                
+                Suggest exactly 3 products that directly compete with the above product
+                in the SAME category AND sub-category. Do NOT include the product itself.
+                For each, estimate a Reddit community score (0–100) based on general public opinion.
+                
+                Return ONLY a JSON array. No explanation, no markdown:
+                [
+                  { "name": "<product name>", "estimatedScore": <0-100> },
+                  { "name": "<product name>", "estimatedScore": <0-100> },
+                  { "name": "<product name>", "estimatedScore": <0-100> }
+                ]
+                """.formatted(productQuery,
+                category != null ? category : "Unknown",
+                subCategory != null ? subCategory : "Unknown");
+
+        try {
+            ChatResponse response = chatModel.call(new Prompt(prompt));
+            String output = response.getResult().getOutput().getText();
+            if (output == null || output.isBlank()) return Collections.emptyList();
+
+            // Strip markdown fences if present
+            String json = output;
+            if (json.contains("```")) {
+                json = json.replaceAll("(?s)```\\w*\\n?", "").replaceAll("```", "").trim();
+            }
+            JsonNode root = objectMapper.readTree(json);
+            return parseCompetitorSeeds(root);
+        } catch (Exception e) {
+            log.warn("suggestCompetitors failed for '{}': {}", productQuery, e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     // ─── Parsing ────────────────────────────────────────────────────────────────
 
     private AnalysisResult parseAiResponse(String aiOutput, String query) {
@@ -142,13 +191,14 @@ public class AIAnalysisEngine {
             List<String>                         bestFor          = parseStringArray(root.path("bestFor"));
             List<String>                         avoid            = parseStringArray(root.path("avoid"));
             List<SearchResponse.EvidenceSnippet> evidenceSnippets = parseEvidenceSnippets(root.path("evidenceSnippets"));
+            List<AnalysisResult.CompetitorSeed>  competitorSeeds  = parseCompetitorSeeds(root.path("competitorSuggestions"));
 
-            log.info("AI parsed — category: '{}', score: {}, metrics: {}, positives: {}, complaints: {}",
-                    productCategory, overallScore, metrics.size(), positives.size(), complaints.size());
+            log.info("AI parsed — category: '{}', subcategory: '{}', score: {}, metrics: {}, competitors suggested: {}",
+                    productCategory, productSubCategory, overallScore, metrics.size(), competitorSeeds.size());
 
             return new AnalysisResult(
                     productCategory, productSubCategory, overallScore, verdictSentence,
-                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json
+                    metrics, positives, complaints, bestFor, avoid, evidenceSnippets, json, competitorSeeds
             );
 
         } catch (Exception e) {
@@ -211,6 +261,25 @@ public class AIAnalysisEngine {
         catch (NumberFormatException e) { return 0.0; }
     }
 
+    private List<AnalysisResult.CompetitorSeed> parseCompetitorSeeds(JsonNode node) {
+        if (node.isMissingNode() || !node.isArray()) return Collections.emptyList();
+        try {
+            return objectMapper.readValue(
+                    node.toString(),
+                    new TypeReference<List<Map<String, Object>>>() {}
+            ).stream()
+                    .filter(map -> map.get("name") != null)
+                    .map(map -> new AnalysisResult.CompetitorSeed(
+                            (String) map.get("name"),
+                            (int) toDouble(map.get("estimatedScore"))
+                    ))
+                    .toList();
+        } catch (JsonProcessingException e) {
+            log.warn("Failed to parse competitorSuggestions: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     // ─── Result record ──────────────────────────────────────────────────────────
 
     /**
@@ -227,14 +296,19 @@ public class AIAnalysisEngine {
             List<String> bestFor,
             List<String> avoid,
             List<SearchResponse.EvidenceSnippet> evidenceSnippets,
-            String rawJson
+            String rawJson,
+            List<CompetitorSeed> competitorSeeds
     ) {
+        /** AI-suggested competitor: name + estimated community score as placeholder. */
+        public record CompetitorSeed(String name, int estimatedScore) {}
+
         public static AnalysisResult empty(String query) {
             return new AnalysisResult(
                     null, null, 0,
                     "No social media posts found for this query — try a different search term.",
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}"
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}",
+                    Collections.emptyList()
             );
         }
 
@@ -243,7 +317,8 @@ public class AIAnalysisEngine {
                     null, null, 0,
                     "AI analysis temporarily unavailable — Reddit data was collected. Retry shortly.",
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}"
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), "{}",
+                    Collections.emptyList()
             );
         }
     }

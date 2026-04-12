@@ -105,6 +105,12 @@ public class PromptBuilder {
                 Paraphrase them into short, readable snippets (1–2 sentences max).
                 Include the subreddit source and permalink.
 
+                Step 10 — Competitor suggestions:
+                Suggest exactly 3 similar products that compete directly in the same category AND sub-category.
+                Do NOT include the queried product itself.
+                For each competitor, provide an estimated Reddit community score (0–100) based on your general knowledge of public opinion.
+                These are placeholder scores — they will be refined once users search for those products.
+
                 ═══ OUTPUT FORMAT ═══
                 Return ONLY this JSON. No markdown. No explanation. No extra keys.
 
@@ -126,6 +132,11 @@ public class PromptBuilder {
                   "evidenceSnippets": [
                     { "text": "<paraphrased snippet>", "source": "<r/subreddit>", "permalink": "<url>" },
                     { "text": "<paraphrased snippet>", "source": "<r/subreddit>", "permalink": "<url>" }
+                  ],
+                  "competitorSuggestions": [
+                    { "name": "<competitor product name>", "estimatedScore": <0-100 integer> },
+                    { "name": "<competitor product name>", "estimatedScore": <0-100 integer> },
+                    { "name": "<competitor product name>", "estimatedScore": <0-100 integer> }
                   ]
                 }
                 """.formatted(query, posts.size(), postsContext);
