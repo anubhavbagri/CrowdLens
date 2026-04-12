@@ -50,7 +50,14 @@ spring:
           model: ${AI_MODEL:}
           temperature: 0.3
 
-
+    # Google GenAI / Gemini (secondary: loading hints, lightweight tasks)
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY:}
+        chat:
+          options:
+            model: ${GEMINI_MODEL:}
+            temperature: 0.2
 
 # rqueue job queue (sequential: one job at a time via concurrency=1 on listener)
 rqueue:
