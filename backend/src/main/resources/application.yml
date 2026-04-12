@@ -41,7 +41,7 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
-  # Spring AI — OpenAI (swap model via env var)
+  # Spring AI — OpenAI (primary: main sentiment analysis — injected as @Primary ChatModel)
   ai:
     openai:
       api-key: ${OPENAI_API_KEY:}
@@ -49,6 +49,17 @@ spring:
         options:
           model: ${AI_MODEL:gpt-4o-mini}
           temperature: 0.3
+
+    # Google Gemini (secondary: lightweight tasks — image validation, competitor hints)
+    # Uses the Gemini Developer API (not Vertex AI) — only requires GEMINI_API_KEY
+    vertex:
+      ai:
+        gemini:
+          api-key: ${GEMINI_API_KEY:}
+          chat:
+            options:
+              model: ${GEMINI_MODEL:gemini-2.0-flash}
+              temperature: 0.2
 
 # rqueue job queue (sequential: one job at a time via concurrency=1 on listener)
 rqueue:
@@ -95,6 +106,13 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 3
         minimum-number-of-calls: 5
       openAi:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+        permitted-number-of-calls-in-half-open-state: 2
+        minimum-number-of-calls: 3
+      gemini:
         sliding-window-type: COUNT_BASED
         sliding-window-size: 5
         failure-rate-threshold: 50

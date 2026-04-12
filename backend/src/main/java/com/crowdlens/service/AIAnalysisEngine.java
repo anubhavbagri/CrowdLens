@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -32,7 +33,9 @@ public class AIAnalysisEngine {
     private final PromptBuilder promptBuilder;
     private final ObjectMapper objectMapper;
 
-    public AIAnalysisEngine(ChatModel chatModel, PromptBuilder promptBuilder, ObjectMapper objectMapper) {
+    public AIAnalysisEngine(@Qualifier("openAiChatModel") ChatModel chatModel,
+                            PromptBuilder promptBuilder,
+                            ObjectMapper objectMapper) {
         this.chatModel = chatModel;
         this.promptBuilder = promptBuilder;
         this.objectMapper = objectMapper;
