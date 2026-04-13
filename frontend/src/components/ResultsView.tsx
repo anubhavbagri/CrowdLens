@@ -1,8 +1,12 @@
+'use client';
+
 import { SearchResponse } from '@/lib/api';
 import VerdictCard from './VerdictCard';
 import MetricsGrid from './MetricsGrid';
 import OpinionBlocks from './OpinionBlocks';
 import CompetitorCard from './CompetitorCard';
+import SharePrompt from './SharePrompt';
+import { useShareCard } from '@/lib/useShareCard';
 
 interface ResultsViewProps {
   results: SearchResponse;
@@ -10,6 +14,8 @@ interface ResultsViewProps {
 }
 
 export default function ResultsView({ results, onSearch }: ResultsViewProps) {
+  const { handleShare, handleDownload } = useShareCard(results.query);
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 pb-20 animate-fade-in">
 
@@ -21,11 +27,14 @@ export default function ResultsView({ results, onSearch }: ResultsViewProps) {
         <MetricsGrid metrics={results.metrics} />
       )}
 
+      {/* Competitor comparison — after performance breakdown */}
+      <CompetitorCard results={results} onSearch={onSearch} />
+
       {/* Positives / complaints / bestFor / avoid / evidence snippets */}
       <OpinionBlocks results={results} />
 
-      {/* Competitor comparison — only shown when productCategory is resolved */}
-      <CompetitorCard results={results} onSearch={onSearch} />
+      {/* Share prompt toast — appears 2s after results load */}
+      <SharePrompt onShare={handleShare} onDownload={handleDownload} delayMs={2000} />
 
     </div>
   );

@@ -1,27 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { SearchResponse } from '@/lib/api';
 import ScoreCircle from './ScoreCircle';
 import { Zap, Download, Share2, Check } from 'lucide-react';
-import { toPng, toBlob as ht2iBlob } from 'html-to-image';
 import { ShareCardVisual } from './ShareCard';
+import { useShareCard } from '@/lib/useShareCard';
 
-// Map product category → emoji placeholder for when an image is unavailable
-function categoryEmoji(category?: string | null, subCategory?: string | null): string {
-  const c = ((subCategory ?? category) ?? '').toLowerCase();
-  if (c.includes('audio') || c.includes('headphone') || c.includes('speaker') || c.includes('earphone')) return '🎧';
-  if (c.includes('groom') || c.includes('trimmer') || c.includes('shaver') || c.includes('razor')) return '🪒';
-  if (c.includes('skin') || c.includes('moistur') || c.includes('serum') || c.includes('beauty') || c.includes('cosmetic')) return '🧴';
-  if (c.includes('footwear') || c.includes('shoe') || c.includes('sneaker') || c.includes('boot')) return '👟';
-  if (c.includes('fitness') || c.includes('supplement') || c.includes('protein') || c.includes('sport')) return '🏋️';
-  if (c.includes('laptop') || c.includes('computer') || c.includes('pc') || c.includes('macbook')) return '💻';
-  if (c.includes('phone') || c.includes('smartphone') || c.includes('mobile')) return '📱';
-  if (c.includes('motorcycle') || c.includes('bike') || c.includes('scooter')) return '🏍️';
-  if (c.includes('travel') || c.includes('trip') || c.includes('experience')) return '✈️';
-  if (c.includes('food') || c.includes('nutrition') || c.includes('snack')) return '🥗';
-  if (c.includes('kitchen') || c.includes('appliance') || c.includes('cooker')) return '🍳';
-  return '📦';
+/** Generate a deterministic placeholder image URL from the query string */
+function fallbackImageUrl(query: string): string {
+  const seed = encodeURIComponent(query.trim().toLowerCase());
+  return `https://api.dicebear.com/9.x/icons/svg?seed=${seed}&backgroundColor=f0fdfa&radius=12`;
 }
 
 interface VerdictCardProps {
@@ -51,53 +39,9 @@ function MetricPill({ label, score }: { label: string; score: number }) {
 }
 
 export default function VerdictCard({ response }: VerdictCardProps) {
-  const [sharing, setSharing] = useState(false);
-  const [downloading, setDownloading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const { handleShare, handleDownload, sharing, downloading, copied } = useShareCard(response.query);
 
-  const slug = response.query.replace(/\s+/g, '-').toLowerCase();
-
-  const getCardEl = () => {
-    const el = document.getElementById('share-card-visual');
-    if (!el) throw new Error('Card element not found');
-    return el;
-  };
-
-  const handleShare = async () => {
-    setSharing(true);
-    try {
-      const blob = await ht2iBlob(getCardEl(), { pixelRatio: 2 });
-      if (!blob) return;
-      const file = new File([blob], `crowdlens-${slug}.png`, { type: 'image/png' });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: `CrowdLens: ${response.query}` });
-      } else {
-        // Desktop fallback: copy to clipboard
-        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } catch (e) {
-      console.error('Share failed', e);
-    } finally {
-      setSharing(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    setDownloading(true);
-    try {
-      const dataUrl = await toPng(getCardEl(), { pixelRatio: 2 });
-      const link = document.createElement('a');
-      link.download = `crowdlens-${slug}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch (e) {
-      console.error('Download failed', e);
-    } finally {
-      setDownloading(false);
-    }
-  };
+  const imgSrc = response.productImageUrl || fallbackImageUrl(response.query);
 
   return (
     <>
@@ -137,26 +81,19 @@ export default function VerdictCard({ response }: VerdictCardProps) {
 
             {/* Product image — shown above score circle */}
             <div className="mb-3 w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center">
-              {response.productImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={response.productImageUrl}
-                  alt={response.query}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Hide broken image, show emoji placeholder
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.parentElement!.dataset.fallback = 'true';
-                    e.currentTarget.parentElement!.textContent =
-                      categoryEmoji(response.productCategory, response.productSubCategory);
-                    e.currentTarget.parentElement!.style.fontSize = '2rem';
-                  }}
-                />
-              ) : (
-                <span className="text-3xl" title={response.productCategory ?? 'Product'}>
-                  {categoryEmoji(response.productCategory, response.productSubCategory)}
-                </span>
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imgSrc}
+                alt={response.query}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // If the primary URL fails, fall back to DiceBear avatar
+                  const fallback = fallbackImageUrl(response.query);
+                  if (e.currentTarget.src !== fallback) {
+                    e.currentTarget.src = fallback;
+                  }
+                }}
+              />
             </div>
 
             <ScoreCircle score={response.overallScore} />

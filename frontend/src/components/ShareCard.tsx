@@ -6,22 +6,10 @@ interface ShareCardProps {
   results: SearchResponse;
 }
 
-// Map product category → emoji placeholder for the share card
-function categoryEmoji(category?: string | null): string {
-  if (!category) return '📦';
-  const c = category.toLowerCase();
-  if (c.includes('audio') || c.includes('headphone') || c.includes('speaker') || c.includes('earphone')) return '🎧';
-  if (c.includes('groom') || c.includes('trimmer') || c.includes('shaver') || c.includes('razor')) return '🪒';
-  if (c.includes('skin') || c.includes('moistur') || c.includes('serum') || c.includes('beauty') || c.includes('cosmetic')) return '🧴';
-  if (c.includes('footwear') || c.includes('shoe') || c.includes('sneaker') || c.includes('boot')) return '👟';
-  if (c.includes('fitness') || c.includes('supplement') || c.includes('protein') || c.includes('sport')) return '🏋️';
-  if (c.includes('laptop') || c.includes('computer') || c.includes('pc') || c.includes('macbook')) return '💻';
-  if (c.includes('phone') || c.includes('smartphone') || c.includes('mobile')) return '📱';
-  if (c.includes('motorcycle') || c.includes('bike') || c.includes('scooter')) return '🏍️';
-  if (c.includes('travel') || c.includes('trip') || c.includes('experience')) return '✈️';
-  if (c.includes('food') || c.includes('nutrition') || c.includes('snack')) return '🥗';
-  if (c.includes('kitchen') || c.includes('appliance') || c.includes('cooker')) return '🍳';
-  return '📦';
+/** Generate a deterministic placeholder image URL from the query string */
+function fallbackImageUrl(query: string): string {
+  const seed = encodeURIComponent(query.trim().toLowerCase());
+  return `https://api.dicebear.com/9.x/icons/svg?seed=${seed}&backgroundColor=f0fdfa&radius=12`;
 }
 
 // The visual card — rendered off-screen and captured by html-to-image in VerdictCard
@@ -32,6 +20,8 @@ export function ShareCardVisual({ results }: ShareCardProps) {
       : results.overallScore >= 50
       ? '#f59e0b'
       : '#ef4444';
+
+  const imgSrc = results.productImageBase64 || results.productImageUrl || fallbackImageUrl(results.query);
 
   return (
     <div
@@ -49,7 +39,7 @@ export function ShareCardVisual({ results }: ShareCardProps) {
       {/* Header: Product image + Score + product name */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20 }}>
 
-        {/* Product image or emoji placeholder — 64x64 */}
+        {/* Product image — 64x64 */}
         <div
           style={{
             width: 64,
@@ -61,20 +51,15 @@ export function ShareCardVisual({ results }: ShareCardProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 32,
             border: '1px solid #e5e7eb',
           }}
         >
-          {results.productImageBase64 ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={results.productImageBase64}
-              alt={results.query}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            categoryEmoji(results.productCategory ?? results.productSubCategory)
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imgSrc}
+            alt={results.query}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
         </div>
 
         {/* Score bubble */}
