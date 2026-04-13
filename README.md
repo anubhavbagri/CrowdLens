@@ -22,6 +22,23 @@ Search any product, service, or experience — CrowdLens scrapes Reddit for real
 
 ---
 
+## Features (v1)
+
+- **AI Verdict & Score**: Concise summaries and a community score (0-100)
+- **Competitor Analysis**: Automatically surfaces and compares alternative products
+- **Dynamic Metrics**: Sentiment metrics tailored specifically to the product category
+- **Pros & Cons**: Breakdown of what people love and complain about
+- **Persona Matching**: "Who is this best for & who should avoid it" analysis
+- **Source Breakdown**: Quoting directly from the Reddit community
+- **Shareable Verdict Card**: Easily share structured insights
+- **Fuzzy Search Suggestions**: Autocomplete dropdown for fast querying
+- **Loading Engagement**: Dynamic loading facts and hints while AI processes
+- **Landing Page Discovery**: Recent searches and popular categories directly on the homepage
+- **Product Images**: Visually identifying the searched product
+- *Note: Design revamp coming soon!*
+
+---
+
 ## Backend
 
 ### Architecture

@@ -2,7 +2,24 @@
 
 ---
 
-## 1. Design Principles
+## 1. Features (v1)
+
+- **AI Verdict & Score**: Concise summaries and a community score (0-100)
+- **Competitor Analysis**: Automatically surfaces and compares alternative products
+- **Dynamic Metrics**: Sentiment metrics tailored specifically to the product category
+- **Pros & Cons**: Breakdown of what people love and complain about
+- **Persona Matching**: "Who is this best for & who should avoid it" analysis
+- **Source Breakdown**: Quoting directly from the Reddit community
+- **Shareable Verdict Card**: Easily share structured insights
+- **Fuzzy Search Suggestions**: Autocomplete dropdown for fast querying
+- **Loading Engagement**: Dynamic loading facts and hints while AI processes
+- **Landing Page Discovery**: Recent searches and popular categories directly on the homepage
+- **Product Images**: Visually identifying the searched product
+- *Note: Design revamp coming soon!*
+
+---
+
+## 2. Design Principles
 
 | Principle | How We Apply It |
 |-----------|----------------|
@@ -16,7 +33,7 @@
 
 ---
 
-## 2. Design Patterns
+## 3. Design Patterns
 
 ### Strategy Pattern — Platform Providers
 Each social platform is a swappable strategy. The `PlatformRegistry` delegates to whichever providers are enabled.
@@ -88,7 +105,7 @@ Spring's `ApplicationEventPublisher` for decoupled side-effects:
 
 ---
 
-## 3. Database Design
+## 4. Database Design
 
 ### 3.1 SQL vs NoSQL — Why SQLite?
 
@@ -230,7 +247,7 @@ CREATE INDEX idx_cursor_lookup ON scrape_cursors(platform, query_normalized);
 
 ---
 
-## 4. High-Level Design (HLD)
+## 5. High-Level Design (HLD)
 
 ### System Context
 
@@ -295,7 +312,7 @@ graph TB
 
 ---
 
-## 5. Low-Level Design (LLD)
+## 6. Low-Level Design (LLD)
 
 ### Class Diagram — Core Domain
 
@@ -455,7 +472,7 @@ sequenceDiagram
 
 ---
 
-## 6. Scraping Intelligence Strategy
+## 7. Scraping Intelligence Strategy
 
 *Adapted from [Matiks Monitor Scraping Intelligence](https://github.com/Krishnav1237/Social-Media-Brand-Monitoring/blob/main/docs/02_SCRAPING_INTELLIGENCE_AND_STRATEGY.md)*
 
@@ -508,7 +525,7 @@ public class ScrapeCursor {
 
 ---
 
-## 7. Data Models
+## 8. Data Models
 
 ### Request/Response DTOs
 
@@ -554,7 +571,7 @@ record PersonaAnalysis(
 
 ---
 
-## 8. Reddit Account Safety
+## 9. Reddit Account Safety
 
 ### Is Using "Script" Type App Safe?
 

@@ -6,7 +6,7 @@
 
 ## Project Description
 
-CrowdLens searches Reddit (and future platforms) for authentic user opinions on any product, service, or experience. Unlike traditional search engines that surface SEO-optimized or sponsored content, CrowdLens taps into anonymous, unbiased discussions from real people. It then uses AI to distill hundreds of posts into a structured analysis page — inspired by [tally.shop](https://tally.shop) — with category ratings, sentiment breakdowns, curated testimonials, and an overall verdict.
+CrowdLens searches Reddit (and future platforms) for authentic user opinions on any product. Unlike traditional search engines that surface SEO-optimized or sponsored content, CrowdLens taps into anonymous, unbiased discussions from real people. It then uses AI to distill hundreds of posts into a structured analysis page — inspired by [tally.shop](https://tally.shop) — with category ratings, sentiment breakdowns, curated testimonials, and an overall verdict.
 
 ---
 
@@ -14,16 +14,22 @@ CrowdLens searches Reddit (and future platforms) for authentic user opinions on 
 
 | Feature | Description |
 |---------|-------------|
-| **🔍 Intelligent Search** | Natural language search across Reddit (extensible to Twitter, HN, etc.) |
-| **🤖 AI-Powered Analysis** | GPT-4o-mini (swappable) produces structured ratings, summaries, and verdicts |
-| **📊 Category Breakdown** | Auto-detects relevant categories (e.g., Efficacy, Safety, Value) with Fair/Excellent ratings |
-| **💬 Curated Testimonials** | Selects representative Reddit quotes with sentiment labels (Positive/Neutral/Negative) |
-| **👤 Persona Matching** | "Is this right for you?" — AI-generated pros/cons for different user types |
+| **🤖 AI Verdict & Score** | Concise summaries and a community score (0-100) |
+| **🥇 Competitor Analysis** | Automatically surfaces and compares alternative products |
+| **📈 Dynamic Metrics** | Sentiment metrics tailored specifically to the product category |
+| **⚖️ Pros & Cons** | Breakdown of what people love and complain about |
+| **💬 Curated Testimonials** | Selects representative Reddit quotes with sentiment labels |
+| **👤 Persona Matching** | "Who is this best for & who should avoid it" analysis |
+| **🔗 Shareable Verdict Card** | Easily share structured insights |
+| **🔎 Fuzzy Search Suggestions**| Autocomplete dropdown for fast querying |
+| **⏳ Loading Engagement** | Dynamic loading facts and hints while AI processes |
+| **🌟 Landing Page Discovery** | Recent searches and popular categories directly on the homepage |
+| **🖼️ Product Images** | Visually identifying the searched product |
 | **🔌 Platform Plugins** | Add new social platforms (Twitter, HN) without modifying core logic |
 | **🧠 Model-Agnostic AI** | Swap OpenAI → Anthropic → Gemini → Ollama via config, zero code changes |
 | **⚡ Smart Caching** | DynamoDB TTL cache — identical queries never hit Reddit or AI twice |
 | **🛡️ Anti-Ban Stealth** | Token bucket, exponential backoff, UA rotation, request jitter |
-| **📈 Incremental Cursor** | Avoids duplicate data, minimizes bandwidth — inspired by [Matiks Monitor](https://github.com/Krishnav1237/Social-Media-Brand-Monitoring/blob/main/docs/02_SCRAPING_INTELLIGENCE_AND_STRATEGY.md) |
+| **📈 Incremental Cursor** | Avoids duplicate data, minimizes bandwidth |
 
 ---
 
@@ -129,6 +135,7 @@ CREATE TABLE social_posts (
 **Approach**: Clean, functional UI using Tailwind CSS utility classes. Basic now, designed to be progressively enhanced.
 
 **Sections** (tally.shop-inspired):
+
 1. **Search Home** — Centered search bar, tagline, recent searches
 2. **Header** — Query name + score circle (0-100) + verdict label
 3. **AI Verdict** — 2-3 sentence summary card
@@ -235,6 +242,7 @@ crowdlens/
 ## Phases — Local First, Cloud Later
 
 ### Phase 1 — Backend Foundation (Local Docker) ✅
+
 1. Spring Boot 3.2 project init (Java 17, Maven)
 2. Docker Compose: PostgreSQL + DynamoDB Local + Spring Boot (multi-stage Dockerfile)
 3. Reddit OAuth2 client (script-type auth) + `.json` fallback
@@ -244,25 +252,28 @@ crowdlens/
 7. Database schema (JPA entities + Flyway migrations)
 
 ### Phase 2 — AI Analysis Pipeline (Local) ✅
+
 8. Spring AI integration (OpenAI, model-agnostic)
-9. `PromptBuilder` with query-type auto-detection + dynamic categories
-10. `CacheService` with DynamoDB Local
-11. `SearchOrchestrator` (end-to-end pipeline)
-12. REST endpoints: `POST /api/search`, `GET /api/health`
-13. API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
+2. `PromptBuilder` with query-type auto-detection + dynamic categories
+3. `CacheService` with DynamoDB Local
+4. `SearchOrchestrator` (end-to-end pipeline)
+5. REST endpoints: `POST /api/search`, `GET /api/health`
+6. API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
 
 ### Phase 3 — Frontend (Minimal, Modular) ✅
+
 13. Next.js 14 + TypeScript + Tailwind CSS v4
-14. Search home page (clean, centered search bar)
-15. Analysis results page (modular component structure)
-16. API client + loading/error states
-17. Basic but extensible component library
+2. Search home page (clean, centered search bar)
+3. Analysis results page (modular component structure)
+4. API client + loading/error states
+5. Basic but extensible component library
 
 ### Phase 4 — Cloud Deployment
+
 18. Ubuntu VM / Railway server provisioning
-19. AWS DynamoDB production setup
-20. Vercel frontend deploy
-21. README with full setup guide
+2. AWS DynamoDB production setup
+3. Vercel frontend deploy
+4. README with full setup guide
 
 ---
 
