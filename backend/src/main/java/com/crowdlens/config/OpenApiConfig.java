@@ -9,18 +9,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-    @Bean
-    public OpenAPI crowdLensOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("CrowdLens API")
-                        .description(
-                                "Aggregates authentic user opinions from social platforms and uses AI for structured analysis. "
-                                        +
-                                        "Search any product, service, or experience to get crowd-sourced insights powered by AI.")
-                        .version("1.0.0")
-                        .contact(new Contact()
-                                .name("CrowdLens")
-                                .url("https://github.com/anubhavbagri/CrowdLens")));
-    }
+        @Bean
+        public OpenAPI crowdLensOpenAPI() {
+                return new OpenAPI()
+                                .info(new Info()
+                                                .title("CrowdLens API")
+                                                .description(
+                                                                "Aggregates authentic user opinions from social platforms and uses AI for structured analysis. "
+                                                                                +
+                                                                                "Search any product to get crowd-sourced insights powered by AI.")
+                                                .version("1.0.0")
+                                                .contact(new Contact()
+                                                                .name("CrowdLens")
+                                                                .url("https://github.com/anubhavbagri/CrowdLens")));
+        }
 }

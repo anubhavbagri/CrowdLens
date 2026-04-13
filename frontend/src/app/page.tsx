@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import SearchBar from '@/components/SearchBar';
 import Navbar from '@/components/Navbar';
+import TrendingSection from '@/components/TrendingSection';
 import { searchCrowdLens, SearchResponse, JobStatus } from '@/lib/api';
 import { ShimmerResults } from '@/components/ShimmerSkeleton';
 import ResultsView from '@/components/ResultsView';
@@ -35,7 +36,7 @@ export default function Home() {
       .then((data: { hints: string[] } | null) => {
         if (data?.hints?.length) setLoadingHints(data.hints);
       })
-      .catch(() => {});
+      .catch(() => { });
 
     const startTime = Date.now();
     const timer = setInterval(() => {
@@ -73,6 +74,15 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/50 to-gray-50/90" />
       </div>
 
+      {/* Version badge — top-right on landing, replaced by Navbar badge on search */}
+      {appState === 'idle' && (
+        <div className="absolute top-5 right-6 z-20 animate-fade-in">
+          <span className="px-2.5 py-1 rounded-full bg-brand-50/80 text-brand-700 text-xs font-semibold tracking-wide border border-brand-200/50 shadow-sm backdrop-blur-sm">
+            v1
+          </span>
+        </div>
+      )}
+
       {/* Navbar appearing on search */}
       {appState !== 'idle' && (
         <Navbar onSearch={handleSearch} isLoading={appState === 'loading'} currentQuery={query} />
@@ -92,8 +102,8 @@ export default function Home() {
                   Real Opinions.
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto font-medium">
-                Search millions of authentic Reddit discussions to get unbiased insights on any product, service, or experience.
+              <p className="text-lg sm:text-xl text-gray-700 max-w-xl mx-auto font-medium">
+                Search millions of authentic Reddit discussions to get unbiased insights on any product.
               </p>
             </div>
 
@@ -101,16 +111,8 @@ export default function Home() {
               <SearchBar onSearch={handleSearch} isLoading={false} variant="hero" />
             </div>
 
-            <div className="relative z-0 pt-8 flex flex-wrap justify-center gap-3 opacity-90">
-              {['Pondicherry Trip', 'Triumph Scrambler 400', 'Sony WH-1000XM5', 'Notion vs Obsidian'].map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => handleSearch(suggestion)}
-                  className="px-4 py-2 rounded-full bg-white/60 hover:bg-white text-gray-700 text-sm font-medium border border-gray-200/50 shadow-sm transition-all hover:shadow-md hover:text-gray-900 backdrop-blur-sm"
-                >
-                  {suggestion}
-                </button>
-              ))}
+            <div className="relative z-0">
+              <TrendingSection onSearch={handleSearch} />
             </div>
           </div>
         )}

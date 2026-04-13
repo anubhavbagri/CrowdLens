@@ -48,4 +48,70 @@ public interface SearchResultRepository extends JpaRepository<SearchResult, UUID
     """)
     List<SearchResult> findAllLatestUniqueResults(String excludeQuery);
 
+    // ── Trending / Discovery Queries ──
+    // Note on SQL injection safety:
+    //   - findPopularCategories uses JPQL (ORM-managed, parameterized)
+    //   - findTrendingByFrequency uses native SQL because it JOINs two unrelated JPA entities
+    //     (SearchResult ↔ SearchJob have no @ManyToOne mapping). It takes ZERO user parameters,
+    //     so SQL injection is not possible. Spring Data uses PreparedStatement regardless.
+
+    /**
+     * Most frequently searched products (ranked by job count, weighted by recency).
+     * Native SQL required: JOINs search_results with search_jobs — no JPA relationship exists.
+     * Takes zero user parameters.
+     */
+    @Query(value = """
+        SELECT sr.query AS query, sr.overall_score AS score, sr.product_category AS category
+        FROM search_results sr
+        INNER JOIN search_jobs sj ON sj.query_normalized = sr.query_normalized
+        WHERE sr.overall_score IS NOT NULL
+          AND sj.status = 'COMPLETED'
+          AND sr.created_at = (
+              SELECT MAX(sr2.created_at) FROM search_results sr2
+              WHERE sr2.query_normalized = sr.query_normalized
+          )
+        GROUP BY sr.query_normalized
+        ORDER BY COUNT(sj.id) DESC, MAX(sj.created_at) DESC
+        LIMIT 8
+    """, nativeQuery = true)
+    List<TrendingItemProjection> findTrendingByFrequency();
+
+    /**
+     * Top product categories by number of unique products searched.
+     * Uses JPQL with constructor expression.
+     */
+    @Query("""
+        SELECT sr.productCategory AS name, COUNT(DISTINCT sr.queryNormalized) AS searchCount
+        FROM SearchResult sr
+        WHERE sr.productCategory IS NOT NULL
+          AND sr.overallScore IS NOT NULL
+        GROUP BY sr.productCategory
+        ORDER BY searchCount DESC
+    """)
+    List<CategoryProjection> findPopularCategories();
+
+    /**
+     * Fetch product query names for a given category.
+     * Returns distinct original queries, ordered by most recent first.
+     */
+    @Query("""
+        SELECT DISTINCT sr.query FROM SearchResult sr
+        WHERE sr.productCategory = :category
+          AND sr.overallScore IS NOT NULL
+        ORDER BY sr.query ASC
+    """)
+    List<String> findProductsByCategory(String category);
+
+    /** Projection for trending items (native SQL result mapping). */
+    interface TrendingItemProjection {
+        String getQuery();
+        Integer getScore();
+        String getCategory();
+    }
+
+    /** Projection for category counts. */
+    interface CategoryProjection {
+        String getName();
+        long getSearchCount();
+    }
 }

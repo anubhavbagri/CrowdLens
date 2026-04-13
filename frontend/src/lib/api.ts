@@ -112,3 +112,28 @@ async function pollJob(jobId: string, onStatus?: StatusCallback): Promise<Search
 function sleep(ms: number) {
   return new Promise<void>((r) => setTimeout(r, ms));
 }
+
+// ── Trending / Discovery ──
+
+export interface TrendingItem {
+  query: string;
+  score: number | null;
+  category: string | null;
+}
+
+export interface CategoryItem {
+  name: string;
+  count: number;
+  products: string[];
+}
+
+export interface TrendingResponse {
+  trending: TrendingItem[];
+  popularCategories: CategoryItem[];
+}
+
+export async function fetchTrending(): Promise<TrendingResponse> {
+  const res = await fetch(`${API_BASE_URL}/trending`);
+  if (!res.ok) throw new Error(`Failed to fetch trending: ${res.status}`);
+  return res.json();
+}

@@ -89,11 +89,10 @@ export default function SearchBar({
     >
       <form onSubmit={handleSubmit}>
         <div
-          className={`relative flex items-center w-full rounded-xl overflow-hidden ${
-            isHero
+          className={`relative flex items-center w-full rounded-xl overflow-hidden ${isHero
               ? 'bg-white h-14 shadow-xl border border-gray-200 hover:border-gray-300 focus-within:ring-2 focus-within:ring-gray-300 focus-within:border-gray-400 transition-all duration-300'
               : 'bg-gray-100 h-10 border border-gray-200 focus-within:ring-2 focus-within:ring-gray-300 focus-within:bg-white transition-all duration-300 rounded-lg'
-          } ${showDropdown ? 'rounded-b-none border-b-transparent' : ''}`}
+            } ${showDropdown ? 'rounded-b-none border-b-transparent' : ''}`}
         >
           <div className={`flex items-center justify-center text-gray-400 ${isHero ? 'pl-6 pr-4' : 'pl-4 pr-3'}`}>
             <Search className={`w-5 h-5 ${isHero ? 'text-gray-500' : 'text-gray-400'}`} />
@@ -110,10 +109,9 @@ export default function SearchBar({
             }}
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
-            placeholder={isHero ? 'Ask about any product, service, or experience...' : 'Search...'}
-            className={`flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 w-full ${
-              isHero ? 'text-lg' : 'text-sm'
-            }`}
+            placeholder={isHero ? 'Ask about any product...' : 'Search...'}
+            className={`flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 w-full ${isHero ? 'text-lg' : 'text-sm'
+              }`}
             disabled={isLoading}
             autoComplete="off"
             aria-autocomplete="list"
@@ -124,11 +122,10 @@ export default function SearchBar({
           <button
             type="submit"
             disabled={!query.trim() || isLoading}
-            className={`h-full flex items-center justify-center transition-all ${
-              isHero
+            className={`h-full flex items-center justify-center transition-all ${isHero
                 ? 'px-6 bg-black text-white hover:bg-gray-800 disabled:bg-gray-200 disabled:text-gray-400'
                 : 'px-4 text-gray-900 hover:text-black disabled:text-gray-400'
-            }`}
+              }`}
           >
             {isLoading ? (
               <Loader2 className={`animate-spin ${isHero ? 'h-6 w-6' : 'h-5 w-5'}`} />
@@ -157,11 +154,10 @@ export default function SearchBar({
                 handleSuggestionClick(s);
               }}
               onMouseEnter={() => setActiveIndex(i)}
-              className={`flex items-center gap-3 px-5 py-3 cursor-pointer text-sm transition-colors ${
-                i === activeIndex
+              className={`flex items-center gap-3 px-5 py-3 cursor-pointer text-sm transition-colors ${i === activeIndex
                   ? 'bg-gray-100 text-gray-900'
                   : 'text-gray-700 hover:bg-gray-50'
-              } ${i !== suggestions.length - 1 ? 'border-b border-gray-100' : ''}`}
+                } ${i !== suggestions.length - 1 ? 'border-b border-gray-100' : ''}`}
             >
               <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />
               <span>{s}</span>

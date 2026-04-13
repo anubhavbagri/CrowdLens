@@ -34,9 +34,9 @@ export default function Navbar({ onSearch, isLoading, currentQuery }: NavbarProp
           </div>
 
           <div className="flex items-center space-x-4">
-            <a href="https://github.com/AnubhavBagri/CrowdLens" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 font-medium transition-colors text-sm">
-              GitHub
-            </a>
+            <span className="px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-semibold tracking-wide border border-brand-200">
+              v1
+            </span>
           </div>
         </div>
 
