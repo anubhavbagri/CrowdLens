@@ -61,7 +61,7 @@ interface JobStatusResponse {
   error?: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 const POLL_INTERVAL_MS = 2000;
 const MAX_POLLS = 90; // 3 minutes

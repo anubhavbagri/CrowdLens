@@ -5,7 +5,7 @@ import Image from 'next/image';
 import SearchBar from '@/components/SearchBar';
 import Navbar from '@/components/Navbar';
 import TrendingSection from '@/components/TrendingSection';
-import { searchCrowdLens, SearchResponse, JobStatus } from '@/lib/api';
+import { searchCrowdLens, SearchResponse, JobStatus, API_BASE_URL } from '@/lib/api';
 import { ShimmerResults } from '@/components/ShimmerSkeleton';
 import ResultsView from '@/components/ResultsView';
 import { AlertTriangle } from 'lucide-react';
@@ -19,8 +19,6 @@ export default function Home() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [loadingHints, setLoadingHints] = useState<string[]>([]);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-
   const handleSearch = async (newQuery: string) => {
     setQuery(newQuery);
     setAppState('loading');
@@ -31,7 +29,7 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Fire hints fetch in parallel — don't await, just set state when it resolves
-    fetch(`${API_BASE}/loading-hints?q=${encodeURIComponent(newQuery)}`)
+    fetch(`${API_BASE_URL}/loading-hints?q=${encodeURIComponent(newQuery)}`)
       .then(r => r.ok ? r.json() : null)
       .then((data: { hints: string[] } | null) => {
         if (data?.hints?.length) setLoadingHints(data.hints);
