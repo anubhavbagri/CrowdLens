@@ -1,0 +1,5 @@
+architecture.md
+implementation_plan.md
+README.md
+frontend\README.md
+frontend\public\pattern-grey-wide.png

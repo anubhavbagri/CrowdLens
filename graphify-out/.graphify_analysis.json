@@ -1,0 +1,576 @@
+{
+  "communities": {
+    "0": [
+      "backend_src_main_java_com_crowdlens_repository_searchresultrepository_java",
+      "backend_src_main_java_com_crowdlens_service_competitorservice_java",
+      "backend_src_main_java_com_crowdlens_service_trendingservice_java",
+      "competitorservice_competitorservice",
+      "competitorservice_competitorservice_fetchandseedfromai",
+      "competitorservice_competitorservice_getcompetitors",
+      "competitorservice_competitorservice_normalize",
+      "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
+      "searchresultrepository_categoryprojection",
+      "searchresultrepository_categoryprojection_getname",
+      "searchresultrepository_categoryprojection_getsearchcount",
+      "searchresultrepository_searchresultrepository",
+      "searchresultrepository_searchresultrepository_findalllatestuniqueresults",
+      "searchresultrepository_searchresultrepository_findcompetitors",
+      "searchresultrepository_searchresultrepository_findpopularcategories",
+      "searchresultrepository_searchresultrepository_findproductsbycategory",
+      "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
+      "searchresultrepository_searchresultrepository_findtrendingbyfrequency",
+      "searchresultrepository_trendingitemprojection",
+      "searchresultrepository_trendingitemprojection_getcategory",
+      "searchresultrepository_trendingitemprojection_getscore",
+      "trendingservice_trendingservice",
+      "trendingservice_trendingservice_gettrending",
+      "trendingservice_trendingservice_loadcategories",
+      "trendingservice_trendingservice_loadtrending"
+    ],
+    "1": [
+      "backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
+      "backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
+      "backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
+      "frontend_src_app_api_suggest_route_ts",
+      "redditapiclient_redditapiclient",
+      "redditapiclient_redditapiclient_ensureauthenticated",
+      "redditapiclient_redditapiclient_fetchcomments",
+      "redditapiclient_redditapiclient_healthcheck",
+      "redditapiclient_redditapiclient_redditapiclient",
+      "redditapiclient_redditapiclient_searchfallback",
+      "redditapiclient_redditapiclient_searchposts",
+      "redditapiclient_redditapiclient_warmuptoken",
+      "redditjsonscraper_redditjsonscraper",
+      "redditjsonscraper_redditjsonscraper_addjitter",
+      "redditjsonscraper_redditjsonscraper_getrandomuseragent",
+      "redditjsonscraper_redditjsonscraper_redditjsonscraper",
+      "redditjsonscraper_redditjsonscraper_searchposts",
+      "redditratelimiter_redditratelimiter",
+      "redditratelimiter_redditratelimiter_acquireapitoken",
+      "redditratelimiter_redditratelimiter_acquirescrapertoken",
+      "redditratelimiter_redditratelimiter_createbucket",
+      "redditratelimiter_redditratelimiter_redditratelimiter",
+      "route_get"
+    ],
+    "2": [
+      "architecture_ai_provider_abstraction",
+      "architecture_document",
+      "architecture_dynamodb_ttl_cache",
+      "architecture_incremental_cursor_strategy",
+      "architecture_platform_provider_strategy",
+      "architecture_rate_limit_resilience",
+      "architecture_reddit_fallback_chain",
+      "architecture_search_orchestrator_flow",
+      "architecture_sqlite_primary_store",
+      "frontend_readme_document",
+      "frontend_readme_nextjs_scaffold",
+      "implementation_plan_document",
+      "implementation_plan_phased_delivery",
+      "implementation_plan_platform_agnostic_vision",
+      "implementation_plan_zero_cost_cloud",
+      "pattern-grey-wide_neutral_ui_texture",
+      "pattern-grey-wide_social_interaction_motif",
+      "pattern-grey-wide_visual_artifact",
+      "readme_backend_pipeline_contract",
+      "readme_document",
+      "readme_frontend_product_experience"
+    ],
+    "3": [
+      "backend_src_main_java_com_crowdlens_model_entity_searchresult_java",
+      "backend_src_main_java_com_crowdlens_provider_platformregistry_java",
+      "backend_src_main_java_com_crowdlens_repository_socialpostrepository_java",
+      "backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
+      "platformregistry_platformregistry",
+      "platformregistry_platformregistry_getenabledplatforms",
+      "platformregistry_platformregistry_platformregistry",
+      "platformregistry_platformregistry_searchall",
+      "searchjoblistener_searchjoblistener",
+      "searchjoblistener_searchjoblistener_buildresponse",
+      "searchjoblistener_searchjoblistener_normalize",
+      "searchjoblistener_searchjoblistener_onmessage",
+      "searchjoblistener_searchjoblistener_processjob",
+      "searchresult_searchresult",
+      "searchresult_searchresult_prepersist",
+      "searchresultrepository_trendingitemprojection_getquery",
+      "socialpostrepository_socialpostrepository",
+      "socialpostrepository_socialpostrepository_existsbyplatformid",
+      "socialpostrepository_socialpostrepository_findbysearchresultid"
+    ],
+    "4": [
+      "aianalysisengine_empty",
+      "backend_src_main_java_com_crowdlens_service_cacheservice_java",
+      "backend_src_main_java_com_crowdlens_service_imageresolutionservice_java",
+      "backend_src_main_java_com_crowdlens_util_jaccardutils_java",
+      "cacheservice_cacheservice",
+      "cacheservice_cacheservice_cacheservice",
+      "cacheservice_cacheservice_ensuretableexists",
+      "cacheservice_cacheservice_evict",
+      "cacheservice_cacheservice_findsimilar",
+      "cacheservice_cacheservice_get",
+      "cacheservice_cacheservice_hashquery",
+      "cacheservice_cacheservice_serialize",
+      "imageresolutionservice_imageresolutionservice",
+      "imageresolutionservice_imageresolutionservice_encodequery",
+      "imageresolutionservice_imageresolutionservice_fetchfromamazon",
+      "imageresolutionservice_imageresolutionservice_infermimetype",
+      "imageresolutionservice_imageresolutionservice_tobase64datauri",
+      "jaccardutils_jaccardutils",
+      "jaccardutils_jaccardutils_calculatesimilarity"
+    ],
+    "5": [
+      "backend_src_main_java_com_crowdlens_provider_reddit_redditdataaggregator_java",
+      "backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
+      "redditdataaggregator_redditdataaggregator",
+      "redditdataaggregator_redditdataaggregator_aggregate",
+      "redditdataaggregator_redditdataaggregator_extractimageurl",
+      "redditdataaggregator_redditdataaggregator_isdirectimageurl",
+      "redditdataaggregator_redditdataaggregator_normalize",
+      "redditdataaggregator_redditdataaggregator_passesfilters",
+      "redditdataaggregator_redditdataaggregator_tosocialpostdto",
+      "redditprovider_redditprovider",
+      "redditprovider_redditprovider_deduplicateraw",
+      "redditprovider_redditprovider_fetchcommentsfromtopposts",
+      "redditprovider_redditprovider_getplatformname",
+      "redditprovider_redditprovider_healthcheck",
+      "redditprovider_redditprovider_logredditresponse",
+      "redditprovider_redditprovider_search",
+      "redditprovider_redditprovider_truncate"
+    ],
+    "6": [
+      "backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
+      "backend_src_main_java_com_crowdlens_model_dto_searchrequest_java",
+      "backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
+      "cacheservice_cacheservice_deserialize",
+      "searchcontroller_searchcontroller",
+      "searchcontroller_searchcontroller_getjobstatus",
+      "searchcontroller_searchcontroller_search",
+      "searchorchestrator_searchorchestrator",
+      "searchorchestrator_searchorchestrator_enqueuejob",
+      "searchorchestrator_searchorchestrator_enrichwithcompetitors",
+      "searchorchestrator_searchorchestrator_getcachedresult",
+      "searchorchestrator_searchorchestrator_getjob",
+      "searchorchestrator_searchorchestrator_getresultforjob",
+      "searchorchestrator_searchorchestrator_normalizequery",
+      "searchorchestrator_searchorchestrator_persistjob",
+      "searchrequest_effectivelimit",
+      "searchrequest_effectivemaxcomments"
+    ],
+    "7": [
+      "aianalysisengine_aianalysisengine",
+      "aianalysisengine_aianalysisengine_aianalysisengine",
+      "aianalysisengine_aianalysisengine_analyze",
+      "aianalysisengine_aianalysisengine_analyzefallback",
+      "aianalysisengine_aianalysisengine_parseairesponse",
+      "aianalysisengine_aianalysisengine_parsecompetitorseeds",
+      "aianalysisengine_aianalysisengine_parseevidencesnippets",
+      "aianalysisengine_aianalysisengine_parsemetrics",
+      "aianalysisengine_aianalysisengine_parsestringarray",
+      "aianalysisengine_aianalysisengine_suggestcompetitors",
+      "aianalysisengine_aianalysisengine_todouble",
+      "aianalysisengine_error",
+      "backend_src_main_java_com_crowdlens_service_aianalysisengine_java"
+    ],
+    "8": [
+      "aianalysisengine_aianalysisengine_healthcheck",
+      "backend_src_main_java_com_crowdlens_controller_globalexceptionhandler_java",
+      "backend_src_main_java_com_crowdlens_controller_healthcontroller_java",
+      "cacheservice_cacheservice_put",
+      "globalexceptionhandler_globalexceptionhandler",
+      "globalexceptionhandler_globalexceptionhandler_handlegeneral",
+      "globalexceptionhandler_globalexceptionhandler_handlenotfound",
+      "globalexceptionhandler_globalexceptionhandler_handlevalidation",
+      "healthcontroller_healthcontroller",
+      "healthcontroller_healthcontroller_health",
+      "platformregistry_platformregistry_healthcheckall"
+    ],
+    "9": [
+      "backend_src_main_java_com_crowdlens_service_geminichatservice_java",
+      "backend_src_main_java_com_crowdlens_service_loadinghintsservice_java",
+      "geminichatservice_geminichatservice",
+      "geminichatservice_geminichatservice_call",
+      "geminichatservice_geminichatservice_callfallback",
+      "geminichatservice_geminichatservice_geminichatservice",
+      "geminichatservice_geminichatservice_ishealthy",
+      "loadinghintsservice_loadinghintsservice",
+      "loadinghintsservice_loadinghintsservice_generatewithgemini",
+      "searchcontroller_searchcontroller_getloadinghints"
+    ],
+    "10": [
+      "api_fetchtrending",
+      "api_polljob",
+      "api_searchcrowdlens",
+      "api_sleep",
+      "frontend_src_app_page_tsx",
+      "frontend_src_lib_api_ts",
+      "page_handlesearch"
+    ],
+    "11": [
+      "appconfig_appconfig",
+      "appconfig_appconfig_dynamodbclient",
+      "appconfig_appconfig_redditpublicwebclient",
+      "appconfig_appconfig_redditwebclient",
+      "appconfig_appconfig_webclientbuilder",
+      "backend_src_main_java_com_crowdlens_config_appconfig_java"
+    ],
+    "12": [
+      "backend_src_main_java_com_crowdlens_service_promptbuilder_java",
+      "promptbuilder_promptbuilder",
+      "promptbuilder_promptbuilder_buildprompt",
+      "promptbuilder_promptbuilder_formatcandidateimages",
+      "promptbuilder_promptbuilder_formatposts",
+      "promptbuilder_promptbuilder_truncate"
+    ],
+    "13": [
+      "backend_src_main_java_com_crowdlens_provider_platformprovider_java",
+      "platformprovider_platformprovider",
+      "platformprovider_platformprovider_getplatformname",
+      "platformprovider_platformprovider_healthcheck",
+      "platformprovider_platformprovider_search"
+    ],
+    "14": [
+      "frontend_src_components_searchbar_tsx",
+      "searchbar_handlekeydown",
+      "searchbar_handler",
+      "searchbar_handlesubmit",
+      "searchbar_handlesuggestionclick"
+    ],
+    "15": [
+      "backend_src_main_java_com_crowdlens_model_entity_searchjob_java",
+      "searchjob_searchjob",
+      "searchjob_searchjob_oncreate",
+      "searchjob_searchjob_onupdate"
+    ],
+    "16": [
+      "competitorcard_deltacolor",
+      "competitorcard_scorecolor",
+      "competitorcard_scoredelta",
+      "frontend_src_components_competitorcard_tsx"
+    ],
+    "17": [
+      "backend_src_main_java_com_crowdlens_crowdlensapplication_java",
+      "crowdlensapplication_crowdlensapplication",
+      "crowdlensapplication_crowdlensapplication_main"
+    ],
+    "18": [
+      "backend_src_main_java_com_crowdlens_config_openairestclientconfig_java",
+      "openairestclientconfig_openairestclientconfig",
+      "openairestclientconfig_openairestclientconfig_restclientcustomizer"
+    ],
+    "19": [
+      "backend_src_main_java_com_crowdlens_config_openapiconfig_java",
+      "openapiconfig_openapiconfig",
+      "openapiconfig_openapiconfig_crowdlensopenapi"
+    ],
+    "20": [
+      "backend_src_main_java_com_crowdlens_config_redisconfig_java",
+      "redisconfig_redisconfig",
+      "redisconfig_redisconfig_lettucejvmdnsresolver"
+    ],
+    "21": [
+      "backend_src_main_java_com_crowdlens_controller_trendingcontroller_java",
+      "trendingcontroller_trendingcontroller",
+      "trendingcontroller_trendingcontroller_gettrending"
+    ],
+    "22": [
+      "backend_src_main_java_com_crowdlens_model_entity_socialpost_java",
+      "socialpost_socialpost",
+      "socialpost_socialpost_prepersist"
+    ],
+    "23": [
+      "backend_src_main_java_com_crowdlens_repository_searchjobrepository_java",
+      "searchjobrepository_searchjobrepository",
+      "searchjobrepository_searchjobrepository_failallincomplete"
+    ],
+    "24": [
+      "frontend_src_components_metricsgrid_tsx",
+      "metricsgrid_scorecolor",
+      "metricsgrid_scorelabel"
+    ],
+    "25": [
+      "frontend_src_app_layout_tsx",
+      "layout_rootlayout"
+    ],
+    "26": [
+      "frontend_src_components_navbar_tsx",
+      "navbar_navbar"
+    ],
+    "27": [
+      "frontend_src_components_scorecircle_tsx",
+      "scorecircle_scorecircle"
+    ],
+    "28": [
+      "frontend_src_components_sharecard_tsx",
+      "sharecard_fallbackimageurl"
+    ],
+    "29": [
+      "frontend_src_components_shareprompt_tsx",
+      "shareprompt_shareprompt"
+    ],
+    "30": [
+      "frontend_src_components_trendingsection_tsx",
+      "trendingsection_handler"
+    ],
+    "31": [
+      "frontend_src_components_verdictcard_tsx",
+      "verdictcard_fallbackimageurl"
+    ],
+    "32": [
+      "frontend_src_lib_usesearchsuggestions_ts",
+      "usesearchsuggestions_usesearchsuggestions"
+    ],
+    "33": [
+      "frontend_src_lib_usesharecard_ts",
+      "usesharecard_usesharecard"
+    ],
+    "34": [
+      "backend_src_main_java_com_crowdlens_config_dynamodbproperties_java"
+    ],
+    "35": [
+      "backend_src_main_java_com_crowdlens_config_ratelimitproperties_java"
+    ],
+    "36": [
+      "backend_src_main_java_com_crowdlens_config_redditproperties_java"
+    ],
+    "37": [
+      "backend_src_main_java_com_crowdlens_model_dto_competitordto_java"
+    ],
+    "38": [
+      "backend_src_main_java_com_crowdlens_model_dto_jobstatusresponse_java"
+    ],
+    "39": [
+      "backend_src_main_java_com_crowdlens_model_dto_searchresponse_java"
+    ],
+    "40": [
+      "backend_src_main_java_com_crowdlens_model_dto_socialpostdto_java"
+    ],
+    "41": [
+      "backend_src_main_java_com_crowdlens_model_dto_trendingresponse_java"
+    ],
+    "42": [
+      "backend_src_main_java_com_crowdlens_service_searchjobmessage_java"
+    ],
+    "43": [
+      "frontend_eslint_config_mjs"
+    ],
+    "44": [
+      "frontend_next_env_d_ts"
+    ],
+    "45": [
+      "frontend_next_config_ts"
+    ],
+    "46": [
+      "frontend_postcss_config_mjs"
+    ],
+    "47": [
+      "frontend_src_components_opinionblocks_tsx"
+    ],
+    "48": [
+      "frontend_src_components_resultsview_tsx"
+    ],
+    "49": [
+      "frontend_src_components_shimmerskeleton_tsx"
+    ],
+    "50": [
+      "architecture_layered_ntier_architecture"
+    ]
+  },
+  "cohesion": {
+    "0": 0.13,
+    "1": 0.14,
+    "2": 0.12,
+    "3": 0.13,
+    "4": 0.15,
+    "5": 0.18,
+    "6": 0.19,
+    "7": 0.29,
+    "8": 0.25,
+    "9": 0.22,
+    "10": 0.38,
+    "11": 0.33,
+    "12": 0.53,
+    "13": 0.4,
+    "14": 0.4,
+    "15": 0.5,
+    "16": 0.5,
+    "17": 0.67,
+    "18": 0.67,
+    "19": 0.67,
+    "20": 0.67,
+    "21": 0.67,
+    "22": 0.67,
+    "23": 0.67,
+    "24": 0.67,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0,
+    "48": 1.0,
+    "49": 1.0,
+    "50": 1.0
+  },
+  "gods": [
+    {
+      "id": "route_get",
+      "label": "GET()",
+      "degree": 17
+    },
+    {
+      "id": "aianalysisengine_aianalysisengine",
+      "label": "AIAnalysisEngine",
+      "degree": 12
+    },
+    {
+      "id": "aianalysisengine_error",
+      "label": "error()",
+      "degree": 12
+    },
+    {
+      "id": "cacheservice_cacheservice",
+      "label": "CacheService",
+      "degree": 10
+    },
+    {
+      "id": "redditapiclient_redditapiclient",
+      "label": "RedditApiClient",
+      "degree": 8
+    },
+    {
+      "id": "redditprovider_redditprovider",
+      "label": "RedditProvider",
+      "degree": 8
+    },
+    {
+      "id": "searchorchestrator_searchorchestrator",
+      "label": "SearchOrchestrator",
+      "degree": 8
+    },
+    {
+      "id": "redditdataaggregator_redditdataaggregator",
+      "label": "RedditDataAggregator",
+      "degree": 7
+    },
+    {
+      "id": "searchresultrepository_searchresultrepository",
+      "label": "SearchResultRepository",
+      "degree": 7
+    },
+    {
+      "id": "aianalysisengine_empty",
+      "label": "empty()",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Social Interaction Icon Motif",
+      "target": "Platform-Agnostic Product Vision",
+      "source_files": [
+        "frontend/public/pattern-grey-wide.png",
+        "implementation_plan.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "rationale_for",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 image); connects across different repos/directories"
+    },
+    {
+      "source": "Default Next.js Scaffold Guidance",
+      "target": "Frontend Product Experience Positioning",
+      "source_files": [
+        "frontend/README.md",
+        "README.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "semantically_similar_to",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; semantically similar concepts with no structural link"
+    },
+    {
+      "source": "Frontend Product Experience Positioning",
+      "target": "Social Interaction Icon Motif",
+      "source_files": [
+        "README.md",
+        "frontend/public/pattern-grey-wide.png"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 image); connects across different repos/directories"
+    },
+    {
+      "source": "Phased Delivery Plan",
+      "target": "Search Orchestrator Flow",
+      "source_files": [
+        "implementation_plan.md",
+        "architecture.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "rationale_for",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `Phased Delivery Plan` unexpectedly reaches hub `Search Orchestrator Flow`"
+    },
+    {
+      "source": "handleSearch()",
+      "target": "searchCrowdLens()",
+      "source_files": [
+        "frontend\\src\\app\\page.tsx",
+        "frontend\\src\\lib\\api.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    }
+  ],
+  "suggested_questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `GET()` connect `Community 1` to `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 12`?",
+      "why": "High betweenness centrality (0.103) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `error()` connect `Community 7` to `Community 1`, `Community 3`, `Community 5`, `Community 6`, `Community 8`?",
+      "why": "High betweenness centrality (0.086) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `sleep()` connect `Community 10` to `Community 1`?",
+      "why": "High betweenness centrality (0.026) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 16 inferred relationships involving `GET()` (e.g. with `.search()` and `.getJobStatus()`) actually correct?",
+      "why": "`GET()` has 16 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 7 inferred relationships involving `error()` (e.g. with `.handleGeneral()` and `.getJobStatus()`) actually correct?",
+      "why": "`error()` has 7 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Frontend README`, `Layered N-Tier Architecture`, `Rate Limiting and Resilience Controls` to the rest of the system?",
+      "why": "6 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
