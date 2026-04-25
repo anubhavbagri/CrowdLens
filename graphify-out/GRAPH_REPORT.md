@@ -1,7 +1,8 @@
-# Graph Report - .  (2026-04-20)
+# Graph Report - D:\indie side projects\CrowdLens  (2026-04-25)
 
 ## Corpus Check
-- Corpus is ~31,432 words - fits in a single context window. You may not need a graph.
+- 65 files · ~50,668 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 - 271 nodes · 354 edges · 51 communities detected
@@ -74,14 +75,14 @@
 10. `empty()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Social Interaction Icon Motif` --rationale_for--> `Platform-Agnostic Product Vision`  [INFERRED]
-  frontend/public/pattern-grey-wide.png → implementation_plan.md
-- `Default Next.js Scaffold Guidance` --semantically_similar_to--> `Frontend Product Experience Positioning`  [INFERRED] [semantically similar]
-  frontend/README.md → README.md
+- `Platform-Agnostic Product Vision` --rationale_for--> `Social Interaction Icon Motif`  [INFERRED]
+  implementation_plan.md → frontend/public/pattern-grey-wide.png
+- `Frontend Product Experience Positioning` --semantically_similar_to--> `Default Next.js Scaffold Guidance`  [INFERRED] [semantically similar]
+  README.md → frontend/README.md
 - `Frontend Product Experience Positioning` --conceptually_related_to--> `Social Interaction Icon Motif`  [INFERRED]
   README.md → frontend/public/pattern-grey-wide.png
-- `Phased Delivery Plan` --rationale_for--> `Search Orchestrator Flow`  [INFERRED]
-  implementation_plan.md → architecture.md
+- `Search Orchestrator Flow` --rationale_for--> `Phased Delivery Plan`  [INFERRED]
+  architecture.md → implementation_plan.md
 - `handleSearch()` --calls--> `searchCrowdLens()`  [INFERRED]
   frontend\src\app\page.tsx → frontend\src\lib\api.ts
 

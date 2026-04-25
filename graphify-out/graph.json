@@ -2299,9 +2299,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_document",
       "community": 2,
-      "norm_label": "architecture document"
+      "norm_label": "architecture document",
+      "id": "architecture_document"
     },
     {
       "label": "Implementation Plan Document",
@@ -2312,9 +2312,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "implementation_plan_document",
       "community": 2,
-      "norm_label": "implementation plan document"
+      "norm_label": "implementation plan document",
+      "id": "implementation_plan_document"
     },
     {
       "label": "Repository README",
@@ -2325,9 +2325,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_document",
       "community": 2,
-      "norm_label": "repository readme"
+      "norm_label": "repository readme",
+      "id": "readme_document"
     },
     {
       "label": "Frontend README",
@@ -2338,9 +2338,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "frontend_readme_document",
       "community": 2,
-      "norm_label": "frontend readme"
+      "norm_label": "frontend readme",
+      "id": "frontend_readme_document"
     },
     {
       "label": "Grey Social Icon Pattern",
@@ -2351,9 +2351,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "pattern-grey-wide_visual_artifact",
       "community": 2,
-      "norm_label": "grey social icon pattern"
+      "norm_label": "grey social icon pattern",
+      "id": "pattern-grey-wide_visual_artifact"
     },
     {
       "label": "Layered N-Tier Architecture",
@@ -2364,9 +2364,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_layered_ntier_architecture",
       "community": 50,
-      "norm_label": "layered n-tier architecture"
+      "norm_label": "layered n-tier architecture",
+      "id": "architecture_layered_ntier_architecture"
     },
     {
       "label": "Platform Provider Strategy",
@@ -2377,9 +2377,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_platform_provider_strategy",
       "community": 2,
-      "norm_label": "platform provider strategy"
+      "norm_label": "platform provider strategy",
+      "id": "architecture_platform_provider_strategy"
     },
     {
       "label": "AI Provider Abstraction",
@@ -2390,9 +2390,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_ai_provider_abstraction",
       "community": 2,
-      "norm_label": "ai provider abstraction"
+      "norm_label": "ai provider abstraction",
+      "id": "architecture_ai_provider_abstraction"
     },
     {
       "label": "Search Orchestrator Flow",
@@ -2403,9 +2403,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_search_orchestrator_flow",
       "community": 2,
-      "norm_label": "search orchestrator flow"
+      "norm_label": "search orchestrator flow",
+      "id": "architecture_search_orchestrator_flow"
     },
     {
       "label": "Reddit API-to-Scraper Fallback Chain",
@@ -2416,9 +2416,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_reddit_fallback_chain",
       "community": 2,
-      "norm_label": "reddit api-to-scraper fallback chain"
+      "norm_label": "reddit api-to-scraper fallback chain",
+      "id": "architecture_reddit_fallback_chain"
     },
     {
       "label": "Rate Limiting and Resilience Controls",
@@ -2429,9 +2429,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_rate_limit_resilience",
       "community": 2,
-      "norm_label": "rate limiting and resilience controls"
+      "norm_label": "rate limiting and resilience controls",
+      "id": "architecture_rate_limit_resilience"
     },
     {
       "label": "SQLite Primary Relational Store",
@@ -2442,9 +2442,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_sqlite_primary_store",
       "community": 2,
-      "norm_label": "sqlite primary relational store"
+      "norm_label": "sqlite primary relational store",
+      "id": "architecture_sqlite_primary_store"
     },
     {
       "label": "DynamoDB TTL Cache Layer",
@@ -2455,9 +2455,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_dynamodb_ttl_cache",
       "community": 2,
-      "norm_label": "dynamodb ttl cache layer"
+      "norm_label": "dynamodb ttl cache layer",
+      "id": "architecture_dynamodb_ttl_cache"
     },
     {
       "label": "Incremental Cursor Dedup Strategy",
@@ -2468,9 +2468,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "architecture_incremental_cursor_strategy",
       "community": 2,
-      "norm_label": "incremental cursor dedup strategy"
+      "norm_label": "incremental cursor dedup strategy",
+      "id": "architecture_incremental_cursor_strategy"
     },
     {
       "label": "Platform-Agnostic Product Vision",
@@ -2481,9 +2481,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "implementation_plan_platform_agnostic_vision",
       "community": 2,
-      "norm_label": "platform-agnostic product vision"
+      "norm_label": "platform-agnostic product vision",
+      "id": "implementation_plan_platform_agnostic_vision"
     },
     {
       "label": "Zero-Cost Cloud Deployment Strategy",
@@ -2494,9 +2494,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "implementation_plan_zero_cost_cloud",
       "community": 2,
-      "norm_label": "zero-cost cloud deployment strategy"
+      "norm_label": "zero-cost cloud deployment strategy",
+      "id": "implementation_plan_zero_cost_cloud"
     },
     {
       "label": "Phased Delivery Plan",
@@ -2507,9 +2507,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "implementation_plan_phased_delivery",
       "community": 2,
-      "norm_label": "phased delivery plan"
+      "norm_label": "phased delivery plan",
+      "id": "implementation_plan_phased_delivery"
     },
     {
       "label": "Backend Pipeline and API Contract",
@@ -2520,9 +2520,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_backend_pipeline_contract",
       "community": 2,
-      "norm_label": "backend pipeline and api contract"
+      "norm_label": "backend pipeline and api contract",
+      "id": "readme_backend_pipeline_contract"
     },
     {
       "label": "Frontend Product Experience Positioning",
@@ -2533,9 +2533,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_frontend_product_experience",
       "community": 2,
-      "norm_label": "frontend product experience positioning"
+      "norm_label": "frontend product experience positioning",
+      "id": "readme_frontend_product_experience"
     },
     {
       "label": "Default Next.js Scaffold Guidance",
@@ -2546,9 +2546,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "frontend_readme_nextjs_scaffold",
       "community": 2,
-      "norm_label": "default next.js scaffold guidance"
+      "norm_label": "default next.js scaffold guidance",
+      "id": "frontend_readme_nextjs_scaffold"
     },
     {
       "label": "Social Interaction Icon Motif",
@@ -2559,9 +2559,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "pattern-grey-wide_social_interaction_motif",
       "community": 2,
-      "norm_label": "social interaction icon motif"
+      "norm_label": "social interaction icon motif",
+      "id": "pattern-grey-wide_social_interaction_motif"
     },
     {
       "label": "Neutral Repeating UI Texture",
@@ -2572,9 +2572,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "pattern-grey-wide_neutral_ui_texture",
       "community": 2,
-      "norm_label": "neutral repeating ui texture"
+      "norm_label": "neutral repeating ui texture",
+      "id": "pattern-grey-wide_neutral_ui_texture"
     }
   ],
   "links": [
@@ -3101,8 +3101,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L86",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_persistjob",
-      "_tgt": "searchrequest_effectivelimit",
+      "_src": "searchrequest_effectivelimit",
+      "_tgt": "searchorchestrator_searchorchestrator_persistjob",
       "source": "searchrequest_effectivelimit",
       "target": "searchorchestrator_searchorchestrator_persistjob"
     },
@@ -3113,8 +3113,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L87",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_persistjob",
-      "_tgt": "searchrequest_effectivemaxcomments",
+      "_src": "searchrequest_effectivemaxcomments",
+      "_tgt": "searchorchestrator_searchorchestrator_persistjob",
       "source": "searchrequest_effectivemaxcomments",
       "target": "searchorchestrator_searchorchestrator_persistjob"
     },
@@ -3185,8 +3185,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L113",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "searchresult_searchresult",
+      "_src": "searchresult_searchresult",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "searchresult_searchresult",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -3353,8 +3353,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L67",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "platformregistry_platformregistry_searchall",
+      "_src": "platformregistry_platformregistry_searchall",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "platformregistry_platformregistry_searchall",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -3365,8 +3365,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L104",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "platformregistry_platformregistry_getenabledplatforms",
+      "_src": "platformregistry_platformregistry_getenabledplatforms",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "platformregistry_platformregistry_getenabledplatforms",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -3377,8 +3377,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L229",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_buildresponse",
-      "_tgt": "platformregistry_platformregistry_getenabledplatforms",
+      "_src": "platformregistry_platformregistry_getenabledplatforms",
+      "_tgt": "searchjoblistener_searchjoblistener_buildresponse",
       "source": "platformregistry_platformregistry_getenabledplatforms",
       "target": "searchjoblistener_searchjoblistener_buildresponse"
     },
@@ -3593,8 +3593,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
       "source_location": "L136",
       "weight": 1.0,
-      "_src": "redditprovider_redditprovider_fetchcommentsfromtopposts",
-      "_tgt": "redditapiclient_redditapiclient_fetchcomments",
+      "_src": "redditapiclient_redditapiclient_fetchcomments",
+      "_tgt": "redditprovider_redditprovider_fetchcommentsfromtopposts",
       "source": "redditapiclient_redditapiclient_fetchcomments",
       "target": "redditprovider_redditprovider_fetchcommentsfromtopposts"
     },
@@ -3737,8 +3737,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
       "source_location": "L66",
       "weight": 1.0,
-      "_src": "redditprovider_redditprovider_search",
-      "_tgt": "redditdataaggregator_redditdataaggregator_aggregate",
+      "_src": "redditdataaggregator_redditdataaggregator_aggregate",
+      "_tgt": "redditprovider_redditprovider_search",
       "source": "redditdataaggregator_redditdataaggregator_aggregate",
       "target": "redditprovider_redditprovider_search"
     },
@@ -3893,8 +3893,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
       "source_location": "L48",
       "weight": 1.0,
-      "_src": "redditprovider_redditprovider_search",
-      "_tgt": "redditjsonscraper_redditjsonscraper_searchposts",
+      "_src": "redditjsonscraper_redditjsonscraper_searchposts",
+      "_tgt": "redditprovider_redditprovider_search",
       "source": "redditjsonscraper_redditjsonscraper_searchposts",
       "target": "redditprovider_redditprovider_search"
     },
@@ -4313,8 +4313,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CompetitorService.java",
       "source_location": "L124",
       "weight": 1.0,
-      "_src": "competitorservice_competitorservice_fetchandseedfromai",
-      "_tgt": "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
+      "_src": "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
+      "_tgt": "competitorservice_competitorservice_fetchandseedfromai",
       "source": "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
       "target": "competitorservice_competitorservice_fetchandseedfromai"
     },
@@ -4325,8 +4325,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L193",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
-      "_tgt": "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
+      "_src": "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
+      "_tgt": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
       "source": "searchresultrepository_searchresultrepository_findtopbyquerynormalizedorderbycreatedatdesc",
       "target": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded"
     },
@@ -4337,8 +4337,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CompetitorService.java",
       "source_location": "L67",
       "weight": 1.0,
-      "_src": "competitorservice_competitorservice_getcompetitors",
-      "_tgt": "searchresultrepository_searchresultrepository_findcompetitors",
+      "_src": "searchresultrepository_searchresultrepository_findcompetitors",
+      "_tgt": "competitorservice_competitorservice_getcompetitors",
       "source": "searchresultrepository_searchresultrepository_findcompetitors",
       "target": "competitorservice_competitorservice_getcompetitors"
     },
@@ -4349,8 +4349,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L177",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
-      "_tgt": "searchresultrepository_searchresultrepository_findcompetitors",
+      "_src": "searchresultrepository_searchresultrepository_findcompetitors",
+      "_tgt": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
       "source": "searchresultrepository_searchresultrepository_findcompetitors",
       "target": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded"
     },
@@ -4361,8 +4361,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CompetitorService.java",
       "source_location": "L47",
       "weight": 1.0,
-      "_src": "competitorservice_competitorservice_getcompetitors",
-      "_tgt": "searchresultrepository_searchresultrepository_findalllatestuniqueresults",
+      "_src": "searchresultrepository_searchresultrepository_findalllatestuniqueresults",
+      "_tgt": "competitorservice_competitorservice_getcompetitors",
       "source": "searchresultrepository_searchresultrepository_findalllatestuniqueresults",
       "target": "competitorservice_competitorservice_getcompetitors"
     },
@@ -4373,8 +4373,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L41",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadtrending",
-      "_tgt": "searchresultrepository_searchresultrepository_findtrendingbyfrequency",
+      "_src": "searchresultrepository_searchresultrepository_findtrendingbyfrequency",
+      "_tgt": "trendingservice_trendingservice_loadtrending",
       "source": "searchresultrepository_searchresultrepository_findtrendingbyfrequency",
       "target": "trendingservice_trendingservice_loadtrending"
     },
@@ -4385,8 +4385,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L52",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadcategories",
-      "_tgt": "searchresultrepository_searchresultrepository_findpopularcategories",
+      "_src": "searchresultrepository_searchresultrepository_findpopularcategories",
+      "_tgt": "trendingservice_trendingservice_loadcategories",
       "source": "searchresultrepository_searchresultrepository_findpopularcategories",
       "target": "trendingservice_trendingservice_loadcategories"
     },
@@ -4397,8 +4397,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L54",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadcategories",
-      "_tgt": "searchresultrepository_searchresultrepository_findproductsbycategory",
+      "_src": "searchresultrepository_searchresultrepository_findproductsbycategory",
+      "_tgt": "trendingservice_trendingservice_loadcategories",
       "source": "searchresultrepository_searchresultrepository_findproductsbycategory",
       "target": "trendingservice_trendingservice_loadcategories"
     },
@@ -4445,8 +4445,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CompetitorService.java",
       "source_location": "L94",
       "weight": 1.0,
-      "_src": "competitorservice_competitorservice_getcompetitors",
-      "_tgt": "searchresultrepository_trendingitemprojection_getquery",
+      "_src": "searchresultrepository_trendingitemprojection_getquery",
+      "_tgt": "competitorservice_competitorservice_getcompetitors",
       "source": "searchresultrepository_trendingitemprojection_getquery",
       "target": "competitorservice_competitorservice_getcompetitors"
     },
@@ -4457,8 +4457,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L60",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "searchresultrepository_trendingitemprojection_getquery",
+      "_src": "searchresultrepository_trendingitemprojection_getquery",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "searchresultrepository_trendingitemprojection_getquery",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -4469,8 +4469,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L217",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_buildresponse",
-      "_tgt": "searchresultrepository_trendingitemprojection_getquery",
+      "_src": "searchresultrepository_trendingitemprojection_getquery",
+      "_tgt": "searchjoblistener_searchjoblistener_buildresponse",
       "source": "searchresultrepository_trendingitemprojection_getquery",
       "target": "searchjoblistener_searchjoblistener_buildresponse"
     },
@@ -4481,8 +4481,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadtrending",
-      "_tgt": "searchresultrepository_trendingitemprojection_getquery",
+      "_src": "searchresultrepository_trendingitemprojection_getquery",
+      "_tgt": "trendingservice_trendingservice_loadtrending",
       "source": "searchresultrepository_trendingitemprojection_getquery",
       "target": "trendingservice_trendingservice_loadtrending"
     },
@@ -4493,8 +4493,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadtrending",
-      "_tgt": "searchresultrepository_trendingitemprojection_getscore",
+      "_src": "searchresultrepository_trendingitemprojection_getscore",
+      "_tgt": "trendingservice_trendingservice_loadtrending",
       "source": "searchresultrepository_trendingitemprojection_getscore",
       "target": "trendingservice_trendingservice_loadtrending"
     },
@@ -4505,8 +4505,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadtrending",
-      "_tgt": "searchresultrepository_trendingitemprojection_getcategory",
+      "_src": "searchresultrepository_trendingitemprojection_getcategory",
+      "_tgt": "trendingservice_trendingservice_loadtrending",
       "source": "searchresultrepository_trendingitemprojection_getcategory",
       "target": "trendingservice_trendingservice_loadtrending"
     },
@@ -4541,8 +4541,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L54",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadcategories",
-      "_tgt": "searchresultrepository_categoryprojection_getname",
+      "_src": "searchresultrepository_categoryprojection_getname",
+      "_tgt": "trendingservice_trendingservice_loadcategories",
       "source": "searchresultrepository_categoryprojection_getname",
       "target": "trendingservice_trendingservice_loadcategories"
     },
@@ -4553,8 +4553,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\TrendingService.java",
       "source_location": "L55",
       "weight": 1.0,
-      "_src": "trendingservice_trendingservice_loadcategories",
-      "_tgt": "searchresultrepository_categoryprojection_getsearchcount",
+      "_src": "searchresultrepository_categoryprojection_getsearchcount",
+      "_tgt": "trendingservice_trendingservice_loadcategories",
       "source": "searchresultrepository_categoryprojection_getsearchcount",
       "target": "trendingservice_trendingservice_loadcategories"
     },
@@ -4601,8 +4601,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L112",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "socialpostrepository_socialpostrepository_existsbyplatformid",
+      "_src": "socialpostrepository_socialpostrepository_existsbyplatformid",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "socialpostrepository_socialpostrepository_existsbyplatformid",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -4841,8 +4841,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L72",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "aianalysisengine_aianalysisengine_analyze",
+      "_src": "aianalysisengine_aianalysisengine_analyze",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "aianalysisengine_aianalysisengine_analyze",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -4913,8 +4913,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CompetitorService.java",
       "source_location": "L112",
       "weight": 1.0,
-      "_src": "competitorservice_competitorservice_fetchandseedfromai",
-      "_tgt": "aianalysisengine_aianalysisengine_suggestcompetitors",
+      "_src": "aianalysisengine_aianalysisengine_suggestcompetitors",
+      "_tgt": "competitorservice_competitorservice_fetchandseedfromai",
       "source": "aianalysisengine_aianalysisengine_suggestcompetitors",
       "target": "competitorservice_competitorservice_fetchandseedfromai"
     },
@@ -5045,8 +5045,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
       "source_location": "L57",
       "weight": 1.0,
-      "_src": "cacheservice_cacheservice_get",
-      "_tgt": "aianalysisengine_empty",
+      "_src": "aianalysisengine_empty",
+      "_tgt": "cacheservice_cacheservice_get",
       "source": "aianalysisengine_empty",
       "target": "cacheservice_cacheservice_get"
     },
@@ -5057,8 +5057,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
       "source_location": "L126",
       "weight": 1.0,
-      "_src": "cacheservice_cacheservice_findsimilar",
-      "_tgt": "aianalysisengine_empty",
+      "_src": "aianalysisengine_empty",
+      "_tgt": "cacheservice_cacheservice_findsimilar",
       "source": "aianalysisengine_empty",
       "target": "cacheservice_cacheservice_findsimilar"
     },
@@ -5069,8 +5069,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\ImageResolutionService.java",
       "source_location": "L89",
       "weight": 1.0,
-      "_src": "imageresolutionservice_imageresolutionservice_fetchfromamazon",
-      "_tgt": "aianalysisengine_empty",
+      "_src": "aianalysisengine_empty",
+      "_tgt": "imageresolutionservice_imageresolutionservice_fetchfromamazon",
       "source": "aianalysisengine_empty",
       "target": "imageresolutionservice_imageresolutionservice_fetchfromamazon"
     },
@@ -5081,8 +5081,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\ImageResolutionService.java",
       "source_location": "L109",
       "weight": 1.0,
-      "_src": "imageresolutionservice_imageresolutionservice_tobase64datauri",
-      "_tgt": "aianalysisengine_empty",
+      "_src": "aianalysisengine_empty",
+      "_tgt": "imageresolutionservice_imageresolutionservice_tobase64datauri",
       "source": "aianalysisengine_empty",
       "target": "imageresolutionservice_imageresolutionservice_tobase64datauri"
     },
@@ -5093,8 +5093,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L117",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_getresultforjob",
-      "_tgt": "aianalysisengine_empty",
+      "_src": "aianalysisengine_empty",
+      "_tgt": "searchorchestrator_searchorchestrator_getresultforjob",
       "source": "aianalysisengine_empty",
       "target": "searchorchestrator_searchorchestrator_getresultforjob"
     },
@@ -5105,8 +5105,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L48",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_onmessage",
-      "_tgt": "aianalysisengine_error",
+      "_src": "aianalysisengine_error",
+      "_tgt": "searchjoblistener_searchjoblistener_onmessage",
       "source": "aianalysisengine_error",
       "target": "searchjoblistener_searchjoblistener_onmessage"
     },
@@ -5117,8 +5117,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L153",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "aianalysisengine_error",
+      "_src": "aianalysisengine_error",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "aianalysisengine_error",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -5297,8 +5297,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L47",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_getcachedresult",
-      "_tgt": "cacheservice_cacheservice_findsimilar",
+      "_src": "cacheservice_cacheservice_findsimilar",
+      "_tgt": "searchorchestrator_searchorchestrator_getcachedresult",
       "source": "cacheservice_cacheservice_findsimilar",
       "target": "searchorchestrator_searchorchestrator_getcachedresult"
     },
@@ -5321,8 +5321,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L135",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "cacheservice_cacheservice_put",
+      "_src": "cacheservice_cacheservice_put",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "cacheservice_cacheservice_put",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -5345,8 +5345,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L135",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "cacheservice_cacheservice_serialize",
+      "_src": "cacheservice_cacheservice_serialize",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "cacheservice_cacheservice_serialize",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -5357,8 +5357,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L52",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_getcachedresult",
-      "_tgt": "cacheservice_cacheservice_deserialize",
+      "_src": "cacheservice_cacheservice_deserialize",
+      "_tgt": "searchorchestrator_searchorchestrator_getcachedresult",
       "source": "cacheservice_cacheservice_deserialize",
       "target": "searchorchestrator_searchorchestrator_getcachedresult"
     },
@@ -5369,8 +5369,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L118",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_getresultforjob",
-      "_tgt": "cacheservice_cacheservice_deserialize",
+      "_src": "cacheservice_cacheservice_deserialize",
+      "_tgt": "searchorchestrator_searchorchestrator_getresultforjob",
       "source": "cacheservice_cacheservice_deserialize",
       "target": "searchorchestrator_searchorchestrator_getresultforjob"
     },
@@ -5465,8 +5465,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L129",
       "weight": 1.0,
-      "_src": "searchorchestrator_searchorchestrator_enrichwithcompetitors",
-      "_tgt": "competitorservice_competitorservice_getcompetitors",
+      "_src": "competitorservice_competitorservice_getcompetitors",
+      "_tgt": "searchorchestrator_searchorchestrator_enrichwithcompetitors",
       "source": "competitorservice_competitorservice_getcompetitors",
       "target": "searchorchestrator_searchorchestrator_enrichwithcompetitors"
     },
@@ -5561,8 +5561,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\LoadingHintsService.java",
       "source_location": "L54",
       "weight": 1.0,
-      "_src": "loadinghintsservice_loadinghintsservice_generatewithgemini",
-      "_tgt": "geminichatservice_geminichatservice_call",
+      "_src": "geminichatservice_geminichatservice_call",
+      "_tgt": "loadinghintsservice_loadinghintsservice_generatewithgemini",
       "source": "geminichatservice_geminichatservice_call",
       "target": "loadinghintsservice_loadinghintsservice_generatewithgemini"
     },
@@ -5657,8 +5657,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L78",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "imageresolutionservice_imageresolutionservice_fetchfromamazon",
+      "_src": "imageresolutionservice_imageresolutionservice_fetchfromamazon",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "imageresolutionservice_imageresolutionservice_fetchfromamazon",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -5693,8 +5693,8 @@
       "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L86",
       "weight": 1.0,
-      "_src": "searchjoblistener_searchjoblistener_processjob",
-      "_tgt": "imageresolutionservice_imageresolutionservice_tobase64datauri",
+      "_src": "imageresolutionservice_imageresolutionservice_tobase64datauri",
+      "_tgt": "searchjoblistener_searchjoblistener_processjob",
       "source": "imageresolutionservice_imageresolutionservice_tobase64datauri",
       "target": "searchjoblistener_searchjoblistener_processjob"
     },
@@ -6533,8 +6533,8 @@
       "source_file": "implementation_plan.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "implementation_plan_document",
-      "_tgt": "architecture_document",
+      "_src": "architecture_document",
+      "_tgt": "implementation_plan_document",
       "source": "architecture_document",
       "target": "implementation_plan_document"
     },
@@ -6557,8 +6557,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 0.91,
-      "_src": "readme_document",
-      "_tgt": "implementation_plan_document",
+      "_src": "implementation_plan_document",
+      "_tgt": "readme_document",
       "source": "implementation_plan_document",
       "target": "readme_document"
     },
@@ -6569,8 +6569,8 @@
       "source_file": "frontend/README.md",
       "source_location": null,
       "weight": 0.74,
-      "_src": "frontend_readme_document",
-      "_tgt": "readme_document",
+      "_src": "readme_document",
+      "_tgt": "frontend_readme_document",
       "source": "readme_document",
       "target": "frontend_readme_document"
     },
@@ -6605,8 +6605,8 @@
       "source_file": "implementation_plan.md",
       "source_location": null,
       "weight": 0.94,
-      "_src": "implementation_plan_platform_agnostic_vision",
-      "_tgt": "architecture_platform_provider_strategy",
+      "_src": "architecture_platform_provider_strategy",
+      "_tgt": "implementation_plan_platform_agnostic_vision",
       "source": "architecture_platform_provider_strategy",
       "target": "implementation_plan_platform_agnostic_vision"
     },
@@ -6617,8 +6617,8 @@
       "source_file": "architecture.md",
       "source_location": null,
       "weight": 0.96,
-      "_src": "architecture_search_orchestrator_flow",
-      "_tgt": "architecture_platform_provider_strategy",
+      "_src": "architecture_platform_provider_strategy",
+      "_tgt": "architecture_search_orchestrator_flow",
       "source": "architecture_platform_provider_strategy",
       "target": "architecture_search_orchestrator_flow"
     },
@@ -6629,8 +6629,8 @@
       "source_file": "architecture.md",
       "source_location": null,
       "weight": 0.9,
-      "_src": "architecture_reddit_fallback_chain",
-      "_tgt": "architecture_platform_provider_strategy",
+      "_src": "architecture_platform_provider_strategy",
+      "_tgt": "architecture_reddit_fallback_chain",
       "source": "architecture_platform_provider_strategy",
       "target": "architecture_reddit_fallback_chain"
     },
@@ -6641,8 +6641,8 @@
       "source_file": "implementation_plan.md",
       "source_location": null,
       "weight": 0.95,
-      "_src": "implementation_plan_platform_agnostic_vision",
-      "_tgt": "architecture_ai_provider_abstraction",
+      "_src": "architecture_ai_provider_abstraction",
+      "_tgt": "implementation_plan_platform_agnostic_vision",
       "source": "architecture_ai_provider_abstraction",
       "target": "implementation_plan_platform_agnostic_vision"
     },
@@ -6653,8 +6653,8 @@
       "source_file": "architecture.md",
       "source_location": null,
       "weight": 0.96,
-      "_src": "architecture_search_orchestrator_flow",
-      "_tgt": "architecture_ai_provider_abstraction",
+      "_src": "architecture_ai_provider_abstraction",
+      "_tgt": "architecture_search_orchestrator_flow",
       "source": "architecture_ai_provider_abstraction",
       "target": "architecture_search_orchestrator_flow"
     },
@@ -6689,8 +6689,8 @@
       "source_file": "implementation_plan.md",
       "source_location": null,
       "weight": 0.79,
-      "_src": "implementation_plan_phased_delivery",
-      "_tgt": "architecture_search_orchestrator_flow",
+      "_src": "architecture_search_orchestrator_flow",
+      "_tgt": "implementation_plan_phased_delivery",
       "source": "architecture_search_orchestrator_flow",
       "target": "implementation_plan_phased_delivery"
     },
@@ -6701,8 +6701,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 0.92,
-      "_src": "readme_backend_pipeline_contract",
-      "_tgt": "architecture_search_orchestrator_flow",
+      "_src": "architecture_search_orchestrator_flow",
+      "_tgt": "readme_backend_pipeline_contract",
       "source": "architecture_search_orchestrator_flow",
       "target": "readme_backend_pipeline_contract"
     },
@@ -6725,8 +6725,8 @@
       "source_file": "architecture.md",
       "source_location": null,
       "weight": 0.8,
-      "_src": "architecture_incremental_cursor_strategy",
-      "_tgt": "architecture_reddit_fallback_chain",
+      "_src": "architecture_reddit_fallback_chain",
+      "_tgt": "architecture_incremental_cursor_strategy",
       "source": "architecture_reddit_fallback_chain",
       "target": "architecture_incremental_cursor_strategy"
     },
@@ -6737,8 +6737,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 0.89,
-      "_src": "readme_backend_pipeline_contract",
-      "_tgt": "architecture_reddit_fallback_chain",
+      "_src": "architecture_reddit_fallback_chain",
+      "_tgt": "readme_backend_pipeline_contract",
       "source": "architecture_reddit_fallback_chain",
       "target": "readme_backend_pipeline_contract"
     },
@@ -6749,8 +6749,8 @@
       "source_file": "architecture.md",
       "source_location": null,
       "weight": 0.9,
-      "_src": "architecture_dynamodb_ttl_cache",
-      "_tgt": "architecture_sqlite_primary_store",
+      "_src": "architecture_sqlite_primary_store",
+      "_tgt": "architecture_dynamodb_ttl_cache",
       "source": "architecture_sqlite_primary_store",
       "target": "architecture_dynamodb_ttl_cache"
     },
@@ -6761,8 +6761,8 @@
       "source_file": "implementation_plan.md",
       "source_location": null,
       "weight": 0.94,
-      "_src": "implementation_plan_zero_cost_cloud",
-      "_tgt": "architecture_sqlite_primary_store",
+      "_src": "architecture_sqlite_primary_store",
+      "_tgt": "implementation_plan_zero_cost_cloud",
       "source": "architecture_sqlite_primary_store",
       "target": "implementation_plan_zero_cost_cloud"
     },
@@ -6773,8 +6773,8 @@
       "source_file": "implementation_plan.md",
       "source_location": null,
       "weight": 0.94,
-      "_src": "implementation_plan_zero_cost_cloud",
-      "_tgt": "architecture_dynamodb_ttl_cache",
+      "_src": "architecture_dynamodb_ttl_cache",
+      "_tgt": "implementation_plan_zero_cost_cloud",
       "source": "architecture_dynamodb_ttl_cache",
       "target": "implementation_plan_zero_cost_cloud"
     },
@@ -6785,8 +6785,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 0.9,
-      "_src": "readme_backend_pipeline_contract",
-      "_tgt": "architecture_incremental_cursor_strategy",
+      "_src": "architecture_incremental_cursor_strategy",
+      "_tgt": "readme_backend_pipeline_contract",
       "source": "architecture_incremental_cursor_strategy",
       "target": "readme_backend_pipeline_contract"
     },
@@ -6797,8 +6797,8 @@
       "source_file": "frontend/public/pattern-grey-wide.png",
       "source_location": null,
       "weight": 0.72,
-      "_src": "pattern-grey-wide_social_interaction_motif",
-      "_tgt": "implementation_plan_platform_agnostic_vision",
+      "_src": "implementation_plan_platform_agnostic_vision",
+      "_tgt": "pattern-grey-wide_social_interaction_motif",
       "source": "implementation_plan_platform_agnostic_vision",
       "target": "pattern-grey-wide_social_interaction_motif"
     },
@@ -6809,8 +6809,8 @@
       "source_file": "frontend/README.md",
       "source_location": null,
       "weight": 0.66,
-      "_src": "frontend_readme_nextjs_scaffold",
-      "_tgt": "readme_frontend_product_experience",
+      "_src": "readme_frontend_product_experience",
+      "_tgt": "frontend_readme_nextjs_scaffold",
       "source": "readme_frontend_product_experience",
       "target": "frontend_readme_nextjs_scaffold"
     },
