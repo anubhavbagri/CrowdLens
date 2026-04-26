@@ -2,7 +2,7 @@
 
 ## Overview
 
-CrowdLens is a product opinion analysis engine that aggregates Reddit discussions and uses AI to produce structured, dynamic verdicts. The architecture is built for a **single low-powered VM** (2 vCPU / 1 GB RAM) and optimized for sequential processing, minimal memory footprint, and graceful degradation.
+CrowdLens is a product opinion analysis engine that aggregates Reddit discussions and uses AI to produce structured, dynamic verdicts. The architecture is built for a **single VM** (4 vCPU / 24 GB RAM) and optimized for sequential processing, minimal memory footprint, and graceful degradation.
 
 ---
 
