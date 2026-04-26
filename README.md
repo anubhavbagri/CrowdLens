@@ -1,220 +1,305 @@
 # CrowdLens
 
-> Aggregates authentic user opinions from social media platforms and uses AI for structured analysis.
+**Community-sourced product intelligence.** CrowdLens reads Reddit so you don't have to — turning thousands of real opinions into a structured, shareable product verdict with dynamically selected metrics.
 
-Search any product, service, or experience — CrowdLens scrapes Reddit for real opinions, analyzes them with AI, and returns a structured verdict with scores, categories, testimonials, and persona matching.
+Live: [crowdlens.anubhavbagri.com](https://crowdlens.anubhavbagri.com)
+
+---
+
+## What It Does
+
+Search any product. CrowdLens:
+
+1. Scrapes Reddit (OAuth2 + fallback scraper) for relevant posts and comments
+2. Classifies the product category and sub-category
+3. Extracts the top discussion themes — **4 dynamic metrics selected per product** (not fixed templates)
+4. Scores each metric 0–10 based on community sentiment
+5. Produces a blended overall score, a crafted one-sentence verdict, positives/complaints, and persona fits
+6. Suggests similar competing products with estimated scores
+
+Results are returned as a shareable card image (PNG download / copy to clipboard).
+
+---
+
+## Architecture
+
+```
+Next.js (Vercel)  ──►  Spring Boot (OCI VM)  ──►  Redis (RQueue)
+                               │                       │
+                           SQLite                SearchJobListener
+                               │                    │
+                           DynamoDB ◄───── full AI JSON cached here
+```
+
+- **Redis + RQueue** — async job queue. Analysis takes 15–45 seconds; the HTTP request returns immediately with a `jobId` (HTTP 202). The frontend polls every 2 seconds until `COMPLETED`.
+- **SQLite** — job state tracking + lean result index (query, score, category, image URL)
+- **DynamoDB** — full AI JSON response cached with TTL (default 24h). Cache hit → HTTP 200 with instant result.
+- **OpenAI** — primary AI for dynamic metric extraction and verdict generation
+- **Google Gemini** — secondary AI for contextual loading hints only
+- **`concurrency=1`** — one job runs at a time (intentional; 1 GB VM)
+
+See [architecture.md](./architecture.md) for full detail.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Java 17, Spring Boot 3.2, Maven |
-| **AI** | Spring AI (model-agnostic: OpenAI, Anthropic, Gemini, Ollama) |
-| **Database** | SQLite (Embedded) |
-| **Cache** | DynamoDB (TTL-based key-value) |
-| **Rate Limiting** | Bucket4j (token bucket) |
-| **Resilience** | Resilience4j (circuit breaker) |
-| **API Docs** | SpringDoc OpenAPI (Swagger UI) |
-| **Local Dev** | Docker Compose |
-| **Frontend** | Next.js 14, TypeScript, Tailwind CSS v4 |
+### Backend
+- Java 17 / Spring Boot 3.2
+- Spring AI (model-agnostic: OpenAI primary, Gemini secondary)
+- Redis 7 + RQueue (async job queue)
+- SQLite (WAL mode) via Hibernate
+- AWS DynamoDB (response cache)
+- Resilience4j (circuit breakers) + Bucket4j (rate limiting)
+- SpringDoc OpenAPI (Swagger UI)
+- Docker + Docker Compose
+
+### Frontend
+- Next.js 14 / TypeScript
+- Tailwind CSS v4
+- `html2canvas` (share card PNG export)
+- Vercel (hosting)
 
 ---
 
-## Features (v1)
-
-- **AI Verdict & Score**: Concise summaries and a community score (0-100)
-- **Competitor Analysis**: Automatically surfaces and compares alternative products
-- **Dynamic Metrics**: Sentiment metrics tailored specifically to the product category
-- **Pros & Cons**: Breakdown of what people love and complain about
-- **Persona Matching**: "Who is this best for & who should avoid it" analysis
-- **Source Breakdown**: Quoting directly from the Reddit community
-- **Shareable Verdict Card**: Easily share structured insights
-- **Fuzzy Search Suggestions**: Autocomplete dropdown for fast querying
-- **Loading Engagement**: Dynamic loading facts and hints while AI processes
-- **Landing Page Discovery**: Recent searches and popular categories directly on the homepage
-- **Product Images**: Visually identifying the searched product
-- *Note: Design revamp coming soon!*
-
----
-
-## Backend
-
-### Architecture
-
-Layered/N-Tier architecture with pluggable platform providers:
-
-```
-Controller → Orchestrator → AI Engine + Platform Providers → Repositories
-                ↕                        ↕
-           CacheService            Reddit (API + Scraper)
-```
-
-### Design Patterns
-
-| Pattern | Implementation |
-|---------|---------------|
-| **Strategy** | `PlatformProvider` interface — Reddit now, Twitter/HN pluggable later |
-| **Chain of Responsibility** | `RedditProvider`: OAuth2 API → JSON scraper fallback |
-| **Circuit Breaker** | Resilience4j on Reddit API + OpenAI calls |
-| **Token Bucket** | Bucket4j: 60 req/min (API), 20 req/min (scraper) |
-| **Incremental Cursor** | `ScrapeCursorService`: skips already-seen posts/comments on repeat queries |
-
-### Project Structure
-
-```
-backend/
-├── src/main/java/com/crowdlens/
-│   ├── CrowdLensApplication.java
-│   ├── config/
-│   │   ├── AppConfig.java              # WebClient beans, DynamoDB client
-│   │   ├── OpenApiConfig.java          # Swagger UI config
-│   │   ├── RedditProperties.java
-│   │   ├── DynamoDbProperties.java
-│   │   └── RateLimitProperties.java
-│   ├── controller/
-│   │   ├── SearchController.java       # POST /api/search
-│   │   ├── HealthController.java       # GET /api/health
-│   │   └── GlobalExceptionHandler.java
-│   ├── service/
-│   │   ├── SearchOrchestrator.java     # Full pipeline: cache → search → AI → persist
-│   │   ├── AIAnalysisEngine.java       # Spring AI ChatModel + JSON parsing
-│   │   ├── PromptBuilder.java          # Query-type detection + dynamic categories
-│   │   ├── CacheService.java           # DynamoDB-backed with SHA-256 keys + TTL
-│   │   └── ScrapeCursorService.java    # Incremental cursor for deduplication
-│   ├── provider/
-│   │   ├── PlatformProvider.java       # Strategy interface
-│   │   ├── PlatformRegistry.java       # Auto-discovers providers
-│   │   └── reddit/
-│   │       ├── RedditProvider.java     # Chain: API → scraper → comments → aggregate
-│   │       ├── RedditApiClient.java    # OAuth2 + circuit breaker
-│   │       ├── RedditJsonScraper.java  # Stealth fallback (UA rotation, jitter)
-│   │       ├── RedditDataAggregator.java
-│   │       └── RedditRateLimiter.java  # Dual Bucket4j buckets
-│   ├── model/
-│   │   ├── dto/                        # SearchRequest, SearchResponse, SocialPostDto
-│   │   └── entity/                     # SearchResult, SocialPost, ScrapeCursor (JPA)
-│   └── repository/                     # Spring Data JPA repos
-├── src/main/resources/
-│   ├── application.yml
-│   └── db/migration/V1__init_schema.sql
-├── pom.xml
-└── Dockerfile                          # Multi-stage build (Maven + JRE)
-```
+## Local Development
 
 ### Prerequisites
 
-- **Docker Desktop** — [Install](https://docs.docker.com/desktop/)
-- **Reddit API credentials** — Create a "script" app at [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps)
-- **OpenAI API key** — Get one at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- Java 17+, Maven 3.9+
+- Docker Desktop
+- Node.js 18+
+- Reddit OAuth2 app credentials  
+- OpenAI API key  
+- Gemini API key (optional — loading hints degrade gracefully without it)
+- AWS credentials for DynamoDB (or use local DynamoDB for dev)
 
-### Setup & Run Locally
+### 1. Clone
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/anubhavbagri/CrowdLens.git
 cd CrowdLens
-
-# 2. Create .env from template and fill in your credentials
-cp .env.example .env
-# Edit .env with your Reddit + OpenAI credentials
-
-# 3. Start all services (PostgreSQL + DynamoDB Local + Backend)
-docker compose up --build
-
-# 4. Verify
-curl http://localhost:8080/api/health
 ```
 
-The first build takes ~3-5 minutes (downloading Maven dependencies). Subsequent builds are fast due to Docker layer caching.
+### 2. Backend environment
 
-### API Endpoints
+Create `.env` in the project root:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/search` | Analyze crowd opinions for a query |
-| `GET` | `/api/health` | Service health + Reddit/AI connectivity |
+```env
+# OpenAI (primary AI — product analysis)
+OPENAI_API_KEY=sk-...
+AI_MODEL=gpt-4o
 
-**Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+# Gemini (secondary AI — loading hints only)
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-2.0-flash
 
-#### Search Request
+# Reddit OAuth2
+REDDIT_CLIENT_ID=...
+REDDIT_CLIENT_SECRET=...
+REDDIT_USERNAME=...
+REDDIT_PASSWORD=...
+REDDIT_USER_AGENT=CrowdLens/1.0
+
+# AWS DynamoDB
+AWS_REGION=ap-south-1
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+
+# Redis (set automatically by docker-compose — only needed for external Redis)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Optional
+SHOW_SQL=false
+```
+
+### 3. Start with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+This starts:
+- `crowdlens-redis` (Redis 7, in-memory, no persistence)
+- `crowdlens-backend` (Spring Boot on port 8080, waits for Redis)
+
+SQLite database is stored in a Docker volume at `/app/data/crowdlens.db`.
+
+### 4. Verify backend
+
+```
+GET  http://localhost:8080/api/health
+     http://localhost:8080/swagger-ui.html
+```
+
+### 5. Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.local.example .env.local
+# Set NEXT_PUBLIC_API_URL=http://localhost:8080/api
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## API Reference
+
+### POST `/api/search`
+
+Submits a search. Returns immediately — either a cached result (HTTP 200) or a job receipt (HTTP 202).
 
 ```json
-POST /api/search
+// Request
 {
-  "query": "creatine supplement",
-  "limit": 10,         // optional, default: 10, max: 50
-  "maxComments": 50    // optional, default: 50, max: 100
+  "query": "JBL Flip 6",
+  "limit": 10,
+  "maxComments": 50
 }
+
+// Cache HIT → HTTP 200: full SearchResponse (see below)
+
+// Cache MISS → HTTP 202:
+{ "jobId": "uuid", "status": "PENDING" }
 ```
 
-#### Search Response
+### GET `/api/search/{jobId}`
+
+Poll this every 2 seconds until status changes.
+
+```json
+// Still running:
+{ "jobId": "...", "status": "IN_PROGRESS" }
+
+// Done:
+{ "jobId": "...", "status": "COMPLETED", "result": { /* SearchResponse */ } }
+
+// Failed:
+{ "jobId": "...", "status": "FAILED", "error": "..." }
+```
+
+### SearchResponse shape
 
 ```json
 {
   "id": "uuid",
-  "query": "creatine supplement",
-  "overallScore": 82,
-  "overallVerdict": "Highly Recommended",
-  "verdictSummary": "...",
-  "categories": [
-    { "name": "Effectiveness", "rating": "Positive", "summary": "...", "highlights": [...] }
+  "query": "JBL Flip 6",
+  "productCategory": "Audio",
+  "productSubCategory": "Bluetooth Speaker",
+  "overallScore": 84,
+  "verdictSentence": "Excellent portable speaker with punchy sound and great battery, though bass-heavy tuning won't suit everyone.",
+  "metrics": [
+    { "label": "Sound Quality", "score": 8.8, "explanation": "..." },
+    { "label": "Battery Life",  "score": 8.5, "explanation": "..." },
+    { "label": "Portability",   "score": 9.1, "explanation": "..." },
+    { "label": "Loudness",      "score": 8.0, "explanation": "..." }
   ],
-  "testimonials": [
-    { "text": "...", "sentiment": "positive", "source": "r/supplements", "permalink": "..." }
+  "positives": ["Punchy bass", "IP67 waterproof", "Compact size"],
+  "complaints": ["No EQ control", "Slightly overpriced"],
+  "bestFor": ["Outdoor use", "Casual listeners", "Travel"],
+  "avoid": ["Audiophiles wanting flat response"],
+  "evidenceSnippets": [
+    { "text": "...", "source": "r/audiophile", "permalink": "https://..." }
   ],
-  "personaAnalysis": {
-    "question": "Is this right for you?",
-    "fits": [
-      { "persona": "Gym Regular", "verdict": "Great fit", "reason": "..." }
-    ]
-  },
+  "productImageUrl": "https://...",
+  "productImageBase64": "data:image/jpeg;base64,...",
   "postCount": 20,
   "sourcePlatforms": ["reddit"],
-  "analyzedAt": "2026-03-09T...",
+  "analyzedAt": "2026-04-26T12:00:00Z",
   "cached": false
 }
 ```
 
-### Querying Databases Locally
+### GET `/api/loading-hints?q={query}`
 
-**SQLite:**
-```bash
-# SQLite DB is stored locally in the mounted /data volume or backend directory
-sqlite3 backend/data/crowdlens.db
-```
+Returns 4–5 Gemini-generated loading messages for the query. Returns empty list if Gemini is unavailable.
 
-**DynamoDB Local:**
-```bash
-aws dynamodb scan --table-name crowdlens-cache \
-  --endpoint-url http://localhost:8000 --region us-east-1
-```
+### GET `/api/trending`
 
-### Environment Variables
+Returns recent high-scoring searches from SQLite.
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `REDDIT_CLIENT_ID` | ✅ | — | Reddit app client ID |
-| `REDDIT_CLIENT_SECRET` | ✅ | — | Reddit app secret |
-| `REDDIT_USERNAME` | ✅ | — | Reddit account username |
-| `REDDIT_PASSWORD` | ✅ | — | Reddit account password |
-| `OPENAI_API_KEY` | ✅ | — | OpenAI API key |
-| `AI_MODEL` | | `gpt-4o-mini` | AI model to use |
-| `DYNAMODB_ENDPOINT` | | `http://localhost:8000` | DynamoDB endpoint (use AWS URL in prod) |
-| `AWS_ACCESS_KEY_ID` | | — | AWS IAM Access Key for DynamoDB |
-| `AWS_SECRET_ACCESS_KEY` | | — | AWS IAM Secret Key for DynamoDB |
-| `AWS_REGION` | | `us-east-1` | AWS Region for DynamoDB |
-| `CACHE_TTL_HOURS` | | `24` | Cache expiry in hours |
+### GET `/api/health`
+
+Returns backend health status + AI connectivity check.
 
 ---
 
-## Frontend
+## Production Deployment
 
-Built with Next.js 14, TypeScript, and Tailwind CSS v4. Features a tally.shop-inspired clean UI with micro-animations, glassmorphism, and a seamless single-page search experience.
+### Backend (OCI Ubuntu VM)
+
+```bash
+# SSH into VM
+cd ~/CrowdLens
+
+# Pull latest
+git pull origin main
+
+# Rebuild and restart
+docker compose up --build -d
+
+# Check logs
+docker compose logs -f backend
+docker compose logs -f redis
+```
+
+**Required on server:** `.env` file with all credentials listed in the Local Development section above.
+
+SQLite data persists in Docker volume `sqlite_data` — survives container restarts and rebuilds.
+
+### Frontend (Vercel)
+
+1. Connect GitHub repo to Vercel
+2. Set root directory: `frontend`
+3. Add environment variable: `NEXT_PUBLIC_API_URL = https://crowdlens-api.anubhavbagri.com/api`
+4. Deploy — Vercel auto-deploys on every `main` push
+
+### Custom Domains
+
+| Service | Domain | DNS |
+|---|---|---|
+| Frontend | `crowdlens.anubhavbagri.com` | CNAME → `cname.vercel-dns.com` |
+| Backend | `crowdlens-api.anubhavbagri.com` | A record → OCI VM IP |
 
 ---
 
-## License
+## Project Structure
 
-MIT
+```
+CrowdLens/
+├── backend/
+│   ├── src/main/java/com/crowdlens/
+│   │   ├── controller/         # REST endpoints
+│   │   ├── service/            # Business logic + AI + queue listener
+│   │   ├── model/dto/          # Request/response shapes
+│   │   ├── model/entity/       # JPA entities (SQLite)
+│   │   ├── provider/           # Reddit scraper
+│   │   ├── config/             # Spring config beans
+│   │   └── util/               # JaccardUtils, helpers
+│   ├── src/main/resources/
+│   │   └── application.yml
+│   └── Dockerfile
+├── frontend/
+│   └── src/
+│       ├── app/                # Next.js pages
+│       ├── components/         # UI components
+│       └── lib/api.ts          # API client + polling logic
+├── docker-compose.yml          # Redis + backend
+├── architecture.md
+├── implementation_plan.md
+└── README.md
+```
+
+---
+
+## Key Design Rules
+
+- **Metrics are never hardcoded.** The AI selects 4 metrics per product based on what people actually discuss.
+- **One job at a time.** `concurrency=1` on the RQueue listener — safe for 1 GB server.
+- **Full AI JSON never touches SQLite.** Only DynamoDB stores the rich response; SQLite holds lightweight index rows.
+- **Cache miss ≠ slow user experience.** HTTP 202 + polling means the browser stays responsive while the job runs in the background.
+- **AI failure is graceful.** If OpenAI fails, the job is marked `FAILED`, the client shows a retry button, and nothing is cached.

@@ -1,302 +1,229 @@
-# CrowdLens — Implementation Plan
+# CrowdLens — Implementation Plan (Current State)
 
-> *Real People, Real Opinions* — A platform-agnostic search engine that aggregates authentic user opinions from social platforms and uses AI to produce structured, actionable analysis.
-
----
-
-## Project Description
-
-CrowdLens searches Reddit (and future platforms) for authentic user opinions on any product. Unlike traditional search engines that surface SEO-optimized or sponsored content, CrowdLens taps into anonymous, unbiased discussions from real people. It then uses AI to distill hundreds of posts into a structured analysis page — inspired by [tally.shop](https://tally.shop) — with category ratings, sentiment breakdowns, curated testimonials, and an overall verdict.
+> This document reflects the **live, deployed system** as of April 2026.
 
 ---
 
-## Key Features
+## What Is CrowdLens
 
-| Feature | Description |
-|---------|-------------|
-| **🤖 AI Verdict & Score** | Concise summaries and a community score (0-100) |
-| **🥇 Competitor Analysis** | Automatically surfaces and compares alternative products |
-| **📈 Dynamic Metrics** | Sentiment metrics tailored specifically to the product category |
-| **⚖️ Pros & Cons** | Breakdown of what people love and complain about |
-| **💬 Curated Testimonials** | Selects representative Reddit quotes with sentiment labels |
-| **👤 Persona Matching** | "Who is this best for & who should avoid it" analysis |
-| **🔗 Shareable Verdict Card** | Easily share structured insights |
-| **🔎 Fuzzy Search Suggestions**| Autocomplete dropdown for fast querying |
-| **⏳ Loading Engagement** | Dynamic loading facts and hints while AI processes |
-| **🌟 Landing Page Discovery** | Recent searches and popular categories directly on the homepage |
-| **🖼️ Product Images** | Visually identifying the searched product |
-| **🔌 Platform Plugins** | Add new social platforms (Twitter, HN) without modifying core logic |
-| **🧠 Model-Agnostic AI** | Swap OpenAI → Anthropic → Gemini → Ollama via config, zero code changes |
-| **⚡ Smart Caching** | DynamoDB TTL cache — identical queries never hit Reddit or AI twice |
-| **🛡️ Anti-Ban Stealth** | Token bucket, exponential backoff, UA rotation, request jitter |
-| **📈 Incremental Cursor** | Avoids duplicate data, minimizes bandwidth |
+A product opinion analysis engine. Not a review site. Not a ranking page. It reads Reddit discussions and produces a structured, community-sourced verdict with **dynamically selected metrics** specific to the product category.
 
 ---
 
-## Architecture Overview
+## Current Architecture Summary
 
-```mermaid
-graph TB
-    subgraph Frontend["Frontend — Next.js 14 + TypeScript + Tailwind"]
-        A[Search Page] --> B[Results Page — tally.shop-style]
-    end
-
-    subgraph Backend["Backend — Spring Boot 3.2 / Java 21"]
-        D[SearchController] --> E[SearchOrchestrator]
-        E --> F[PlatformRegistry]
-        E --> G[AIAnalysisEngine]
-        E --> H[CacheService]
-        
-        F --> F1["RedditProvider 🔌"]
-        F --> F2["TwitterProvider 🔌 — Future"]
-        
-        G --> G1["Spring AI — ChatModel Interface"]
-        G1 --> G1a["OpenAI Adapter"]
-        G1 --> G1b["Anthropic — Future"]
-        G1 --> G1c["Ollama — Future"]
-    end
-
-    subgraph Cloud["☁️ Permanently Free Cloud"]
-        M["SQLite — Embedded Volume"]
-        D["AWS DynamoDB Cache"]
-        L["Spring Boot Backend — Ubuntu VM / Railway"]
-        V["Vercel — Frontend"]
-    end
-
-    A -->|POST /api/search| D
-    E --> M
+```
+Frontend (Vercel / Next.js 14)
+    ↕  HTTP + polling
+Backend (OCI Ubuntu VM / Docker)
+    ├── Redis 7 — RQueue job queue
+    ├── SQLite — job state + result index
+    └── AWS DynamoDB — response cache (full AI JSON)
 ```
 
 ---
 
-## AI Provider Abstraction (Model-Agnostic)
+## Backend: Service Map
 
-Uses **Spring AI** — swap models by changing one config property + Maven dependency:
+### Controllers
 
-| Model | Config Property | Dependency |
-|-------|----------------|------------|
-| OpenAI GPT-4o-mini | `spring.ai.openai.chat.options.model=gpt-4o-mini` | `spring-ai-openai-spring-boot-starter` |
-| Anthropic Claude | `spring.ai.anthropic.chat.options.model=claude-3-haiku` | `spring-ai-anthropic-spring-boot-starter` |
-| Google Gemini | `spring.ai.vertex-ai.chat.options.model=gemini-pro` | `spring-ai-vertex-ai-gemini-spring-boot-starter` |
-| Local Ollama | `spring.ai.ollama.chat.options.model=llama3` | `spring-ai-ollama-spring-boot-starter` |
+| Class | Endpoints | Description |
+|---|---|---|
+| `SearchController` | `POST /api/search`, `GET /api/search/{jobId}`, `GET /api/loading-hints` | Search submission, polling, loading hints |
+| `HealthController` | `GET /api/health` | Liveness + AI connectivity check |
+| `TrendingController` | `GET /api/trending` | Recent top queries from SQLite |
+| `GlobalExceptionHandler` | — | Structured JSON error responses |
+
+### Services
+
+| Class | Responsibility |
+|---|---|
+| `SearchOrchestrator` | Cache lookup → persist job → enqueue to Redis → poll job status |
+| `SearchJobListener` | RQueue worker: scrape → AI → image → SQLite → DynamoDB → competitors |
+| `AIAnalysisEngine` | Sends prompt to OpenAI, parses dynamic JSON response |
+| `PromptBuilder` | Builds the 9-step analysis prompt; instructs AI to select 4 dynamic metrics |
+| `CacheService` | DynamoDB exact (SHA-256) + similar (Jaccard) cache lookup/put |
+| `CompetitorService` | Retrieves top-scored competitors for same subcategory from SQLite |
+| `ImageResolutionService` | Reddit AI-validated URL → Amazon ASIN fallback → base64 encode |
+| `LoadingHintsService` | Gemini-generated loading messages (4–5 per query); degrades gracefully |
+| `TrendingService` | Queries SQLite for recent high-scoring searches |
+| `GeminiChatService` | Secondary AI client for lightweight tasks (loading hints) |
+
+### Entities (SQLite)
+
+| Entity | Key Fields |
+|---|---|
+| `SearchJob` | `id`, `query`, `queryNormalized`, `status (PENDING/IN_PROGRESS/COMPLETED/FAILED)`, `resultJson`, `errorMessage` |
+| `SearchResult` | `id`, `query`, `queryNormalized`, `overallScore`, `productCategory`, `productSubCategory`, `verdictSentence`, `imageUrl`, `postCount`, `createdAt` |
+| `SocialPost` | `id`, `platform`, `platformId`, `title`, `body`, `score`, `permalink`, `postedAt` |
+
+### DTOs
+
+| Class | Description |
+|---|---|
+| `SearchRequest` | `query` (required), `limit` (default 10), `maxComments` (default 50) |
+| `SearchResponse` | Full verdict: `metrics[]`, `verdictSentence`, `positives[]`, `complaints[]`, `bestFor[]`, `avoid[]`, `evidenceSnippets[]`, `productImageUrl`, `productImageBase64` |
+| `JobStatusResponse` | `jobId`, `status`, `result?`, `error?` |
+| `CompetitorDto` | `name`, `score`, `productCategory`, `productSubCategory`, `imageUrl` |
+| `TrendingResponse` | `query`, `score`, `category` |
 
 ---
 
-## Anti-Ban & Rate Limiting Strategy
+## Async Pipeline Detail
 
-| Measure | Implementation |
-|---------|---------------|
-| **Token Bucket** | Bucket4j: 60 req/min (API), 20 req/min (JSON scraper) |
-| **Exponential Backoff** | On 429: 2s → 4s → 8s → 16s → 32s → 60s cap |
-| **User-Agent Rotation** | Pool of 10+ browser-like UA strings, rotated per request |
-| **Request Jitter** | Random 500–2000ms delay between requests |
-| **Aggressive Caching** | DynamoDB: 24h TTL — identical queries never hit Reddit or AI twice |
-| **Circuit Breaker** | Resilience4j: open after 5 failures/60s, 30s recovery wait |
-| **Incremental Cursor** | Track "high water mark" per query — skip already-seen posts |
-| **Data Filtering** | Remove deleted, AutoModerator, bots, min 20-char content |
+### POST /api/search
+
+```
+1. Check DynamoDB cache (exact SHA-256 match)
+   → HIT:  return HTTP 200 with full SearchResponse immediately
+
+2. MISS:  persistJob() [@Transactional — commits before enqueue!]
+          enqueueJob() [Redis → rqueue "search-jobs" queue]
+          return HTTP 202 { jobId, status: "PENDING" }
+```
+
+### SearchJobListener (concurrency=1)
+
+```
+[1] platformRegistry.searchAll() — Reddit scrape
+    ├─ 10 posts × 50 comments (configurable)
+    └─ Deduplication + bot/deleted/AutoMod filter
+
+[2] aiEngine.analyze() — OpenAI
+    └─ PromptBuilder 9-step prompt:
+       classify → extract themes → rank 4 metrics
+       → score each → blended overall score
+       → verdictSentence → positives/complaints
+       → bestFor/avoid → evidenceSnippets
+       → competitorSeeds (3 similar products + estimated scores)
+
+[3] imageResolutionService.fetchFromAmazon() — fallback image
+    └─ AI may return a Reddit image URL; if not, try Amazon
+
+[4] toBase64DataUri() — CORS-safe for share card
+
+[5] Save SearchResult to SQLite (lean row — index only)
+
+[6] Save SocialPosts to SQLite (deduplicated by platformId)
+
+[7] Build full SearchResponse → cache in DynamoDB
+    └─ Only if metrics list is non-empty (AI succeeded)
+
+[8] seedCompetitorsIfNeeded()
+    └─ If no SearchResult rows exist for this subcategory,
+       insert AI-estimated competitor placeholder rows
+
+[9] job.status = COMPLETED, job.resultJson = full JSON
+```
+
+### GET /api/search/{jobId}
+
+```
+PENDING/IN_PROGRESS → { jobId, status }
+COMPLETED           → { jobId, status, result: SearchResponse }
+FAILED              → { jobId, status, error: "..." }
+```
+
+Frontend polls every 2 seconds, max 90 polls (3 minutes timeout).
 
 ---
 
-## Database Schema (Platform-Agnostic)
+## Frontend: Component Map
 
-```sql
-CREATE TABLE search_results (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    query VARCHAR(500) NOT NULL,
-    query_normalized VARCHAR(500) NOT NULL,
-    overall_score INTEGER,
-    overall_verdict TEXT,
-    analysis JSONB NOT NULL,
-    source_platforms TEXT[],              -- ['reddit', 'twitter']
-    post_count INTEGER,
-    created_at TIMESTAMP DEFAULT NOW(),
-    expires_at TIMESTAMP DEFAULT NOW() + INTERVAL '7 days'
-);
+| Component | Role |
+|---|---|
+| `page.tsx` | State machine: idle → loading → results → error |
+| `SearchBar` | Input with AI-hint autosuggest |
+| `Navbar` | Appears after first search |
+| `ShimmerSkeleton` | Loading skeleton with Gemini-powered contextual hints |
+| `VerdictCard` | Score circle + category badge + verdictSentence + 4 inline metric bars |
+| `MetricsGrid` | 2-col detailed metric cards with animated bars + Excellent/Good/Fair/Weak labels |
+| `OpinionBlocks` | Positives/Complaints + BestFor/Avoid + Evidence snippets |
+| `CompetitorCard` | Side-by-side competitor scores from SQLite |
+| `ShareCard` | 480px exportable verdict PNG (html2canvas) — Download + Copy |
+| `SharePrompt` | Share CTA with platform links |
+| `TrendingSection` | Recent popular searches from `GET /api/trending` |
+| `ResultsView` | Orchestrates all result components |
 
-CREATE TABLE social_posts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    platform VARCHAR(50) NOT NULL,       -- 'reddit', 'twitter', 'hackernews'
-    platform_id VARCHAR(100) UNIQUE NOT NULL,
-    search_result_id UUID REFERENCES search_results(id),
-    source VARCHAR(200),                 -- subreddit, hashtag, etc.
-    title TEXT,
-    body TEXT,
-    score INTEGER,
-    permalink VARCHAR(500),
-    posted_at TIMESTAMP,
-    scraped_at TIMESTAMP DEFAULT NOW()
-);
+### api.ts: Client Flow
+
+```typescript
+// Cache hit → HTTP 200 → immediate result
+// Cache miss → HTTP 202 → poll every 2s via GET /api/search/{jobId}
+// Timeout after 90 polls (3 min)
+export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
 ```
 
 ---
 
-## Frontend — Minimal, Modular, Scalable UI
+## Environment Variables
 
-**Approach**: Clean, functional UI using Tailwind CSS utility classes. Basic now, designed to be progressively enhanced.
+### Backend (.env / Docker)
 
-**Sections** (tally.shop-inspired):
+| Variable | Description |
+|---|---|
+| `OPENAI_API_KEY` | OpenAI API key (primary AI) |
+| `AI_MODEL` | OpenAI model name e.g. `gpt-4o` |
+| `GEMINI_API_KEY` | Google Gemini key (loading hints) |
+| `GEMINI_MODEL` | Gemini model name e.g. `gemini-2.0-flash` |
+| `REDDIT_CLIENT_ID` | Reddit OAuth2 app client ID |
+| `REDDIT_CLIENT_SECRET` | Reddit OAuth2 app client secret |
+| `REDDIT_USERNAME` | Reddit account username |
+| `REDDIT_PASSWORD` | Reddit account password |
+| `REDDIT_USER_AGENT` | User-Agent string for Reddit API |
+| `AWS_REGION` | AWS region for DynamoDB |
+| `AWS_ACCESS_KEY_ID` | AWS IAM access key |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key |
+| `REDIS_HOST` | Redis host (set to `redis` in Docker Compose) |
+| `REDIS_PORT` | Redis port (default `6379`) |
+| `SHOW_SQL` | Set `true` to log Hibernate SQL (dev only) |
 
-1. **Search Home** — Centered search bar, tagline, recent searches
-2. **Header** — Query name + score circle (0-100) + verdict label
-3. **AI Verdict** — 2-3 sentence summary card
-4. **"Is this right for you?"** — Persona pros/cons
-5. **Category Deep-Dive** — Sidebar tabs (Composition/Efficacy/Safety/Value) + AI summary per category
-6. **Testimonial Cards** — Reddit quotes with sentiment badges (green/gray/red)
-7. **Data Transparency** — "Based on X posts from Y subreddits"
+### Frontend (Vercel)
 
----
-
-## Cloud Stack — $0/month Forever
-
-| Layer | Service | Always-Free Limits |
-|-------|---------|-------------------|
-| **Backend** | Spring Boot Docker Container | Best for Ubuntu VM/Railway |
-| **Database** | SQLite (Embedded) | < 10MB memory footprint |
-| **Cache** | AWS DynamoDB | 25GB storage, 200M req/mo |
-| **Frontend** | Vercel | Unlimited hobby deploys |
-
-> [!TIP]
-> **Why DynamoDB over Redis/Upstash?** DynamoDB's always-free tier (25GB, 200M req/mo) is vastly more generous than Upstash (256MB, 10K cmd/day). It's an AWS-native service, so zero extra vendor. We use it as a TTL-based key-value cache — `queryHash → analysisJSON` with auto-expiry.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Java 17, Spring Boot 3.2, Maven |
-| **Frontend** | Next.js 14 (App Router), TypeScript, Tailwind CSS v4 |
-| **Database** | SQLite (Embedded file) |
-| **Cache** | DynamoDB (TTL-based key-value) |
-| **AI** | Spring AI (model-agnostic: OpenAI, Anthropic, Gemini, Ollama) |
-| **Rate Limiting** | Bucket4j |
-| **Resilience** | Resilience4j (circuit breaker) |
-| **API Docs** | SpringDoc OpenAPI (Swagger UI) |
-| **Local Dev** | Docker Compose (Postgres + DynamoDB Local + Backend + Frontend) |
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL e.g. `https://crowdlens-api.anubhavbagri.com/api` |
 
 ---
 
-## Reddit Auth — Script Type
+## Deployment: Production
 
-```properties
-# .env — your Reddit "script" app credentials
-REDDIT_CLIENT_ID=your_client_id
-REDDIT_CLIENT_SECRET=your_client_secret
-REDDIT_USERNAME=your_reddit_username  
-REDDIT_PASSWORD=your_reddit_password
-REDDIT_USER_AGENT=crowdlens:v1.0.0 (by /u/your_username)
-```
-
-> [!WARNING]
-> **Create a dedicated Reddit account** for CrowdLens. Register a fresh "script" app on it. This isolates your personal account. With our rate limiting (60 req/min, well under 100 QPM limit) and read-only access, account suspension risk is near zero.
-
----
-
-## Project Structure
-
-```
-crowdlens/
-├── frontend/                          # Next.js 14 + Tailwind CSS
-│   ├── src/app/
-│   │   ├── page.tsx                   # Search home
-│   │   ├── search/[query]/page.tsx    # Results
-│   │   └── layout.tsx
-│   ├── src/components/                # Minimal, modular, scalable
-│   ├── Dockerfile
-│   └── tailwind.config.ts
-│
-├── backend/                           # Spring Boot 3.2
-│   ├── src/main/java/com/crowdlens/
-│   │   ├── CrowdLensApplication.java
-│   │   ├── config/                    # DynamoDB, AI, Reddit, RateLimit, OpenAPI
-│   │   ├── controller/
-│   │   │   ├── SearchController.java
-│   │   │   ├── HealthController.java
-│   │   │   └── GlobalExceptionHandler.java
-│   │   ├── service/
-│   │   │   ├── SearchOrchestrator.java
-│   │   │   ├── AIAnalysisEngine.java
-│   │   │   ├── PromptBuilder.java
-│   │   │   └── CacheService.java     # DynamoDB-backed
-│   │   ├── provider/                  # 🔌 Platform plugins
-│   │   │   ├── PlatformProvider.java
-│   │   │   ├── PlatformRegistry.java
-│   │   │   └── reddit/
-│   │   │       ├── RedditProvider.java
-│   │   │       ├── RedditApiClient.java
-│   │   │       ├── RedditJsonScraper.java
-│   │   │       ├── RedditDataAggregator.java
-│   │   │       └── RedditRateLimiter.java
-│   │   ├── model/                     # DTOs + JPA entities
-│   │   └── repository/               # Spring Data JPA
-│   ├── pom.xml
-│   └── Dockerfile                     # Multi-stage build (Maven + JRE)
-│
-├── docker-compose.yml                 # Local: Postgres + DynamoDB Local + Backend + Frontend
-├── .env.example
-└── README.md
-```
-
----
-
-## Phases — Local First, Cloud Later
-
-### Phase 1 — Backend Foundation (Local Docker) ✅
-
-1. Spring Boot 3.2 project init (Java 17, Maven)
-2. Docker Compose: PostgreSQL + DynamoDB Local + Spring Boot (multi-stage Dockerfile)
-3. Reddit OAuth2 client (script-type auth) + `.json` fallback
-4. Token bucket rate limiting (Bucket4j) + circuit breaker (Resilience4j)
-5. `PlatformProvider` interface + `PlatformRegistry` + `RedditProvider`
-6. `RedditDataAggregator` (dedup, filter bots/deleted/AutoMod)
-7. Database schema (JPA entities + Flyway migrations)
-
-### Phase 2 — AI Analysis Pipeline (Local) ✅
-
-8. Spring AI integration (OpenAI, model-agnostic)
-2. `PromptBuilder` with query-type auto-detection + dynamic categories
-3. `CacheService` with DynamoDB Local
-4. `SearchOrchestrator` (end-to-end pipeline)
-5. REST endpoints: `POST /api/search`, `GET /api/health`
-6. API documentation: SpringDoc OpenAPI (Swagger UI at `/swagger-ui.html`)
-
-### Phase 3 — Frontend (Minimal, Modular) ✅
-
-13. Next.js 14 + TypeScript + Tailwind CSS v4
-2. Search home page (clean, centered search bar)
-3. Analysis results page (modular component structure)
-4. API client + loading/error states
-5. Basic but extensible component library
-
-### Phase 4 — Cloud Deployment
-
-18. Ubuntu VM / Railway server provisioning
-2. AWS DynamoDB production setup
-3. Vercel frontend deploy
-4. README with full setup guide
-
----
-
-## Verification Plan
+### Backend (OCI Ubuntu VM)
 
 ```bash
-# Phase 1
-docker compose up                          # All services start
-curl localhost:8080/api/health             # Backend healthy
+# .env file in project root with all env vars above
+docker compose up --build -d
 
-# Phase 2
-curl -X POST localhost:8080/api/search \
-  -H "Content-Type: application/json" \
-  -d '{"query": "creatine supplement"}'    # Full analysis returned
-
-# Phase 3
-open http://localhost:3000                 # Search UI works end-to-end
-
-# Phase 4
-curl https://your-backend-url/api/health   # Cloud deploy works
+# Services started:
+# - crowdlens-redis (Redis 7, no persistence)
+# - crowdlens-backend (Spring Boot, waits for Redis healthy)
 ```
+
+SQLite data persisted in Docker volume `sqlite_data` → `/app/data/crowdlens.db`.
+
+### Frontend (Vercel)
+
+- Root: `./frontend`
+- Framework: Next.js (auto-detected)
+- Env var: `NEXT_PUBLIC_API_URL = https://crowdlens-api.anubhavbagri.com/api`
+
+### Domains
+
+| Service | URL |
+|---|---|
+| Frontend | `https://crowdlens.anubhavbagri.com` |
+| Backend API | `https://crowdlens-api.anubhavbagri.com` |
+| Swagger UI | `https://crowdlens-api.anubhavbagri.com/swagger-ui.html` |
 
 ---
 
-> [!NOTE]
-> **Full architecture details** (design principles, patterns, HLD, LLD, class diagrams, sequence diagrams, scraping intelligence) are in the companion [architecture.md](file:///Users/Anubhav.Bagri/.gemini/antigravity/brain/51231a21-1ac4-449f-a4ac-278a9ddcdcc3/architecture.md) document.
+## What Was Deliberately Removed / Replaced
+
+| Old | New | Reason |
+|---|---|---|
+| PostgreSQL | SQLite | Zero ops on 1 GB VM |
+| Sync `executeSearch()` | Async `persistJob()` + RQueue | Reddit+AI is 15–45s; sync would timeout |
+| Fixed categories (Efficacy/Quality/etc.) | Dynamic 4 metrics per product | Core product rule |
+| `overallVerdict` (Excellent/Good/Mixed/Poor) | `verdictSentence` (crafted sentence) | More informative |
+| `CategoryAnalysis`, `Testimonial`, `PersonaAnalysis` | `Metric`, `EvidenceSnippet`, `bestFor[]`, `avoid[]` | New response shape (Phase 5) |
+| `ScrapeCursor` / incremental crawling | Simple per-job scrape | Simpler; reuse DynamoDB cache instead |
