@@ -1915,17 +1915,17 @@
     {
       "label": "layout.tsx",
       "file_type": "code",
-      "source_file": "frontend\\src\\app\\layout.tsx",
+      "source_file": "D:\\indie side projects\\CrowdLens\\frontend\\src\\app\\layout.tsx",
       "source_location": "L1",
-      "id": "frontend_src_app_layout_tsx",
+      "id": "d_indie_side_projects_crowdlens_frontend_src_app_layout_tsx",
       "community": 25,
       "norm_label": "layout.tsx"
     },
     {
       "label": "RootLayout()",
       "file_type": "code",
-      "source_file": "frontend\\src\\app\\layout.tsx",
-      "source_location": "L12",
+      "source_file": "D:\\indie side projects\\CrowdLens\\frontend\\src\\app\\layout.tsx",
+      "source_location": "L13",
       "id": "layout_rootlayout",
       "community": 25,
       "norm_label": "rootlayout()"
@@ -6205,12 +6205,12 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "frontend\\src\\app\\layout.tsx",
-      "source_location": "L12",
+      "source_file": "D:\\indie side projects\\CrowdLens\\frontend\\src\\app\\layout.tsx",
+      "source_location": "L13",
       "weight": 1.0,
-      "_src": "frontend_src_app_layout_tsx",
+      "_src": "d_indie_side_projects_crowdlens_frontend_src_app_layout_tsx",
       "_tgt": "layout_rootlayout",
-      "source": "frontend_src_app_layout_tsx",
+      "source": "d_indie_side_projects_crowdlens_frontend_src_app_layout_tsx",
       "target": "layout_rootlayout",
       "confidence_score": 1.0
     },
