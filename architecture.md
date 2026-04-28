@@ -4,8 +4,6 @@
 
 CrowdLens is a product opinion analysis engine that aggregates Reddit discussions and uses AI to produce structured, dynamic verdicts. The architecture is built for a **single VM** (4 vCPU / 24 GB RAM) and optimized for sequential processing, minimal memory footprint, and graceful degradation.
 
----
-
 ## Table of Contents
 
 1. [High-Level Design (HLD)](#1-high-level-design-hld)
@@ -453,7 +451,7 @@ Each handler either produces a result or passes to the next. Resilient to API fa
 ```mermaid
 flowchart LR
     SC["SearchController\nPOST /api/search"] -->|enqueue message| Redis["Redis\nsearch-jobs queue"]
-    Redis -->|@RqueueListener| SJL["SearchJobListener\nconcurrency=1"]
+    Redis -->|"&#64;RqueueListener"| SJL["SearchJobListener\nconcurrency=1"]
     SC -.->|no direct reference| SJL
 ```
 
