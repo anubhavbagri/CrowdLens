@@ -35,5 +35,7 @@ docker-compose.override.yml
 logs/
 *.log
 
+.agents/
+
 # commit graph outputs, ignore extraction cache
 graphify-out/cache
