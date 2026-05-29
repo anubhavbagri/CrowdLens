@@ -52,17 +52,17 @@
     {
       "label": "CrowdLensApplication.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_crowdlensapplication_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_crowdlensapplication_java",
       "community": 17,
       "norm_label": "crowdlensapplication.java"
     },
     {
       "label": "CrowdLensApplication",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
-      "source_location": "L6",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
+      "source_location": "L24",
       "id": "crowdlensapplication_crowdlensapplication",
       "community": 17,
       "norm_label": "crowdlensapplication"
@@ -70,8 +70,8 @@
     {
       "label": ".main()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
-      "source_location": "L9",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
+      "source_location": "L27",
       "id": "crowdlensapplication_crowdlensapplication_main",
       "community": 17,
       "norm_label": ".main()"
@@ -79,17 +79,17 @@
     {
       "label": "AppConfig.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_config_appconfig_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_config_appconfig_java",
       "community": 11,
       "norm_label": "appconfig.java"
     },
     {
       "label": "AppConfig",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L13",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L37",
       "id": "appconfig_appconfig",
       "community": 11,
       "norm_label": "appconfig"
@@ -97,8 +97,8 @@
     {
       "label": ".webClientBuilder()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L17",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L41",
       "id": "appconfig_appconfig_webclientbuilder",
       "community": 11,
       "norm_label": ".webclientbuilder()"
@@ -106,8 +106,8 @@
     {
       "label": ".redditWebClient()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L25",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L49",
       "id": "appconfig_appconfig_redditwebclient",
       "community": 11,
       "norm_label": ".redditwebclient()"
@@ -115,8 +115,8 @@
     {
       "label": ".redditPublicWebClient()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L33",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L57",
       "id": "appconfig_appconfig_redditpublicwebclient",
       "community": 11,
       "norm_label": ".redditpublicwebclient()"
@@ -124,8 +124,8 @@
     {
       "label": ".dynamoDbClient()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L41",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L65",
       "id": "appconfig_appconfig_dynamodbclient",
       "community": 11,
       "norm_label": ".dynamodbclient()"
@@ -214,17 +214,17 @@
     {
       "label": "RedisConfig.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_config_redisconfig_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_config_redisconfig_java",
       "community": 20,
       "norm_label": "redisconfig.java"
     },
     {
       "label": "RedisConfig",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
-      "source_location": "L14",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
+      "source_location": "L30",
       "id": "redisconfig_redisconfig",
       "community": 20,
       "norm_label": "redisconfig"
@@ -232,8 +232,8 @@
     {
       "label": ".lettuceJvmDnsResolver()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
-      "source_location": "L17",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
+      "source_location": "L33",
       "id": "redisconfig_redisconfig_lettucejvmdnsresolver",
       "community": 20,
       "norm_label": ".lettucejvmdnsresolver()"
@@ -313,17 +313,17 @@
     {
       "label": "SearchController.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
       "community": 6,
       "norm_label": "searchcontroller.java"
     },
     {
       "label": "SearchController",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L26",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L47",
       "id": "searchcontroller_searchcontroller",
       "community": 6,
       "norm_label": "searchcontroller"
@@ -331,8 +331,8 @@
     {
       "label": ".search()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L37",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L59",
       "id": "searchcontroller_searchcontroller_search",
       "community": 6,
       "norm_label": ".search()"
@@ -340,8 +340,8 @@
     {
       "label": ".getJobStatus()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L76",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L98",
       "id": "searchcontroller_searchcontroller_getjobstatus",
       "community": 6,
       "norm_label": ".getjobstatus()"
@@ -349,8 +349,8 @@
     {
       "label": ".getLoadingHints()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L115",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L137",
       "id": "searchcontroller_searchcontroller_getloadinghints",
       "community": 9,
       "norm_label": ".getloadinghints()"
@@ -592,17 +592,17 @@
     {
       "label": "PlatformRegistry.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_provider_platformregistry_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_platformregistry_java",
       "community": 3,
       "norm_label": "platformregistry.java"
     },
     {
       "label": "PlatformRegistry",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L14",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L27",
       "id": "platformregistry_platformregistry",
       "community": 3,
       "norm_label": "platformregistry"
@@ -610,8 +610,8 @@
     {
       "label": ".PlatformRegistry()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L20",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L33",
       "id": "platformregistry_platformregistry_platformregistry",
       "community": 3,
       "norm_label": ".platformregistry()"
@@ -619,8 +619,8 @@
     {
       "label": ".searchAll()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L33",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L46",
       "id": "platformregistry_platformregistry_searchall",
       "community": 3,
       "norm_label": ".searchall()"
@@ -628,8 +628,8 @@
     {
       "label": ".getEnabledPlatforms()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L54",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L67",
       "id": "platformregistry_platformregistry_getenabledplatforms",
       "community": 3,
       "norm_label": ".getenabledplatforms()"
@@ -637,8 +637,8 @@
     {
       "label": ".healthCheckAll()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L61",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L74",
       "id": "platformregistry_platformregistry_healthcheckall",
       "community": 8,
       "norm_label": ".healthcheckall()"
@@ -646,17 +646,17 @@
     {
       "label": "RedditApiClient.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
       "community": 1,
       "norm_label": "redditapiclient.java"
     },
     {
       "label": "RedditApiClient",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L23",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L38",
       "id": "redditapiclient_redditapiclient",
       "community": 1,
       "norm_label": "redditapiclient"
@@ -664,8 +664,8 @@
     {
       "label": ".RedditApiClient()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L35",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L50",
       "id": "redditapiclient_redditapiclient_redditapiclient",
       "community": 1,
       "norm_label": ".redditapiclient()"
@@ -673,8 +673,8 @@
     {
       "label": ".warmUpToken()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L52",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L67",
       "id": "redditapiclient_redditapiclient_warmuptoken",
       "community": 1,
       "norm_label": ".warmuptoken()"
@@ -682,8 +682,8 @@
     {
       "label": ".searchPosts()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L69",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L84",
       "id": "redditapiclient_redditapiclient_searchposts",
       "community": 1,
       "norm_label": ".searchposts()"
@@ -691,8 +691,8 @@
     {
       "label": ".fetchComments()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L111",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L126",
       "id": "redditapiclient_redditapiclient_fetchcomments",
       "community": 1,
       "norm_label": ".fetchcomments()"
@@ -700,8 +700,8 @@
     {
       "label": ".searchFallback()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L153",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L168",
       "id": "redditapiclient_redditapiclient_searchfallback",
       "community": 1,
       "norm_label": ".searchfallback()"
@@ -709,8 +709,8 @@
     {
       "label": ".ensureAuthenticated()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L162",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L177",
       "id": "redditapiclient_redditapiclient_ensureauthenticated",
       "community": 1,
       "norm_label": ".ensureauthenticated()"
@@ -718,8 +718,8 @@
     {
       "label": ".healthCheck()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L197",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L212",
       "id": "redditapiclient_redditapiclient_healthcheck",
       "community": 1,
       "norm_label": ".healthcheck()"
@@ -799,17 +799,17 @@
     {
       "label": "RedditJsonScraper.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
       "community": 1,
       "norm_label": "redditjsonscraper.java"
     },
     {
       "label": "RedditJsonScraper",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L21",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L29",
       "id": "redditjsonscraper_redditjsonscraper",
       "community": 1,
       "norm_label": "redditjsonscraper"
@@ -817,8 +817,8 @@
     {
       "label": ".RedditJsonScraper()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L40",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L48",
       "id": "redditjsonscraper_redditjsonscraper_redditjsonscraper",
       "community": 1,
       "norm_label": ".redditjsonscraper()"
@@ -826,8 +826,8 @@
     {
       "label": ".searchPosts()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L49",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L57",
       "id": "redditjsonscraper_redditjsonscraper_searchposts",
       "community": 1,
       "norm_label": ".searchposts()"
@@ -835,8 +835,8 @@
     {
       "label": ".getRandomUserAgent()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L93",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L101",
       "id": "redditjsonscraper_redditjsonscraper_getrandomuseragent",
       "community": 1,
       "norm_label": ".getrandomuseragent()"
@@ -844,8 +844,8 @@
     {
       "label": ".addJitter()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L100",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L108",
       "id": "redditjsonscraper_redditjsonscraper_addjitter",
       "community": 1,
       "norm_label": ".addjitter()"
@@ -853,17 +853,17 @@
     {
       "label": "RedditProvider.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
       "community": 5,
       "norm_label": "redditprovider.java"
     },
     {
       "label": "RedditProvider",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L22",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L31",
       "id": "redditprovider_redditprovider",
       "community": 5,
       "norm_label": "redditprovider"
@@ -871,8 +871,8 @@
     {
       "label": ".getPlatformName()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L34",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L43",
       "id": "redditprovider_redditprovider_getplatformname",
       "community": 5,
       "norm_label": ".getplatformname()"
@@ -880,8 +880,8 @@
     {
       "label": ".search()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L39",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L48",
       "id": "redditprovider_redditprovider_search",
       "community": 5,
       "norm_label": ".search()"
@@ -889,8 +889,8 @@
     {
       "label": ".deduplicateRaw()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L102",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L111",
       "id": "redditprovider_redditprovider_deduplicateraw",
       "community": 5,
       "norm_label": ".deduplicateraw()"
@@ -898,8 +898,8 @@
     {
       "label": ".fetchCommentsFromTopPosts()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L118",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L127",
       "id": "redditprovider_redditprovider_fetchcommentsfromtopposts",
       "community": 5,
       "norm_label": ".fetchcommentsfromtopposts()"
@@ -907,8 +907,8 @@
     {
       "label": ".logRedditResponse()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L201",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L210",
       "id": "redditprovider_redditprovider_logredditresponse",
       "community": 5,
       "norm_label": ".logredditresponse()"
@@ -916,8 +916,8 @@
     {
       "label": ".healthCheck()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L224",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L233",
       "id": "redditprovider_redditprovider_healthcheck",
       "community": 5,
       "norm_label": ".healthcheck()"
@@ -925,8 +925,8 @@
     {
       "label": ".truncate()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L229",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L238",
       "id": "redditprovider_redditprovider_truncate",
       "community": 5,
       "norm_label": ".truncate()"
@@ -934,17 +934,17 @@
     {
       "label": "RedditRateLimiter.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
       "community": 1,
       "norm_label": "redditratelimiter.java"
     },
     {
       "label": "RedditRateLimiter",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L15",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L28",
       "id": "redditratelimiter_redditratelimiter",
       "community": 1,
       "norm_label": "redditratelimiter"
@@ -952,8 +952,8 @@
     {
       "label": ".RedditRateLimiter()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L22",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L35",
       "id": "redditratelimiter_redditratelimiter_redditratelimiter",
       "community": 1,
       "norm_label": ".redditratelimiter()"
@@ -961,8 +961,8 @@
     {
       "label": ".acquireApiToken()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L34",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L47",
       "id": "redditratelimiter_redditratelimiter_acquireapitoken",
       "community": 1,
       "norm_label": ".acquireapitoken()"
@@ -970,8 +970,8 @@
     {
       "label": ".acquireScraperToken()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L47",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L60",
       "id": "redditratelimiter_redditratelimiter_acquirescrapertoken",
       "community": 1,
       "norm_label": ".acquirescrapertoken()"
@@ -979,8 +979,8 @@
     {
       "label": ".createBucket()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L56",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L69",
       "id": "redditratelimiter_redditratelimiter_createbucket",
       "community": 1,
       "norm_label": ".createbucket()"
@@ -1186,17 +1186,17 @@
     {
       "label": "AIAnalysisEngine.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "community": 7,
       "norm_label": "aianalysisengine.java"
     },
     {
       "label": "AIAnalysisEngine",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L28",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L40",
       "id": "aianalysisengine_aianalysisengine",
       "community": 7,
       "norm_label": "aianalysisengine"
@@ -1204,8 +1204,8 @@
     {
       "label": ".AIAnalysisEngine()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L36",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L48",
       "id": "aianalysisengine_aianalysisengine_aianalysisengine",
       "community": 7,
       "norm_label": ".aianalysisengine()"
@@ -1213,8 +1213,8 @@
     {
       "label": ".analyze()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L47",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L59",
       "id": "aianalysisengine_aianalysisengine_analyze",
       "community": 7,
       "norm_label": ".analyze()"
@@ -1222,8 +1222,8 @@
     {
       "label": ".analyzeFallback()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L95",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L107",
       "id": "aianalysisengine_aianalysisengine_analyzefallback",
       "community": 7,
       "norm_label": ".analyzefallback()"
@@ -1231,8 +1231,8 @@
     {
       "label": ".healthCheck()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L105",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L117",
       "id": "aianalysisengine_aianalysisengine_healthcheck",
       "community": 8,
       "norm_label": ".healthcheck()"
@@ -1240,8 +1240,8 @@
     {
       "label": ".suggestCompetitors()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L140",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L152",
       "id": "aianalysisengine_aianalysisengine_suggestcompetitors",
       "community": 7,
       "norm_label": ".suggestcompetitors()"
@@ -1249,8 +1249,8 @@
     {
       "label": ".parseAiResponse()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L185",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L197",
       "id": "aianalysisengine_aianalysisengine_parseairesponse",
       "community": 7,
       "norm_label": ".parseairesponse()"
@@ -1258,8 +1258,8 @@
     {
       "label": ".parseMetrics()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L232",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L244",
       "id": "aianalysisengine_aianalysisengine_parsemetrics",
       "community": 7,
       "norm_label": ".parsemetrics()"
@@ -1267,8 +1267,8 @@
     {
       "label": ".parseStringArray()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L251",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L263",
       "id": "aianalysisengine_aianalysisengine_parsestringarray",
       "community": 7,
       "norm_label": ".parsestringarray()"
@@ -1276,8 +1276,8 @@
     {
       "label": ".parseEvidenceSnippets()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L263",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L275",
       "id": "aianalysisengine_aianalysisengine_parseevidencesnippets",
       "community": 7,
       "norm_label": ".parseevidencesnippets()"
@@ -1285,8 +1285,8 @@
     {
       "label": ".toDouble()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L282",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L294",
       "id": "aianalysisengine_aianalysisengine_todouble",
       "community": 7,
       "norm_label": ".todouble()"
@@ -1294,8 +1294,8 @@
     {
       "label": ".parseCompetitorSeeds()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L294",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L306",
       "id": "aianalysisengine_aianalysisengine_parsecompetitorseeds",
       "community": 7,
       "norm_label": ".parsecompetitorseeds()"
@@ -1303,8 +1303,8 @@
     {
       "label": "empty()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L340",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L352",
       "id": "aianalysisengine_empty",
       "community": 4,
       "norm_label": "empty()"
@@ -1312,8 +1312,8 @@
     {
       "label": "error()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L349",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L361",
       "id": "aianalysisengine_error",
       "community": 7,
       "norm_label": "error()"
@@ -1321,17 +1321,17 @@
     {
       "label": "CacheService.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_service_cacheservice_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_cacheservice_java",
       "community": 4,
       "norm_label": "cacheservice.java"
     },
     {
       "label": "CacheService",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L25",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L39",
       "id": "cacheservice_cacheservice",
       "community": 4,
       "norm_label": "cacheservice"
@@ -1339,8 +1339,8 @@
     {
       "label": ".CacheService()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L33",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L47",
       "id": "cacheservice_cacheservice_cacheservice",
       "community": 4,
       "norm_label": ".cacheservice()"
@@ -1348,8 +1348,8 @@
     {
       "label": ".get()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L46",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L60",
       "id": "cacheservice_cacheservice_get",
       "community": 4,
       "norm_label": ".get()"
@@ -1357,8 +1357,8 @@
     {
       "label": ".findSimilar()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L88",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L102",
       "id": "cacheservice_cacheservice_findsimilar",
       "community": 4,
       "norm_label": ".findsimilar()"
@@ -1366,8 +1366,8 @@
     {
       "label": ".put()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L135",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L149",
       "id": "cacheservice_cacheservice_put",
       "community": 8,
       "norm_label": ".put()"
@@ -1375,8 +1375,8 @@
     {
       "label": ".evict()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L159",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L173",
       "id": "cacheservice_cacheservice_evict",
       "community": 4,
       "norm_label": ".evict()"
@@ -1384,8 +1384,8 @@
     {
       "label": ".serialize()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L175",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L189",
       "id": "cacheservice_cacheservice_serialize",
       "community": 4,
       "norm_label": ".serialize()"
@@ -1393,8 +1393,8 @@
     {
       "label": ".deserialize()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L186",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L200",
       "id": "cacheservice_cacheservice_deserialize",
       "community": 6,
       "norm_label": ".deserialize()"
@@ -1402,8 +1402,8 @@
     {
       "label": ".hashQuery()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L194",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L208",
       "id": "cacheservice_cacheservice_hashquery",
       "community": 4,
       "norm_label": ".hashquery()"
@@ -1411,8 +1411,8 @@
     {
       "label": ".ensureTableExists()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L212",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L226",
       "id": "cacheservice_cacheservice_ensuretableexists",
       "community": 4,
       "norm_label": ".ensuretableexists()"
@@ -1654,17 +1654,17 @@
     {
       "label": "SearchJobListener.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
       "community": 3,
       "norm_label": "searchjoblistener.java"
     },
     {
       "label": "SearchJobListener",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L30",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L40",
       "id": "searchjoblistener_searchjoblistener",
       "community": 3,
       "norm_label": "searchjoblistener"
@@ -1672,8 +1672,8 @@
     {
       "label": ".onMessage()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L44",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L54",
       "id": "searchjoblistener_searchjoblistener_onmessage",
       "community": 3,
       "norm_label": ".onmessage()"
@@ -1681,8 +1681,8 @@
     {
       "label": ".processJob()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L59",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L69",
       "id": "searchjoblistener_searchjoblistener_processjob",
       "community": 3,
       "norm_label": ".processjob()"
@@ -1690,8 +1690,8 @@
     {
       "label": ".seedCompetitorsIfNeeded()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L171",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L181",
       "id": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
       "community": 0,
       "norm_label": ".seedcompetitorsifneeded()"
@@ -1699,8 +1699,8 @@
     {
       "label": ".buildResponse()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L212",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L222",
       "id": "searchjoblistener_searchjoblistener_buildresponse",
       "community": 3,
       "norm_label": ".buildresponse()"
@@ -1708,8 +1708,8 @@
     {
       "label": ".normalize()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L237",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L247",
       "id": "searchjoblistener_searchjoblistener_normalize",
       "community": 3,
       "norm_label": ".normalize()"
@@ -1726,17 +1726,17 @@
     {
       "label": "SearchOrchestrator.java",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
       "source_location": "L1",
-      "id": "backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
+      "id": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
       "community": 6,
       "norm_label": "searchorchestrator.java"
     },
     {
       "label": "SearchOrchestrator",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L22",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L36",
       "id": "searchorchestrator_searchorchestrator",
       "community": 6,
       "norm_label": "searchorchestrator"
@@ -1744,8 +1744,8 @@
     {
       "label": ".getCachedResult()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L39",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L53",
       "id": "searchorchestrator_searchorchestrator_getcachedresult",
       "community": 6,
       "norm_label": ".getcachedresult()"
@@ -1753,8 +1753,8 @@
     {
       "label": ".persistJob()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L80",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L94",
       "id": "searchorchestrator_searchorchestrator_persistjob",
       "community": 6,
       "norm_label": ".persistjob()"
@@ -1762,8 +1762,8 @@
     {
       "label": ".enqueueJob()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L99",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L113",
       "id": "searchorchestrator_searchorchestrator_enqueuejob",
       "community": 6,
       "norm_label": ".enqueuejob()"
@@ -1771,8 +1771,8 @@
     {
       "label": ".getJob()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L107",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L121",
       "id": "searchorchestrator_searchorchestrator_getjob",
       "community": 6,
       "norm_label": ".getjob()"
@@ -1780,8 +1780,8 @@
     {
       "label": ".getResultForJob()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L116",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L130",
       "id": "searchorchestrator_searchorchestrator_getresultforjob",
       "community": 6,
       "norm_label": ".getresultforjob()"
@@ -1789,8 +1789,8 @@
     {
       "label": ".enrichWithCompetitors()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L127",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L141",
       "id": "searchorchestrator_searchorchestrator_enrichwithcompetitors",
       "community": 6,
       "norm_label": ".enrichwithcompetitors()"
@@ -1798,8 +1798,8 @@
     {
       "label": ".normalizeQuery()",
       "file_type": "code",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L174",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L188",
       "id": "searchorchestrator_searchorchestrator_normalizequery",
       "community": 6,
       "norm_label": ".normalizequery()"
@@ -2581,20 +2581,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
-      "source_location": "L6",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
+      "source_location": "L24",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_crowdlensapplication_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_crowdlensapplication_java",
       "_tgt": "crowdlensapplication_crowdlensapplication",
-      "source": "backend_src_main_java_com_crowdlens_crowdlensapplication_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_crowdlensapplication_java",
       "target": "crowdlensapplication_crowdlensapplication",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
-      "source_location": "L9",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\CrowdLensApplication.java",
+      "source_location": "L27",
       "weight": 1.0,
       "_src": "crowdlensapplication_crowdlensapplication",
       "_tgt": "crowdlensapplication_crowdlensapplication_main",
@@ -2605,20 +2605,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L13",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L37",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_config_appconfig_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_config_appconfig_java",
       "_tgt": "appconfig_appconfig",
-      "source": "backend_src_main_java_com_crowdlens_config_appconfig_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_config_appconfig_java",
       "target": "appconfig_appconfig",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L17",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L41",
       "weight": 1.0,
       "_src": "appconfig_appconfig",
       "_tgt": "appconfig_appconfig_webclientbuilder",
@@ -2629,8 +2629,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L25",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L49",
       "weight": 1.0,
       "_src": "appconfig_appconfig",
       "_tgt": "appconfig_appconfig_redditwebclient",
@@ -2641,8 +2641,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L33",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L57",
       "weight": 1.0,
       "_src": "appconfig_appconfig",
       "_tgt": "appconfig_appconfig_redditpublicwebclient",
@@ -2653,8 +2653,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
-      "source_location": "L41",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\AppConfig.java",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "appconfig_appconfig",
       "_tgt": "appconfig_appconfig_dynamodbclient",
@@ -2713,20 +2713,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
-      "source_location": "L14",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
+      "source_location": "L30",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_config_redisconfig_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_config_redisconfig_java",
       "_tgt": "redisconfig_redisconfig",
-      "source": "backend_src_main_java_com_crowdlens_config_redisconfig_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_config_redisconfig_java",
       "target": "redisconfig_redisconfig",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
-      "source_location": "L17",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\config\\RedisConfig.java",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "redisconfig_redisconfig",
       "_tgt": "redisconfig_redisconfig_lettucejvmdnsresolver",
@@ -2893,20 +2893,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L26",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L47",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
       "_tgt": "searchcontroller_searchcontroller",
-      "source": "backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_controller_searchcontroller_java",
       "target": "searchcontroller_searchcontroller",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L37",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "searchcontroller_searchcontroller",
       "_tgt": "searchcontroller_searchcontroller_search",
@@ -2917,8 +2917,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L76",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L98",
       "weight": 1.0,
       "_src": "searchcontroller_searchcontroller",
       "_tgt": "searchcontroller_searchcontroller_getjobstatus",
@@ -2929,8 +2929,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
-      "source_location": "L115",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\controller\\SearchController.java",
+      "source_location": "L137",
       "weight": 1.0,
       "_src": "searchcontroller_searchcontroller",
       "_tgt": "searchcontroller_searchcontroller_getloadinghints",
@@ -3265,20 +3265,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L14",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L27",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_provider_platformregistry_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_platformregistry_java",
       "_tgt": "platformregistry_platformregistry",
-      "source": "backend_src_main_java_com_crowdlens_provider_platformregistry_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_platformregistry_java",
       "target": "platformregistry_platformregistry",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L20",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "platformregistry_platformregistry",
       "_tgt": "platformregistry_platformregistry_platformregistry",
@@ -3289,8 +3289,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L33",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L46",
       "weight": 1.0,
       "_src": "platformregistry_platformregistry",
       "_tgt": "platformregistry_platformregistry_searchall",
@@ -3301,8 +3301,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L54",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "platformregistry_platformregistry",
       "_tgt": "platformregistry_platformregistry_getenabledplatforms",
@@ -3313,8 +3313,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
-      "source_location": "L61",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\PlatformRegistry.java",
+      "source_location": "L74",
       "weight": 1.0,
       "_src": "platformregistry_platformregistry",
       "_tgt": "platformregistry_platformregistry_healthcheckall",
@@ -3409,20 +3409,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L23",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L38",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
       "_tgt": "redditapiclient_redditapiclient",
-      "source": "backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditapiclient_java",
       "target": "redditapiclient_redditapiclient",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L35",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L50",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_redditapiclient",
@@ -3433,8 +3433,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L52",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_warmuptoken",
@@ -3445,8 +3445,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L69",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L84",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_searchposts",
@@ -3457,8 +3457,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L111",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L126",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_fetchcomments",
@@ -3469,8 +3469,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L153",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L168",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_searchfallback",
@@ -3481,8 +3481,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L162",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L177",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_ensureauthenticated",
@@ -3493,8 +3493,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L197",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L212",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient",
       "_tgt": "redditapiclient_redditapiclient_healthcheck",
@@ -3505,8 +3505,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L56",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L71",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient_warmuptoken",
       "_tgt": "redditapiclient_redditapiclient_ensureauthenticated",
@@ -3517,8 +3517,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L72",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient_searchposts",
       "_tgt": "redditapiclient_redditapiclient_ensureauthenticated",
@@ -3553,8 +3553,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L114",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L129",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient_fetchcomments",
       "_tgt": "redditapiclient_redditapiclient_ensureauthenticated",
@@ -3601,8 +3601,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
-      "source_location": "L199",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditApiClient.java",
+      "source_location": "L214",
       "weight": 1.0,
       "_src": "redditapiclient_redditapiclient_healthcheck",
       "_tgt": "redditapiclient_redditapiclient_ensureauthenticated",
@@ -3769,20 +3769,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L21",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L29",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
       "_tgt": "redditjsonscraper_redditjsonscraper",
-      "source": "backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditjsonscraper_java",
       "target": "redditjsonscraper_redditjsonscraper",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L40",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "redditjsonscraper_redditjsonscraper",
       "_tgt": "redditjsonscraper_redditjsonscraper_redditjsonscraper",
@@ -3793,8 +3793,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L49",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L57",
       "weight": 1.0,
       "_src": "redditjsonscraper_redditjsonscraper",
       "_tgt": "redditjsonscraper_redditjsonscraper_searchposts",
@@ -3805,8 +3805,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L93",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L101",
       "weight": 1.0,
       "_src": "redditjsonscraper_redditjsonscraper",
       "_tgt": "redditjsonscraper_redditjsonscraper_getrandomuseragent",
@@ -3817,8 +3817,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L100",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L108",
       "weight": 1.0,
       "_src": "redditjsonscraper_redditjsonscraper",
       "_tgt": "redditjsonscraper_redditjsonscraper_addjitter",
@@ -3829,8 +3829,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L51",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "redditjsonscraper_redditjsonscraper_searchposts",
       "_tgt": "redditjsonscraper_redditjsonscraper_addjitter",
@@ -3841,8 +3841,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
-      "source_location": "L67",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditJsonScraper.java",
+      "source_location": "L75",
       "weight": 1.0,
       "_src": "redditjsonscraper_redditjsonscraper_searchposts",
       "_tgt": "redditjsonscraper_redditjsonscraper_getrandomuseragent",
@@ -3925,20 +3925,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L22",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L31",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
       "_tgt": "redditprovider_redditprovider",
-      "source": "backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditprovider_java",
       "target": "redditprovider_redditprovider",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L34",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L43",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_getplatformname",
@@ -3949,8 +3949,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L39",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_search",
@@ -3961,8 +3961,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L102",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L111",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_deduplicateraw",
@@ -3973,8 +3973,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L118",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L127",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_fetchcommentsfromtopposts",
@@ -3985,8 +3985,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L201",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L210",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_logredditresponse",
@@ -3997,8 +3997,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L224",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L233",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_healthcheck",
@@ -4009,8 +4009,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L229",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L238",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider",
       "_tgt": "redditprovider_redditprovider_truncate",
@@ -4021,8 +4021,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L49",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L58",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider_search",
       "_tgt": "redditprovider_redditprovider_logredditresponse",
@@ -4033,8 +4033,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L78",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider_search",
       "_tgt": "redditprovider_redditprovider_deduplicateraw",
@@ -4045,8 +4045,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L81",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider_search",
       "_tgt": "redditprovider_redditprovider_fetchcommentsfromtopposts",
@@ -4069,8 +4069,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L138",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L147",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider_fetchcommentsfromtopposts",
       "_tgt": "redditprovider_redditprovider_truncate",
@@ -4081,8 +4081,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
-      "source_location": "L217",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditProvider.java",
+      "source_location": "L226",
       "weight": 1.0,
       "_src": "redditprovider_redditprovider_logredditresponse",
       "_tgt": "redditprovider_redditprovider_truncate",
@@ -4105,20 +4105,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L15",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L28",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
       "_tgt": "redditratelimiter_redditratelimiter",
-      "source": "backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_provider_reddit_redditratelimiter_java",
       "target": "redditratelimiter_redditratelimiter",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L22",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L35",
       "weight": 1.0,
       "_src": "redditratelimiter_redditratelimiter",
       "_tgt": "redditratelimiter_redditratelimiter_redditratelimiter",
@@ -4129,8 +4129,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L34",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L47",
       "weight": 1.0,
       "_src": "redditratelimiter_redditratelimiter",
       "_tgt": "redditratelimiter_redditratelimiter_acquireapitoken",
@@ -4141,8 +4141,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L47",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L60",
       "weight": 1.0,
       "_src": "redditratelimiter_redditratelimiter",
       "_tgt": "redditratelimiter_redditratelimiter_acquirescrapertoken",
@@ -4153,8 +4153,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L56",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "redditratelimiter_redditratelimiter",
       "_tgt": "redditratelimiter_redditratelimiter_createbucket",
@@ -4165,8 +4165,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
-      "source_location": "L23",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\provider\\reddit\\RedditRateLimiter.java",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "redditratelimiter_redditratelimiter_redditratelimiter",
       "_tgt": "redditratelimiter_redditratelimiter_createbucket",
@@ -4609,44 +4609,44 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L28",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L40",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "_tgt": "aianalysisengine_aianalysisengine",
-      "source": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "target": "aianalysisengine_aianalysisengine",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L340",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L352",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "_tgt": "aianalysisengine_empty",
-      "source": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "target": "aianalysisengine_empty",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L349",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L361",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "_tgt": "aianalysisengine_error",
-      "source": "backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_aianalysisengine_java",
       "target": "aianalysisengine_error",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L36",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_aianalysisengine",
@@ -4657,8 +4657,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L47",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_analyze",
@@ -4669,8 +4669,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L95",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L107",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_analyzefallback",
@@ -4681,8 +4681,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L105",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L117",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_healthcheck",
@@ -4693,8 +4693,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L140",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L152",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_suggestcompetitors",
@@ -4705,8 +4705,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L185",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L197",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_parseairesponse",
@@ -4717,8 +4717,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L232",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L244",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_parsemetrics",
@@ -4729,8 +4729,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L251",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L263",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_parsestringarray",
@@ -4741,8 +4741,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L263",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L275",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_parseevidencesnippets",
@@ -4753,8 +4753,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L282",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L294",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_todouble",
@@ -4765,8 +4765,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L294",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L306",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine",
       "_tgt": "aianalysisengine_aianalysisengine_parsecompetitorseeds",
@@ -4777,8 +4777,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L51",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_analyze",
       "_tgt": "aianalysisengine_empty",
@@ -4789,8 +4789,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L74",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L86",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_analyze",
       "_tgt": "aianalysisengine_aianalysisengine_parseairesponse",
@@ -4801,8 +4801,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L77",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L89",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_analyze",
       "_tgt": "aianalysisengine_error",
@@ -4849,8 +4849,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L97",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L109",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_analyzefallback",
       "_tgt": "aianalysisengine_error",
@@ -4861,8 +4861,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L116",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L128",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_healthcheck",
       "_tgt": "aianalysisengine_error",
@@ -4885,8 +4885,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L176",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L188",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_suggestcompetitors",
       "_tgt": "aianalysisengine_aianalysisengine_parsecompetitorseeds",
@@ -4921,8 +4921,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L203",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L215",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parseairesponse",
       "_tgt": "aianalysisengine_aianalysisengine_parsemetrics",
@@ -4933,8 +4933,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L204",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L216",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parseairesponse",
       "_tgt": "aianalysisengine_aianalysisengine_parsestringarray",
@@ -4945,8 +4945,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L208",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L220",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parseairesponse",
       "_tgt": "aianalysisengine_aianalysisengine_parseevidencesnippets",
@@ -4957,8 +4957,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L210",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L222",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parseairesponse",
       "_tgt": "aianalysisengine_aianalysisengine_parsecompetitorseeds",
@@ -4969,8 +4969,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L226",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L238",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parseairesponse",
       "_tgt": "aianalysisengine_error",
@@ -4981,8 +4981,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L241",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L253",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parsemetrics",
       "_tgt": "aianalysisengine_aianalysisengine_todouble",
@@ -5017,8 +5017,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
-      "source_location": "L305",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\AIAnalysisEngine.java",
+      "source_location": "L317",
       "weight": 1.0,
       "_src": "aianalysisengine_aianalysisengine_parsecompetitorseeds",
       "_tgt": "aianalysisengine_aianalysisengine_todouble",
@@ -5125,20 +5125,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L25",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L39",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_service_cacheservice_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_cacheservice_java",
       "_tgt": "cacheservice_cacheservice",
-      "source": "backend_src_main_java_com_crowdlens_service_cacheservice_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_cacheservice_java",
       "target": "cacheservice_cacheservice",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L33",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L47",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_cacheservice",
@@ -5149,8 +5149,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L46",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L60",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_get",
@@ -5161,8 +5161,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L88",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L102",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_findsimilar",
@@ -5173,8 +5173,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L135",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L149",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_put",
@@ -5185,8 +5185,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L159",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L173",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_evict",
@@ -5197,8 +5197,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L175",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L189",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_serialize",
@@ -5209,8 +5209,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L186",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L200",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_deserialize",
@@ -5221,8 +5221,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L194",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L208",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_hashquery",
@@ -5233,8 +5233,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L212",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L226",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_ensuretableexists",
@@ -5245,8 +5245,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L37",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L51",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice_cacheservice",
       "_tgt": "cacheservice_cacheservice_ensuretableexists",
@@ -5257,8 +5257,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L47",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L61",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice_get",
       "_tgt": "cacheservice_cacheservice_hashquery",
@@ -5269,8 +5269,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L108",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L122",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice_findsimilar",
       "_tgt": "cacheservice_cacheservice_get",
@@ -5305,8 +5305,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L136",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L150",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice_put",
       "_tgt": "cacheservice_cacheservice_hashquery",
@@ -5329,8 +5329,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
-      "source_location": "L160",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\CacheService.java",
+      "source_location": "L174",
       "weight": 1.0,
       "_src": "cacheservice_cacheservice_evict",
       "_tgt": "cacheservice_cacheservice_hashquery",
@@ -5833,20 +5833,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L30",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L40",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
       "_tgt": "searchjoblistener_searchjoblistener",
-      "source": "backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_searchjoblistener_java",
       "target": "searchjoblistener_searchjoblistener",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L44",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L54",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener",
       "_tgt": "searchjoblistener_searchjoblistener_onmessage",
@@ -5857,8 +5857,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L59",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener",
       "_tgt": "searchjoblistener_searchjoblistener_processjob",
@@ -5869,8 +5869,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L171",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L181",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener",
       "_tgt": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
@@ -5881,8 +5881,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L212",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L222",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener",
       "_tgt": "searchjoblistener_searchjoblistener_buildresponse",
@@ -5893,8 +5893,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L237",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L247",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener",
       "_tgt": "searchjoblistener_searchjoblistener_normalize",
@@ -5905,8 +5905,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L56",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L66",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener_onmessage",
       "_tgt": "searchjoblistener_searchjoblistener_processjob",
@@ -5917,8 +5917,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L132",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L142",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener_processjob",
       "_tgt": "searchjoblistener_searchjoblistener_buildresponse",
@@ -5929,8 +5929,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L141",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L151",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener_processjob",
       "_tgt": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
@@ -5941,8 +5941,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
-      "source_location": "L190",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchJobListener.java",
+      "source_location": "L200",
       "weight": 1.0,
       "_src": "searchjoblistener_searchjoblistener_seedcompetitorsifneeded",
       "_tgt": "searchjoblistener_searchjoblistener_normalize",
@@ -5953,20 +5953,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L22",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L36",
       "weight": 1.0,
-      "_src": "backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
+      "_src": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
       "_tgt": "searchorchestrator_searchorchestrator",
-      "source": "backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
+      "source": "d_indie_side_projects_crowdlens_backend_src_main_java_com_crowdlens_service_searchorchestrator_java",
       "target": "searchorchestrator_searchorchestrator",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L39",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L53",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_getcachedresult",
@@ -5977,8 +5977,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L80",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L94",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_persistjob",
@@ -5989,8 +5989,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L99",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L113",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_enqueuejob",
@@ -6001,8 +6001,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L107",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L121",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_getjob",
@@ -6013,8 +6013,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L116",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L130",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_getresultforjob",
@@ -6025,8 +6025,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L127",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L141",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_enrichwithcompetitors",
@@ -6037,8 +6037,8 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L174",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L188",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator",
       "_tgt": "searchorchestrator_searchorchestrator_normalizequery",
@@ -6049,8 +6049,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L40",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L54",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator_getcachedresult",
       "_tgt": "searchorchestrator_searchorchestrator_normalizequery",
@@ -6061,8 +6061,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L71",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L85",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator_getcachedresult",
       "_tgt": "searchorchestrator_searchorchestrator_enrichwithcompetitors",
@@ -6085,8 +6085,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L82",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L96",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator_persistjob",
       "_tgt": "searchorchestrator_searchorchestrator_normalizequery",
@@ -6097,8 +6097,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
-      "source_location": "L119",
+      "source_file": "D:\\indie side projects\\CrowdLens\\backend\\src\\main\\java\\com\\crowdlens\\service\\SearchOrchestrator.java",
+      "source_location": "L133",
       "weight": 1.0,
       "_src": "searchorchestrator_searchorchestrator_getresultforjob",
       "_tgt": "searchorchestrator_searchorchestrator_enrichwithcompetitors",
