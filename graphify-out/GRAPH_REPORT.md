@@ -1,7 +1,7 @@
 # Graph Report - D:\indie side projects\CrowdLens  (2026-05-29)
 
 ## Corpus Check
-- 65 files · ~65,078 words
+- 65 files · ~65,268 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
