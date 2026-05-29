@@ -21,24 +21,86 @@ Results are returned as a shareable card image (PNG download / copy to clipboard
 
 ---
 
-## Architecture
+## Architecture & Technical Flow
+
+CrowdLens is structured as a **Layered (N-Tier) Architecture** to ensure clean separation of concerns, scalability under resource constraints, and fault tolerance.
 
 ```
-Next.js (Vercel)  ──►  Spring Boot (OCI VM)  ──►  Redis (RQueue)
-                               │                       │
-                           SQLite                SearchJobListener
-                               │                    │
-                           DynamoDB ◄───── full AI JSON cached here
++------------------------------------------------------------------------+
+|                      Presentation Layer (Controllers)                  |
+|          SearchController | TrendingController | HealthController      |
++------------------------------------+-----------------------------------+
+                                     |
+                                     v
++------------------------------------------------------------------------+
+|                         Orchestration Layer                            |
+|                          SearchOrchestrator                            |
++-------------------+----------------+-----------------------------------+
+                    |                |
+                    v (Cache Hit)    v (Cache Miss)
++-----------------------+        +---------------------------------------+
+|  Cache Layer (NoSQL)  |        |      Primary DB Layer (Relational)    |
+|     CacheService      |        |   SearchJobRepository (PENDING job)   |
+|    (AWS DynamoDB)     |        +-------------------+-------------------+
++-----------------------+                            |
+                                                     v
+                                 +---------------------------------------+
+                                 |            Redis Job Queue            |
+                                 |          RqueueMessageEnqueuer        |
+                                 +-------------------+-------------------+
+                                                     |
+                                                     v (Async Dequeue)
++----------------------------------------------------+-------------------+
+|                     Asynchronous Execution Layer                       |
+|                          SearchJobListener                             |
+|    - PlatformRegistry (Crawlers)     - AIAnalysisEngine (OpenAI)       |
+|    - ImageResolutionService (Images) - CompetitorService (Seeding)     |
++-------------------+--------------------------------+-------------------+
+                    |                                |
+                    v                                v
++-----------------------+        +---------------------------------------+
+|  Cache Layer (NoSQL)  |        |      Primary DB Layer (Relational)    |
+|   AWS DynamoDB cache  |        |   SQLite (SearchResult/SocialPost)    |
++-----------------------+        +---------------------------------------+
 ```
 
-- **Redis + RQueue** — async job queue. Analysis takes 15–45 seconds; the HTTP request returns immediately with a `jobId` (HTTP 202). The frontend polls every 2 seconds until `COMPLETED`.
-- **SQLite** — job state tracking + lean result index (query, score, category, image URL)
-- **DynamoDB** — full AI JSON response cached with TTL (default 24h). Cache hit → HTTP 200 with instant result.
-- **OpenAI** — primary AI for dynamic metric extraction and verdict generation
-- **Google Gemini** — secondary AI for contextual loading hints only
-- **`concurrency=1`** — one job runs at a time (intentional; 1 GB VM)
+### End-to-End Execution Flow
 
-See [architecture.md](./architecture.md) for full detail.
+#### 1. Presentation Layer (Request Receipt)
+1. The client submits a search query via `POST /api/search` to [SearchController](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/controller/SearchController.java).
+2. The Controller delegates the cache check to the Orchestration Layer ([SearchOrchestrator](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/service/SearchOrchestrator.java)).
+
+#### 2. Orchestration & Fast Path (Cache Hit)
+1. `SearchOrchestrator` queries [CacheService](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/service/CacheService.java) using the normalized query SHA-256 hash.
+2. `CacheService` does an $O(1)$ query to AWS DynamoDB. 
+   - **Cache Hit:** The serialized JSON is retrieved, validated against its `expires_at` timestamp, deserialized into a `SearchResponse`, enriched with competitors via [CompetitorService](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/service/CompetitorService.java), and returned to the client immediately with **HTTP 200 OK** in `< 100ms`.
+   - **Cache Miss:** The Orchestrator initiates the slow path.
+
+#### 3. Slow Path (Job Ingestion & Decoupling)
+1. `SearchOrchestrator` creates a new `SearchJob` record in `PENDING` state and persists it to the local SQLite database.
+2. Once the SQLite transaction successfully commits, the Orchestrator publishes a `SearchJobMessage` containing the `jobId` to the Redis queue via `RqueueMessageEnqueuer`.
+3. The Controller immediately returns **HTTP 202 Accepted** to the client, along with the `jobId` and `status: PENDING`. The HTTP thread is released.
+
+#### 4. Asynchronous Execution Layer (Worker Pipeline)
+1. [SearchJobListener](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/service/SearchJobListener.java) (running in the background with `concurrency=1` to optimize VPS resource footprint) dequeues the message.
+2. The listener marks the job status as `IN_PROGRESS` in SQLite.
+3. **Data Fetching:** It delegates crawling to [PlatformRegistry](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/provider/PlatformRegistry.java), which invokes [RedditProvider](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/provider/reddit/RedditProvider.java). It calls the official Reddit API ([RedditApiClient](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/provider/reddit/RedditApiClient.java)) and falls back to [RedditJsonScraper](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/provider/reddit/RedditJsonScraper.java) if rate-limited.
+4. **AI Processing:** Scraped posts are sent to [AIAnalysisEngine](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/service/AIAnalysisEngine.java) (powered by Spring AI's `ChatModel` interfacing with OpenAI). The AI classifies categories, evaluates sentiment scores, and constructs a structured analysis response.
+5. **Image Resolution:** [ImageResolutionService](file:///d:/indie%20side%20projects/CrowdLens/backend/src/main/java/com/crowdlens/service/ImageResolutionService.java) fetches a relevant Amazon product image if no Reddit image is resolved, and converts it to a CORS-safe base64 data URI.
+6. **Data Persistence (SQLite & Cache):** Using a transactional wrapper (`TransactionTemplate`):
+   - A lean result index is saved into the SQLite `search_results` table.
+   - Collected social posts are deduplicated and saved into the SQLite `social_posts` table.
+   - The full JSON analysis payload is cached in AWS DynamoDB with a TTL.
+   - Competitor placeholder rows are seeded in SQLite if none exist for the subcategory.
+   - The job row in SQLite is marked `COMPLETED` and the serialized response is stored on the job record (`result_json`).
+
+#### 5. Client Polling Flow
+1. The client polls `GET /api/search/{jobId}` every 2 seconds.
+2. The Controller queries the Orchestrator, which checks the SQLite job status.
+3. While the status is `PENDING` or `IN_PROGRESS`, the server returns a lightweight status response.
+4. Once marked `COMPLETED`, the server retrieves the `result_json` from the SQLite job row, deserializes it, and returns the full analysis payload with **HTTP 200 OK**, concluding the flow.
+
+See [architecture.md](./architecture.md) for full system specifications.
 
 ---
 
