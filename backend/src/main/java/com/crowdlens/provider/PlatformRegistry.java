@@ -8,8 +8,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Registry of all enabled PlatformProviders.
- * Delegates search to each provider and aggregates results.
+ * WHAT IT DOES:
+ * Registry that holds all available {@link PlatformProvider} implementations, acting as a facade
+ * to orchestrate and aggregate search crawl processes across platforms.
+ *
+ * WHY IT'S NEEDED:
+ * Decouples the service execution logic from concrete social media crawl providers (e.g. Reddit, Twitter).
+ * It enforces the Open/Closed Principle: you can register new crawler components by simply implementing
+ * the provider interface, and this registry will automatically discover them without any code modification.
+ *
+ * HOW IT WORKS:
+ * - Dependency Injection List Injection: Spring automatically resolves all beans that implement the {@link PlatformProvider} interface and injects them as a List into the constructor.
+ * - Platform aggregation: searchAll(...) loops through the mapped providers and invokes their search processes. It catches exceptions per provider so that a single platform failure (e.g. Twitter down) doesn't abort the entire job (graceful degradation).
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Component: General-purpose stereotype annotation indicating that this class is a Spring-managed bean, registering it inside the IoC container.
  */
 @Slf4j
 @Component

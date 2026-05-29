@@ -17,8 +17,23 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Reddit OAuth2 API client (script-type authentication).
- * Primary data source — falls back to RedditJsonScraper on failure.
+ * WHAT IT DOES:
+ * Official Reddit API crawler implementing script-based OAuth2 client flows to fetch posts and comments.
+ *
+ * WHY IT'S NEEDED:
+ * Connects directly to Reddit's official API, providing the highest quality data format (author fields, timestamps,
+ * voting metrics) compared to fallback scraper models.
+ *
+ * HOW IT WORKS:
+ * - Startup OAuth Token Warmup: Listens to {@link org.springframework.boot.context.event.ApplicationReadyEvent} to eagerly authenticate on startup. This prevents the first end-user request from paying the ~10s OAuth handshake penalty.
+ * - Thread-Safe Lazy Authenticator: ensureAuthenticated() is synchronized and modifies {@link java.util.concurrent.atomic.AtomicReference} values. This prevents concurrent threads from triggering multiple redundant OAuth refresh API calls.
+ * - Circuit Breaking: Methods are annotated with @CircuitBreaker(name = "redditApi"). If the API throws timeouts or HTTP 5xx failures, Resilience4j intercepts them. Once failure rates exceed 50%, the circuit opens, failing-fast immediately and invoking fallback scraping methods without hitting Reddit.
+ * - Rate limiting: Integrates standard Bucket4j rate limiting via {@code rateLimiter.acquireApiToken()}.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Component: Registers this class as a Spring Bean.
+ * - @Qualifier: Resolves dependency injection ambiguity when multiple beans of the same type exist (e.g. injecting redditWebClient builder custom rules instead of default WebClient builders).
+ * - @EventListener(ApplicationReadyEvent.class): Listens for context startup hooks to run warmups.
  */
 @Slf4j
 @Component

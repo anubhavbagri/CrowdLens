@@ -7,9 +7,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Forces Lettuce to use the JVM DNS resolver instead of Netty's async DNS client.
- * Netty's resolver sends raw UDP queries to 127.0.0.11:53 which times out in Docker.
- * The JVM resolver uses InetAddress (reads /etc/resolv.conf) and works correctly.
+ * WHAT IT DOES:
+ * Configures the Lettuce client connection settings for Redis by forcing it to use JVM-level DNS resolution.
+ *
+ * WHY IT'S NEEDED:
+ * By default, Lettuce (Spring Boot's default Redis driver) uses Netty's asynchronous DNS resolver. Netty's resolver
+ * targets DNS servers directly, which inside Docker containers defaults to querying cgroups/Docker internal DNS at 127.0.0.11:53.
+ * Under high loads or specific Linux network structures, this leads to connection timeouts and "Redis connection refused" exceptions.
+ * Forcing JVM DNS resolution resolves hosts using Java's standard lookup, reading `/etc/resolv.conf` natively.
+ *
+ * HOW IT WORKS:
+ * It defines a {@link LettuceClientConfigurationBuilderCustomizer} Bean that overrides Lettuce client resources.
+ * Specifically, it maps the `.dnsResolver` property to {@link DnsResolvers#JVM_DEFAULT}.
+ *
+ * WHERE IT'S USED:
+ * Automatically loaded by Spring Boot Auto-Configuration to customize the {@code RedisConnectionFactory}.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Configuration: Declares this class as a source of bean definitions for the Spring Application Context.
+ * - @Bean: Tells Spring that this method returns an object that should be registered as a bean in the context.
  */
 @Configuration
 public class RedisConfig {
@@ -23,3 +39,5 @@ public class RedisConfig {
         );
     }
 }
+
+

@@ -23,6 +23,27 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * WHAT IT DOES:
+ * Serves as the primary REST API endpoint controller for product searches, polling, and loading screens.
+ *
+ * WHY IT'S NEEDED:
+ * Provides an HTTP entry point for the frontend, routing incoming client requests to backend services
+ * and mapping complex data processing actions to clean, structured JSON schemas.
+ *
+ * HOW IT WORKS:
+ * Exposes three endpoints:
+ * - POST /api/search: Checks cache. On cache hit, returns SearchResponse immediately (HTTP 200). On cache miss, inserts a job to SQLite, enqueues to Redis queue, and returns JobStatusResponse receipt (HTTP 202).
+ * - GET /api/search/{jobId}: Retrieves current status of an async worker pipeline job from SQLite.
+ * - GET /api/loading-hints: Returns dynamically built loading hint arrays by calling Google Gemini.
+ *
+ * SPRING & LOMBOK ANNOTATIONS EXPLAINED:
+ * - @RestController: Specialization of @Controller that automatically appends @ResponseBody to all handler methods, serializing return payloads into JSON using Jackson.
+ * - @RequestMapping("/api"): Defines the base path mapping prefix for all endpoints defined in this controller.
+ * - @RequiredArgsConstructor: Lombok compile-time annotation that generates a constructor for all private final fields. This implements Constructor-based Dependency Injection.
+ * - @CrossOrigin(origins = "*"): Bypasses browser CORS security restrictions by adding Access-Control-Allow-Origin: * to response headers.
+ * - @Valid: Triggers Spring's validation framework on the request body using JSR-380 constraints (e.g. checking @NotBlank on query).
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -30,6 +51,7 @@ import java.util.UUID;
 @CrossOrigin(origins = "*")
 @Tag(name = "Search", description = "Search and analyze social media opinions")
 public class SearchController {
+
 
     private final SearchOrchestrator orchestrator;
     private final LoadingHintsService loadingHintsService;

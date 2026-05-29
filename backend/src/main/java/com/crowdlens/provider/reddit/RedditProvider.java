@@ -11,13 +11,22 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * Reddit platform provider — implements the PlatformProvider strategy interface.
+ * WHAT IT DOES:
+ * Implements the {@link PlatformProvider} strategy for the Reddit platform. Coordinates the Reddit crawl process,
+ * merging post crawling with comment retrieval, deduplicating records, and filtering high-quality sentiment posts.
  *
- * Uses a Chain of Responsibility pattern for data acquisition:
- * 1. Try RedditApiClient (OAuth2, higher quality)
- * 2. Fall back to RedditJsonScraper (no auth, stealth)
- * 3. Aggregate and deduplicate results via RedditDataAggregator (in-memory, per-request)
- * 4. Fetch top comments from best posts for richer opinions
+ * WHY IT'S NEEDED:
+ * Decouples platform-agnostic crawl managers from concrete platform retrieval logic. It coordinates
+ * crawl API rules specifically for Reddit (handling comment threads, score limits, sanitization).
+ *
+ * HOW IT WORKS:
+ * - Chain of Responsibility: Executes a sequential search block. It queries {@link RedditApiClient} (OAuth client) first. If it encounters exceptions, it fails-over to {@link RedditJsonScraper} (unauthenticated crawler) to assure data collection.
+ * - Deduplication & Sorting: Integrates raw JSON responses using {@link RedditDataAggregator}, sorting entries in-memory based on upvote score, and truncating to configuration limits.
+ * - Deep crawling: Iterates top post results sequentially to retrieve comment threads, filtering out low-quality comments (e.g. from AutoModerator or deleted users).
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Component: Registers this implementation class as a component bean.
+ * - @RequiredArgsConstructor: Generates constructor parameters for final fields to implement constructor-based dependency injection.
  */
 @Slf4j
 @Component

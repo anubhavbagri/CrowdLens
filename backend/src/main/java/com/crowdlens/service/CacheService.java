@@ -18,9 +18,23 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * DynamoDB-backed cache service.
- * Stores serialized search responses with TTL auto-expiry.
- * Key: SHA-256 hash of normalized query → Value: serialized JSON response.
+ * WHAT IT DOES:
+ * Provides a key-value caching layer backed by AWS DynamoDB. Keys are SHA-256 hashes of normalized queries,
+ * and values are serialized JSON string representations of {@link com.crowdlens.model.dto.SearchResponse}.
+ *
+ * WHY IT'S NEEDED:
+ * Analysis takes ~30 seconds and calls paid OpenAI APIs. Caching completes subsequent duplicate query requests
+ * in under 100ms and reduces API expenses.
+ *
+ * HOW IT WORKS:
+ * - Double-Tiered Cache Lookup:
+ *   - Tier 1 (Exact Match): Generates a SHA-256 hash of the normalized query and performs a fast, single-key GetItem lookup (O(1) time complexity).
+ *   - Tier 2 (Similarity Match): On exact miss, performs a DynamoDB Table Scan, filtering active TTL items and executing a local token-set Jaccard similarity comparison. If a record scores >= threshold (e.g. 0.75), it is returned.
+ * - Manual TTL Gate: Because DynamoDB native TTL sweeps are eventually consistent (taking up to 48 hours to physically delete items), the service manually checks expires_at during lookups to prevent serving stale caches.
+ * - Auto Table Provisioning: Attempts to describe the table on startup; if missing, issues a CreateTable call and configures the TTL attribute programmatically.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Service: Identifies this class as a singleton Service component.
  */
 @Slf4j
 @Service

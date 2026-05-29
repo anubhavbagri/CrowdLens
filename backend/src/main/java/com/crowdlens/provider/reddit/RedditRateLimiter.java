@@ -9,8 +9,21 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 
 /**
- * Token bucket rate limiter for Reddit requests.
- * Provides separate buckets for OAuth API and JSON scraper endpoints.
+ * WHAT IT DOES:
+ * Restricts outgoing crawler traffic to Reddit's network using separate rate limit buckets
+ * for the official OAuth API and the unauthenticated JSON scraper.
+ *
+ * WHY IT'S NEEDED:
+ * Prevents the application from getting banned (HTTP 429 Too Many Requests) by Reddit's CDN and WAF,
+ * ensuring outbound requests follow Reddit's API usage policies.
+ *
+ * HOW IT WORKS:
+ * - Token Bucket Algorithm: Employs Bucket4j to define rate limits. Outbound crawl tasks consume tokens. If no tokens are available, the calling thread blocks until the token regenerates.
+ * - Greedy Refill strategy: Refills tokens steadily over the interval (e.g. adding 1 token every second instead of 60 tokens in a batch at minute marks). This smooths request bursts, mimicking human browsing behavior.
+ * - Dual Isolation: Isolates the official API bucket from the scraper bucket to prevent scraper delays from affecting API workflows.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Component: Marks this class as a Spring Bean managed under context registry.
  */
 @Slf4j
 @Component

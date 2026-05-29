@@ -10,13 +10,21 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Fallback Reddit data source using old.reddit.com JSON endpoints (no auth
- * required).
- * Used when OAuth2 API is rate-limited or unavailable.
+ * WHAT IT DOES:
+ * Crawls Reddit discussions using unauthenticated public JSON endpoints from `old.reddit.com`.
  *
- * Stealth measures:
- * - User-Agent rotation
- * - Random jitter between requests (500-2000ms)
+ * WHY IT'S NEEDED:
+ * Serves as the fallback data provider inside the Chain of Responsibility when the official Reddit API
+ * is rate-limited, down, or blocked, guaranteeing that the application still retrieves product posts.
+ *
+ * HOW IT WORKS:
+ * - User-Agent rotation: Holds a static list of 10 modern desktop browser User-Agent strings. Each request picks a random User-Agent to avoid IP bans triggered by standard Java client identifiers.
+ * - Random Jitter: Calls a blocking Thread.sleep() with a randomized delay (500-2000ms) between crawls. This breaks rhythmic crawl signatures, making bot patterns look human to Web Application Firewalls (WAF).
+ * - Rate limiting: Intercepts scraper calls via {@code rateLimiter.acquireScraperToken()} to ensure crawls are spaced out.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Component: Configures this class as a Spring Bean eligible for IoC autowire injection.
+ * - @Qualifier: Directs injection of custom WebClient instances (e.g. `redditPublicWebClient`).
  */
 @Slf4j
 @Component

@@ -20,12 +20,22 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Processes search jobs from the rqueue "search-jobs" queue one at a time.
- * concurrency="1" ensures sequential execution — no parallel jobs on this low-powered server.
+ * WHAT IT DOES:
+ * Background listener that consumes search jobs from the Rqueue queue, executes the crawling
+ * pipeline, runs AI-based sentiment analysis, resolves product images, and persists the aggregated data.
  *
- * Data split:
- *  - SQLite (SearchResult): lightweight permanent index — query, category, subcategory, score only
- *  - DynamoDB: full AI-generated JSON (verdict, metrics, positives, snippets etc.)
+ * WHY IT'S NEEDED:
+ * Crawling and LLM calls are slow external network activities (taking 15-60 seconds). Running them
+ * asynchronously prevents blocking the client's HTTP thread pool, keeping the web server responsive.
+ *
+ * HOW IT WORKS:
+ * - Sequential Concurrency limit: concurrency = "1" ensures that jobs are executed sequentially. This prevents CPU and memory exhaustion on a low-powered single-core VPS and avoids concurrent writes to SQLite, preventing SQLITE_BUSY errors.
+ * - Separation of Transactions: External HTTP requests run outside transaction contexts to avoid holding database pool connections during network requests (pool starvation prevention). Programmatic transactions via TransactionTemplate are used only during final data persistence.
+ * - Data Split Strategy: SQLite stores lean relational indices (query, scores, categories) to support SQL aggregates, while DynamoDB stores bulky, dynamic AI JSON blobs to avoid database file bloating.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Service: Identifies this as a Spring service bean.
+ * - @RqueueListener: Registers this method as a consumer for Rqueue messages. Maps the queue name, concurrency constraints, and dead-letter/retry limits.
  */
 @Slf4j
 @Service

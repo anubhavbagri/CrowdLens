@@ -16,8 +16,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Orchestrates search job lifecycle: cache check, job creation, queue enqueue, and status lookup.
- * Actual pipeline execution (scrape → AI → persist → cache) is handled by SearchJobListener.
+ * WHAT IT DOES:
+ * Orchestrates the lifecycle of product search jobs, including cache verification (AWS DynamoDB),
+ * job creation and state initialization (SQLite), and message queue dispatching (Redis Rqueue).
+ *
+ * WHY IT'S NEEDED:
+ * Serves as a coordination facade for search processing. It decouples the HTTP Controller layer
+ * from direct access to queues and database repository transactions, enforcing the single responsibility principle.
+ *
+ * HOW IT WORKS:
+ * - Cache Validation: Normalized searches query {@link CacheService}. On miss, Jaccard similarity validates table entries.
+ * - Decoupled Job persistence: {@code persistJob(request)} is marked {@code @Transactional} to guarantee that the job entity commits to SQLite *before* Rqueue publishes the message. This prevents race conditions where the listener retrieves a message but the database row is not yet committed.
+ * - Enqueueing: {@code enqueueJob(jobId)} publishes events to Redis.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Service: A specialization of @Component that designates this class as a business-logic container, making it eligible for automatic component scanning and dependency injection.
+ * - @Transactional: Ensures database operations inside the marked method execute within a transaction boundary. If an exception occurs, the transaction rolls back. It relies on Spring AOP proxies.
  */
 @Slf4j
 @Service

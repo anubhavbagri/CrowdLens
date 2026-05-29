@@ -20,10 +20,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * AI analysis engine powered by Spring AI's ChatModel interface.
- * Model-agnostic: swap OpenAI → Anthropic → Gemini → Ollama via config.
+ * WHAT IT DOES:
+ * Interfaces with LLM providers using Spring AI's {@link org.springframework.ai.chat.model.ChatModel} interface
+ * to analyze product posts, generate structured summaries, score sentiment metrics, and estimate competitor ratings.
  *
- * Parses the new dynamic-metric response shape introduced in V2.
+ * WHY IT'S NEEDED:
+ * Encapsulates prompt compilation, LLM REST calls, and JSON output parsing logic, isolating AI interaction details
+ * from background workers.
+ *
+ * HOW IT WORKS:
+ * - Model-Agnostic Abstraction: By injecting `ChatModel` interface and qualifying it as @Qualifier("openAiChatModel"), the application decouples business logic from a concrete LLM provider. Swapping to Anthropic or Gemini requires only config changes, no Java changes.
+ * - Prompt Hardening & Parsing: The prompt forces the LLM to return strict JSON arrays and objects. Jackson is used to deserialize the output defensively, mapping missing or bad schema arrays to empty collections.
+ * - Circuit Breaker Integration: Annotating analyze(...) with @CircuitBreaker from Resilience4j monitors failures. If OpenAI returns consecutive 5xx or rate limit exceptions, the circuit trips open, immediately running the local fallback method without wasting time or request budgets.
+ * - Seeding Estimation: Generates estimates for competitor product scores when the parent subcategory lacks historical indices.
+ *
+ * SPRING ANNOTATIONS EXPLAINED:
+ * - @Service: Marks this as a core Spring business logic component.
  */
 @Slf4j
 @Service
