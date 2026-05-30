@@ -28,18 +28,18 @@ CrowdLens is a product opinion analysis engine that aggregates Reddit discussion
 
 ```mermaid
 graph TD
-    Browser["User Browser"] -->|HTTPS| Vercel["Vercel\nNext.js 14 / TypeScript"]
-    Vercel -->|REST API HTTPS| Backend["Spring Boot 3.2\nOCI VM"]
+    Browser["User Browser"] -->|HTTPS| Vercel["Vercel<br>Next.js 14 / TypeScript"]
+    Vercel -->|REST API HTTPS| Backend["Spring Boot 3.2<br>OCI VM"]
 
-    Backend --> Redis["Redis 7\nJob Queue"]
-    Backend --> SQLite["SQLite WAL\nPrimary DB"]
-    Backend --> DynamoDB["AWS DynamoDB\nAI Response Cache"]
+    Backend --> Redis["Redis 7<br>Job Queue"]
+    Backend --> SQLite["SQLite WAL<br>Primary DB"]
+    Backend --> DynamoDB["AWS DynamoDB<br>AI Response Cache"]
 
     Backend -->|OAuth2| Reddit["Reddit API"]
     Backend -->|.json fallback| RedditScraper["Reddit .json Scraper"]
-    Backend -->|Chat API| OpenAI["OpenAI\ngpt-4o"]
-    Backend -->|Chat API| Gemini["Google Gemini\nLoading Hints"]
-    Backend -->|Image scrape| Amazon["Amazon IN / US\nProduct Images"]
+    Backend -->|Chat API| OpenAI["OpenAI<br>gpt-4o"]
+    Backend -->|Chat API| Gemini["Google Gemini<br>Loading Hints"]
+    Backend -->|Image scrape| Amazon["Amazon IN / US<br>Product Images"]
 ```
 
 ### Request Lifecycle: Two Paths
@@ -76,18 +76,18 @@ sequenceDiagram
     participant JL as SearchJobListener
 
     C->>SC: POST /api/search
-    SC->>SO: getCachedResult() → MISS
+    SC->>SO: getCachedResult() - MISS
     SC->>SO: persistJob() @Transactional
     SO->>DB: INSERT search_jobs (PENDING)
     DB-->>SO: jobId (UUID)
     SC->>SO: enqueueJob(jobId)
     SO->>RQ: enqueue("search-jobs", jobId)
-    SC-->>C: HTTP 202 { jobId, status: PENDING }
+    SC-->>C: "HTTP 202 { jobId, status: PENDING }"
 
     Note over JL: concurrency=1, numRetries=0
     RQ-->>JL: onMessage(jobId)
     JL->>DB: UPDATE search_jobs (IN_PROGRESS)
-    JL->>JL: searchAll() → analyze() → resolveImage()
+    JL->>JL: searchAll() then analyze() then resolveImage()
     JL->>DB: INSERT search_results + social_posts
     JL->>DDB: PUT full JSON (+ TTL)
     JL->>DB: UPDATE search_jobs (COMPLETED, resultJson)
@@ -96,7 +96,7 @@ sequenceDiagram
         C->>SC: GET /api/search/{jobId}
         SC->>DB: findById(jobId)
         DB-->>SC: job.status
-        SC-->>C: { status, result? }
+        SC-->>C: "{ status, result? }"
     end
 ```
 
@@ -120,15 +120,15 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph Docker["Docker Compose"]
-        Redis["crowdlens-redis\nport 6379 internal\nno persistence"]
-        Backend["crowdlens-backend\nport 8080 exposed\nwaits for Redis healthy"]
-        Volume["sqlite_data volume\n/app/data/crowdlens.db"]
+        Redis["crowdlens-redis<br>port 6379 internal<br>no persistence"]
+        Backend["crowdlens-backend<br>port 8080 exposed<br>waits for Redis healthy"]
+        Volume["sqlite_data volume<br>/app/data/crowdlens.db"]
     end
 
     Redis -->|depends_on healthy| Backend
     Backend --> Volume
 
-    Internet["External APIs\nOpenAI / Gemini / Reddit\nDynamoDB / Amazon"] <-->|HTTPS| Backend
+    Internet["External APIs<br>OpenAI / Gemini / Reddit<br>DynamoDB / Amazon"] -->|HTTPS| Backend
 ```
 
 **Redis DNS Config Note:** Lettuce (Spring Data Redis client) uses Netty's async DNS resolver by default, which breaks in Docker (sends UDP to `127.0.0.11:53`). `RedisConfig` forces JVM DNS resolution (`InetAddress` reads `/etc/resolv.conf`) instead.
@@ -139,33 +139,33 @@ graph LR
 
 ```mermaid
 graph TD
-    SC["SearchController\n@RestController"] --> SO["SearchOrchestrator\n@Service"]
-    SC --> LHS["LoadingHintsService\n@Service"]
-    LHS --> GCS["GeminiChatService\n@Service"]
+    SC["SearchController<br>@RestController"] --> SO["SearchOrchestrator<br>@Service"]
+    SC --> LHS["LoadingHintsService<br>@Service"]
+    LHS --> GCS["GeminiChatService<br>@Service"]
 
-    SO --> CS["CacheService\n@Service\n(DynamoDB)"]
-    SO --> SJR["SearchJobRepository\n@Repository"]
+    SO --> CS["CacheService<br>@Service<br>(DynamoDB)"]
+    SO --> SJR["SearchJobRepository<br>@Repository"]
     SO --> RME["RqueueMessageEnqueuer"]
 
-    SJL["SearchJobListener\n@RqueueListener\nconcurrency=1"] --> PR["PlatformRegistry\n@Component"]
-    SJL --> AIE["AIAnalysisEngine\n@Service"]
-    SJL --> IRS["ImageResolutionService\n@Service"]
+    SJL["SearchJobListener<br>@RqueueListener<br>concurrency=1"] --> PR["PlatformRegistry<br>@Component"]
+    SJL --> AIE["AIAnalysisEngine<br>@Service"]
+    SJL --> IRS["ImageResolutionService<br>@Service"]
     SJL --> CS
-    SJL --> SRR["SearchResultRepository\n@Repository"]
-    SJL --> SPR["SocialPostRepository\n@Repository"]
+    SJL --> SRR["SearchResultRepository<br>@Repository"]
+    SJL --> SPR["SocialPostRepository<br>@Repository"]
     SJL --> SJR
     SJL --> TT["TransactionTemplate"]
 
-    PR --> RP["RedditProvider\n@Component\nimplements PlatformProvider"]
-    RP --> RAC["RedditApiClient\nOAuth2"]
-    RP --> RJS["RedditJsonScraper\nfallback"]
-    RP --> RDA["RedditDataAggregator\ndedup + rank"]
+    PR --> RP["RedditProvider<br>@Component<br>implements PlatformProvider"]
+    RP --> RAC["RedditApiClient<br>OAuth2"]
+    RP --> RJS["RedditJsonScraper<br>fallback"]
+    RP --> RDA["RedditDataAggregator<br>dedup + rank"]
 
-    AIE --> CM["ChatModel\nOpenAI @Primary"]
-    AIE --> PB["PromptBuilder\n@Component"]
-    AIE --> OM["ObjectMapper\nJSON parsing"]
+    AIE --> CM["ChatModel<br>OpenAI @Primary"]
+    AIE --> PB["PromptBuilder<br>@Component"]
+    AIE --> OM["ObjectMapper<br>JSON parsing"]
 
-    CompSvc["CompetitorService\n@Service"] --> SRR
+    CompSvc["CompetitorService<br>@Service"] --> SRR
     CompSvc --> AIE
 
     TC["TrendingController"] --> TS["TrendingService"] --> SRR
@@ -177,10 +177,10 @@ graph TD
 
 ```mermaid
 stateDiagram-v2
-    [*] --> PENDING : persistJob() + enqueueJob()
-    PENDING --> IN_PROGRESS : SearchJobListener.onMessage()
-    IN_PROGRESS --> COMPLETED : pipeline succeeds\nresultJson stored
-    IN_PROGRESS --> FAILED : any exception thrown\nseparate @Transactional
+    [*] --> PENDING : "persistJob() + enqueueJob()"
+    PENDING --> IN_PROGRESS : "SearchJobListener.onMessage()"
+    IN_PROGRESS --> COMPLETED : "pipeline succeeds, resultJson stored"
+    IN_PROGRESS --> FAILED : "any exception thrown, separate @Transactional"
     COMPLETED --> [*]
     FAILED --> [*]
 ```
@@ -322,8 +322,8 @@ erDiagram
         TIMESTAMP scraped_at
     }
 
-    search_jobs ||--o| search_results : "references on COMPLETED"
-    search_results ||--o{ social_posts : "has many"
+    search_jobs ||--o| search_results : references
+    search_results ||--o{ social_posts : contains
 ```
 
 ### SQLite — `search_jobs`
@@ -404,25 +404,24 @@ erDiagram
 classDiagram
     class PlatformProvider {
         <<interface>>
-        +getPlatformName() String
-        +search(query, limit, maxComments) List~SocialPostDto~
-        +healthCheck() boolean
+        +String getPlatformName()
+        +List search(String query, int limit, int maxComments)
+        +boolean healthCheck()
     }
 
     class RedditProvider {
-        +getPlatformName() String
-        +search(query, limit, maxComments) List~SocialPostDto~
-        +healthCheck() boolean
+        +String getPlatformName()
+        +List search(String query, int limit, int maxComments)
+        +boolean healthCheck()
     }
 
     class TwitterProvider {
-        <<future>>
     }
 
     class PlatformRegistry {
-        -List~PlatformProvider~ providers
-        +searchAll(query, limit, maxComments) List~SocialPostDto~
-        +getEnabledPlatforms() List~String~
+        -List providers
+        +List searchAll(String query, int limit, int maxComments)
+        +List getEnabledPlatforms()
     }
 
     PlatformProvider <|.. RedditProvider
@@ -436,12 +435,12 @@ Adding a new data source = implement `PlatformProvider`, register as `@Component
 
 ```mermaid
 flowchart LR
-    Q["search(query)"] --> A["RedditApiClient\nOAuth2 primary\nrate-limited"]
-    A -->|success| AGG["RedditDataAggregator\nmerge + dedup + rank"]
-    A -->|empty or failure| B["RedditJsonScraper\n.json fallback\nno auth"]
+    Q["search(query)"] --> A["RedditApiClient<br>OAuth2 primary<br>rate-limited"]
+    A -->|success| AGG["RedditDataAggregator<br>merge + dedup + rank"]
+    A -->|empty or failure| B["RedditJsonScraper<br>.json fallback<br>no auth"]
     B --> AGG
-    AGG --> C["Comment Fetcher\ntop 10 posts × 10 comments"]
-    C --> OUT["List&lt;SocialPostDto&gt;"]
+    AGG --> C["Comment Fetcher<br>top 10 posts x 10 comments"]
+    C --> OUT["List(SocialPostDto)"]
 ```
 
 Each handler either produces a result or passes to the next. Resilient to API failures without changing calling code.
@@ -450,8 +449,8 @@ Each handler either produces a result or passes to the next. Resilient to API fa
 
 ```mermaid
 flowchart LR
-    SC["SearchController\nPOST /api/search"] -->|enqueue message| Redis["Redis\nsearch-jobs queue"]
-    Redis -->|"&#64;RqueueListener"| SJL["SearchJobListener\nconcurrency=1"]
+    SC["SearchController<br>POST /api/search"] -->|enqueue message| Redis["Redis<br>search-jobs queue"]
+    Redis -->|"@RqueueListener"| SJL["SearchJobListener<br>concurrency=1"]
     SC -.->|no direct reference| SJL
 ```
 
@@ -475,15 +474,14 @@ SearchResponse.builder()
 ```mermaid
 classDiagram
     class AnalysisResult {
-        +productCategory String
-        +verdictSentence String
-        +metrics List~Metric~
-        +...
-        +empty(query)$ AnalysisResult
-        +error(query, msg)$ AnalysisResult
+        +String productCategory
+        +String verdictSentence
+        +List metrics
+        +empty(String query) AnalysisResult
+        +error(String query, String msg) AnalysisResult
     }
 
-    note for AnalysisResult "empty() → no posts found\nerror() → AI circuit open or parse failure\nBoth return metrics=[] preventing caching"
+    note for AnalysisResult "empty() returns an empty result when no posts are found. error() returns an error status. Both use empty metrics to prevent caching."
 ```
 
 Static factory methods encapsulate sentinel values. Downstream logic (`metrics != null && !metrics.isEmpty()`) works uniformly — no null checks scattered around.
@@ -492,17 +490,17 @@ Static factory methods encapsulate sentinel values. Downstream logic (`metrics !
 
 ```mermaid
 flowchart TD
-    A["Mark IN_PROGRESS"] --> B["searchAll() — Reddit scrape"]
-    B --> C["analyze() — OpenAI"]
-    C --> D["resolveImage() — Reddit/Amazon"]
+    A["Mark IN_PROGRESS"] --> B["searchAll() - Reddit scrape"]
+    B --> C["analyze() - OpenAI"]
+    C --> D["resolveImage() - Reddit/Amazon"]
     D --> E["toBase64DataUri()"]
     E --> F["save SearchResult to SQLite"]
-    F --> G["saveAll SocialPosts to SQLite\ndedup by platformId"]
-    G --> H["cacheService.put() — DynamoDB"]
+    F --> G["saveAll SocialPosts to SQLite<br>dedup by platformId"]
+    G --> H["cacheService.put() - DynamoDB"]
     H --> I["seedCompetitorsIfNeeded()"]
-    I --> J["Mark COMPLETED\nstore resultJson"]
+    I --> J["Mark COMPLETED<br>store resultJson"]
 
-    B -->|any exception| ERR["Mark FAILED\nseparate @Transactional"]
+    B -->|any exception| ERR["Mark FAILED<br>separate @Transactional"]
     C -->|any exception| ERR
     D -->|image null| F
 ```
@@ -515,7 +513,7 @@ flowchart TD
 
 ```mermaid
 classDiagram
-    class JpaRepository~T, ID~ {
+    class JpaRepository {
         <<interface>>
     }
     class SearchJobRepository
@@ -534,28 +532,32 @@ Service layer never writes SQL directly. All DB access goes through typed reposi
 ### SOLID Principles Applied
 
 ```mermaid
-mindmap
-  root((SOLID in CrowdLens))
-    SRP
-      PromptBuilder only builds prompts
-      CacheService only manages DynamoDB
-      ImageResolutionService only resolves images
-      RedditRateLimiter only throttles
-      RedditDataAggregator only deduplicates
-    OCP
-      PlatformProvider interface
-      Add Twitter without touching SearchJobListener
-      Add Reddit without touching PlatformRegistry loop
-    LSP
-      All PlatformProvider impls are substitutable
-      RedditProvider fully satisfies PlatformProvider contract
-    ISP
-      PlatformProvider has only 3 methods
-      No provider forced to implement unused methods
-    DIP
-      AIAnalysisEngine depends on ChatModel interface
-      Not on OpenAiChatModel concrete class
-      Swap OpenAI to Anthropic via config only
+graph TD
+    Root["SOLID in CrowdLens"] --> SRP["SRP (Single Responsibility)"]
+    Root --> OCP["OCP (Open/Closed)"]
+    Root --> LSP["LSP (Liskov Substitution)"]
+    Root --> ISP["ISP (Interface Segregation)"]
+    Root --> DIP["DIP (Dependency Inversion)"]
+
+    SRP --> SRP1["PromptBuilder only builds prompts"]
+    SRP --> SRP2["CacheService only manages DynamoDB"]
+    SRP --> SRP3["ImageResolutionService only resolves images"]
+    SRP --> SRP4["RedditRateLimiter only throttles"]
+    SRP --> SRP5["RedditDataAggregator only deduplicates"]
+
+    OCP --> OCP1["PlatformProvider interface"]
+    OCP --> OCP2["Add Twitter without touching SearchJobListener"]
+    OCP --> OCP3["Add Reddit without touching PlatformRegistry loop"]
+
+    LSP --> LSP1["All PlatformProvider impls are substitutable"]
+    LSP --> LSP2["RedditProvider satisfies PlatformProvider contract"]
+
+    ISP --> ISP1["PlatformProvider has only 3 methods"]
+    ISP --> ISP2["No provider forced to implement unused methods"]
+
+    DIP --> DIP1["AIAnalysisEngine depends on ChatModel interface"]
+    DIP --> DIP2["Not on OpenAiChatModel concrete class"]
+    DIP --> DIP3["Swap OpenAI to Anthropic via config only"]
 ```
 
 ### Fail Fast + Graceful Degradation
@@ -563,20 +565,20 @@ mindmap
 ```mermaid
 flowchart TD
     OAI["OpenAI fails"] -->|circuit breaker opens| AE["AnalysisResult.error()"]
-    AE -->|metrics empty| FAIL["Job FAILED\nNothing cached"]
+    AE -->|metrics empty| FAIL["Job FAILED<br>Nothing cached"]
     FAIL -->|client sees| RETRY["Retry button shown"]
 
-    DDB["DynamoDB unreachable"] -->|Optional.empty| MISS["Cache miss\nFresh analysis triggered"]
+    DDB["DynamoDB unreachable"] -->|Optional.empty| MISS["Cache miss<br>Fresh analysis triggered"]
     MISS --> OK["App fully operational"]
 
-    REDIS["Redis unreachable\nat startup"] --> CRASH["Spring Boot fails to start\nIntentional — queue is core"]
+    REDIS["Redis unreachable<br>at startup"] --> CRASH["Spring Boot fails to start<br>Intentional - queue is core"]
 
-    GEM["Gemini unavailable"] -->|empty list| HINTS["Generic loading messages\nNon-critical UI path"]
+    GEM["Gemini unavailable"] -->|empty list| HINTS["Generic loading messages<br>Non-critical UI path"]
 
     REDDIT["Reddit API fails"] -->|fallback| SCRAPER["JSON Scraper"]
     SCRAPER -->|both fail| EMPTY["AnalysisResult.empty()"]
 
-    IMG["Image resolution fails"] -->|null| CARD["ShareCard renders\nwithout product image"]
+    IMG["Image resolution fails"] -->|null| CARD["ShareCard renders<br>without product image"]
 ```
 
 ### Idempotency
@@ -588,14 +590,14 @@ flowchart TD
 
 ```mermaid
 graph LR
-    subgraph SQLite["SQLite — Structural / Indexed"]
-        J["SearchJob\n(job lifecycle)"]
-        SR["SearchResult\n(lean index: score, category, imageUrl)"]
-        SP["SocialPost\n(post dedup index)"]
+    subgraph SQLite["SQLite - Structural / Indexed"]
+        J["SearchJob<br>(job lifecycle)"]
+        SR["SearchResult<br>(lean index: score, category, imageUrl)"]
+        SP["SocialPost<br>(post dedup index)"]
     end
 
-    subgraph DDB["DynamoDB — Rich AI Blobs"]
-        D["Full SearchResponse JSON\n~10 KB per result\nTTL auto-expiry"]
+    subgraph DDB["DynamoDB - Rich AI Blobs"]
+        D["Full SearchResponse JSON<br>~10 KB per result<br>TTL auto-expiry"]
     end
 
     SR -.->|never stored here| D
@@ -624,12 +626,12 @@ sequenceDiagram
     loop every 2s, max 90 polls (3 min timeout)
         FE->>API: GET /api/search/{jobId}
         alt PENDING or IN_PROGRESS
-            API-->>FE: { jobId, status }
+            API-->>FE: "{ jobId, status }"
         else COMPLETED
-            API-->>FE: { jobId, status, result: SearchResponse }
+            API-->>FE: "{ jobId, status, result: SearchResponse }"
             Note over FE: Stop polling, render results
         else FAILED
-            API-->>FE: { jobId, status, error }
+            API-->>FE: "{ jobId, status, error }"
             Note over FE: Show retry button
         end
     end
@@ -687,18 +689,18 @@ Null fields are omitted from JSON (`@JsonInclude(NON_NULL)`).
 
 ```mermaid
 flowchart TD
-    IN["Posts + Query + Candidate Images"] --> S0["Step 0\nSelect product image URL\nfrom Reddit candidates"]
-    S0 --> S1["Step 1\nClassify category + sub-category"]
-    S1 --> S2["Step 2\nExtract recurring discussion themes"]
-    S2 --> S3["Step 3\nSelect exactly 4 metrics\n(frequent, relevant, non-redundant)"]
-    S3 --> S4["Step 4\nScore each metric 0.0–10.0\nbased on sentiment"]
-    S4 --> S5["Step 5\nBlended overall score 0–100\n(sentiment + repetition + importance + confidence)"]
-    S5 --> S6["Step 6\nWrite one verdictSentence\ncapturing core trade-off"]
-    S6 --> S7["Step 7\n3-5 positives\n3-5 complaints"]
-    S7 --> S8["Step 8\n2-4 bestFor personas\n2-4 avoid personas"]
-    S8 --> S9["Step 9\n4-6 evidence snippets\nwith subreddit + permalink"]
-    S9 --> S10["Step 10\n3 competitor suggestions\nwith estimated scores"]
-    S10 --> OUT["JSON Response\n(pure JSON, no markdown)"]
+    IN["Posts + Query + Candidate Images"] --> S0["Step 0<br>Select product image URL<br>from Reddit candidates"]
+    S0 --> S1["Step 1<br>Classify category + sub-category"]
+    S1 --> S2["Step 2<br>Extract recurring discussion themes"]
+    S2 --> S3["Step 3<br>Select exactly 4 metrics<br>(frequent, relevant, non-redundant)"]
+    S3 --> S4["Step 4<br>Score each metric 0.0-10.0<br>based on sentiment"]
+    S4 --> S5["Step 5<br>Blended overall score 0-100<br>(sentiment + repetition + importance + confidence)"]
+    S5 --> S6["Step 6<br>Write one verdictSentence<br>capturing core trade-off"]
+    S6 --> S7["Step 7<br>3-5 positives<br>3-5 complaints"]
+    S7 --> S8["Step 8<br>2-4 bestFor personas<br>2-4 avoid personas"]
+    S8 --> S9["Step 9<br>4-6 evidence snippets<br>with subreddit + permalink"]
+    S9 --> S10["Step 10<br>3 competitor suggestions<br>with estimated scores"]
+    S10 --> OUT["JSON Response<br>(pure JSON, no markdown)"]
 ```
 
 **Context window management:** Posts truncated to 400 chars each, max 60 posts sent.
@@ -707,20 +709,18 @@ flowchart TD
 
 Not a simple average — the AI blends four axes:
 
-```mermaid
-quadrantChart
-    title Score Calibration Examples
-    x-axis Low Confidence --> High Confidence
-    y-axis Negative Sentiment --> Positive Sentiment
-    quadrant-1 "Cap at 75 (high praise, low volume)"
-    quadrant-2 "90+ (near-universal praise)"
-    quadrant-3 "< 45 (significant problems)"
-    quadrant-4 "45-59 (mixed, niche use case)"
-    "3 very positive posts": [0.15, 0.85]
-    "20 mostly positive posts": [0.8, 0.8]
-    "10 mixed posts": [0.5, 0.45]
-    "15 mostly negative": [0.7, 0.2]
-```
+| Dimension / Axis | Description |
+|---|---|
+| **X-Axis** | Low Confidence $\to$ High Confidence |
+| **Y-Axis** | Negative Sentiment $\to$ Positive Sentiment |
+| **Quadrant 1 (Top-Left)** | Cap at 75 (high praise, low volume) |
+| **Quadrant 2 (Top-Right)** | 90+ (near-universal praise) |
+| **Quadrant 3 (Bottom-Left)** | < 45 (significant problems) |
+| **Quadrant 4 (Bottom-Right)** | 45-59 (mixed, niche use case) |
+| **Example: 3 very positive posts** | Low Confidence (0.15), Positive Sentiment (0.85) |
+| **Example: 20 mostly positive posts** | High Confidence (0.8), Positive Sentiment (0.8) |
+| **Example: 10 mixed posts** | Medium Confidence (0.5), Mixed Sentiment (0.45) |
+| **Example: 15 mostly negative** | High Confidence (0.7), Negative Sentiment (0.2) |
 
 | Factor | Description |
 |---|---|
@@ -733,12 +733,16 @@ quadrantChart
 
 ```mermaid
 stateDiagram-v2
-    CLOSED --> OPEN : 3 of 5 calls fail\n(50% threshold)
-    OPEN --> HALF_OPEN : 60s wait
-    HALF_OPEN --> CLOSED : 2 probes succeed
-    HALF_OPEN --> OPEN : probe fails
+    StateClosed: CLOSED
+    StateOpen: OPEN
+    StateHalfOpen: HALF_OPEN
 
-    note right of OPEN
+    StateClosed --> StateOpen : 3 of 5 calls fail (50% threshold)
+    StateOpen --> StateHalfOpen : 60s wait
+    StateHalfOpen --> StateClosed : 2 probes succeed
+    StateHalfOpen --> StateOpen : probe fails
+
+    note right of StateOpen
         analyzeFallback() called
         AnalysisResult.error() returned
         Job marked FAILED
@@ -772,13 +776,13 @@ Each sub-array is parsed defensively — missing or non-array nodes return `Coll
 
 ```mermaid
 flowchart TD
-    Q["Incoming query"] --> L1{"Level 1\nDynamoDB Exact\nSHA-256 hash lookup\nO(1)"}
-    L1 -->|HIT| R1["HTTP 200\nfull result\n< 100ms"]
-    L1 -->|MISS| L2{"Level 2\nDynamoDB Jaccard Scan\nword-set similarity ≥ 0.75\nUsed by CompetitorService"}
-    L2 -->|HIT| R2["HTTP 200\nsimilar result"]
-    L2 -->|MISS| L3["Level 3: Cold\nRQueue Job\n15–60s pipeline"]
-    L3 --> R3["HTTP 202 + jobId\npolling begins"]
-    R3 -->|on COMPLETED| STORE["Stored in DynamoDB\n+ SQLite resultJson"]
+    Q["Incoming query"] --> L1{"Level 1<br>DynamoDB Exact<br>SHA-256 hash lookup<br>O(1)"}
+    L1 -->|HIT| R1["HTTP 200<br>full result<br>< 100ms"]
+    L1 -->|MISS| L2{"Level 2<br>DynamoDB Jaccard Scan<br>word-set similarity >= 0.75<br>Used by CompetitorService"}
+    L2 -->|HIT| R2["HTTP 200<br>similar result"]
+    L2 -->|MISS| L3["Level 3: Cold<br>RQueue Job<br>15-60s pipeline"]
+    L3 --> R3["HTTP 202 + jobId<br>polling begins"]
+    R3 -->|on COMPLETED| STORE["Stored in DynamoDB<br>+ SQLite resultJson"]
 ```
 
 ### Cache Invalidation Strategy
@@ -804,12 +808,12 @@ query.trim().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ")
 ```mermaid
 graph LR
     subgraph Buckets["Bucket4j Token Buckets"]
-        B1["Reddit OAuth2 API\n60 tokens / 60s\ncapacity: 60"]
-        B2["Reddit .json Scraper\n20 tokens / 60s\ncapacity: 20"]
+        B1["Reddit OAuth2 API<br>60 tokens / 60s<br>capacity: 60"]
+        B2["Reddit .json Scraper<br>20 tokens / 60s<br>capacity: 20"]
     end
 
-    RAC["RedditApiClient\ncalls"] -->|consumes 1 token| B1
-    RJS["RedditJsonScraper\ncalls"] -->|consumes 1 token| B2
+    RAC["RedditApiClient<br>calls"] -->|consumes 1 token| B1
+    RJS["RedditJsonScraper<br>calls"] -->|consumes 1 token| B2
 ```
 
 Token bucket: each request consumes 1 token. Bursts up to capacity are allowed; sustained throughput is limited to refill rate.
@@ -844,14 +848,14 @@ Redis is a pure in-memory job queue. A Redis restart loses in-flight jobs (they 
 
 ```mermaid
 graph TD
-    D1["1. Async over Sync\nHTTP 202 + polling\nvs synchronous 60s wait"]
-    D2["2. SQLite over PostgreSQL\nzero-ops single file\nvs managed DB overhead"]
-    D3["3. resultJson on SearchJob\nDynamoDB-independent polling\nvs pure DynamoDB dependency"]
-    D4["4. Dynamic Metrics\n4 AI-selected per product\nvs fixed category templates"]
-    D5["5. DynamoDB for AI JSON\nTTL + no schema migrations\nvs SQLite BLOB storage"]
-    D6["6. concurrency=1\n1 job at a time\nvs parallel workers"]
-    D7["7. Two-step persistJob→enqueueJob\nprevents race condition\nvs single transaction"]
-    D8["8. Image Base64 at analysis time\nCORS-safe share card\nvs proxying at render time"]
+    D1["1. Async over Sync<br>HTTP 202 + polling<br>vs synchronous 60s wait"]
+    D2["2. SQLite over PostgreSQL<br>zero-ops single file<br>vs managed DB overhead"]
+    D3["3. resultJson on SearchJob<br>DynamoDB-independent polling<br>vs pure DynamoDB dependency"]
+    D4["4. Dynamic Metrics<br>4 AI-selected per product<br>vs fixed category templates"]
+    D5["5. DynamoDB for AI JSON<br>TTL + no schema migrations<br>vs SQLite BLOB storage"]
+    D6["6. concurrency=1<br>1 job at a time<br>vs parallel workers"]
+    D7["7. Two-step persistJob to enqueueJob<br>prevents race condition<br>vs single transaction"]
+    D8["8. Image Base64 at analysis time<br>CORS-safe share card<br>vs proxying at render time"]
 ```
 
 ### 1. Async over Sync for Analysis
@@ -925,18 +929,18 @@ graph TD
 ```mermaid
 graph LR
     subgraph Current["Current Bottlenecks"]
-        B1["OpenAI latency\n15–45s per job"]
-        B2["Reddit rate limits\n60 req/min OAuth2"]
-        B3["SQLite single writer\nall job writes serialized"]
-        B4["DynamoDB Jaccard scan\nfull table scan – not on hot path"]
-        B5["Amazon image scrape\n4s timeout per job"]
+        B1["OpenAI latency<br>15-45s per job"]
+        B2["Reddit rate limits<br>60 req/min OAuth2"]
+        B3["SQLite single writer<br>all job writes serialized"]
+        B4["DynamoDB Jaccard scan<br>full table scan - not on hot path"]
+        B5["Amazon image scrape<br>4s timeout per job"]
     end
 
     subgraph Mitigations["Mitigations"]
-        M1["Async job → no user wait"]
+        M1["Async job - no user wait"]
         M2["Bucket4j + .json scraper fallback"]
-        M3["concurrency=1 → 1 writer guaranteed"]
-        M4["Not called per request – CompetitorService only"]
+        M3["concurrency=1 - 1 writer guaranteed"]
+        M4["Not called per request - CompetitorService only"]
         M5["Graceful null if fails"]
     end
 
@@ -951,12 +955,12 @@ graph LR
 
 ```mermaid
 graph TD
-    NOW["Current: Single VM\nSQLite + Redis + Spring Boot"] 
+    NOW["Current: Single VM<br>SQLite + Redis + Spring Boot"] 
 
-    NOW -->|"Step 1: High job volume"| S1["Migrate to PostgreSQL\nFlyway V1 migration\nconfig-only change"]
-    S1 -->|"Step 2: Horizontal workers"| S2["Multiple Spring Boot instances\nsame Redis queue\nPostgreSQL shared state"]
-    S2 -->|"Step 3: Cache at scale"| S3["DynamoDB GSI or\nElasticSearch for\nJaccard similarity"]
-    S3 -->|"Step 4: Redis reliability"| S4["Enable AOF persistence\nor Redis Cloud"]
+    NOW -->|"Step 1: High job volume"| S1["Migrate to PostgreSQL<br>Flyway V1 migration<br>config-only change"]
+    S1 -->|"Step 2: Horizontal workers"| S2["Multiple Spring Boot instances<br>same Redis queue<br>PostgreSQL shared state"]
+    S2 -->|"Step 3: Cache at scale"| S3["DynamoDB GSI or<br>ElasticSearch for<br>Jaccard similarity"]
+    S3 -->|"Step 4: Redis reliability"| S4["Enable AOF persistence<br>or Redis Cloud"]
 ```
 
 ### What Scales Well Already
@@ -999,10 +1003,10 @@ It normalizes the query (`"JBL Flip 6"` → `"jbl flip 6"`) and hashes it with S
 flowchart LR
     FE["Frontend"] -->|POST /api/search| SC["SearchController"]
     SC -->|SHA-256 lookup| DDB["DynamoDB"]
-    DDB -->|HIT| R200["HTTP 200\nFull result instantly"]
-    DDB -->|MISS| PERSIST["Write SearchJob to SQLite\nstatus=PENDING"]
-    PERSIST -->|enqueue| REDIS["Redis queue\nsearch-jobs"]
-    REDIS --> R202["HTTP 202\n{ jobId, PENDING }"]
+    DDB -->|HIT| R200["HTTP 200<br>Full result instantly"]
+    DDB -->|MISS| PERSIST["Write SearchJob to SQLite<br>status=PENDING"]
+    PERSIST -->|enqueue| REDIS["Redis queue<br>search-jobs"]
+    REDIS --> R202["HTTP 202<br>(jobId, PENDING)"]
 ```
 
 #### Step 3: The Frontend Polls
@@ -1092,11 +1096,11 @@ sequenceDiagram
     SC->>DDB: GetItem (MISS)
     SC->>DB: INSERT search_jobs (PENDING)
     SC->>RQ: enqueue(jobId)
-    SC-->>FE: HTTP 202 { jobId }
+    SC-->>FE: "HTTP 202 { jobId }"
 
     loop Every 2 seconds
         FE->>SC: GET /api/search/{jobId}
-        SC-->>FE: { status: IN_PROGRESS }
+        SC-->>FE: "{ status: IN_PROGRESS }"
     end
 
     RQ-->>JL: dequeue(jobId)
@@ -1105,11 +1109,11 @@ sequenceDiagram
     OAI-->>JL: structured JSON
     JL->>DB: INSERT results + posts
     JL->>DDB: PUT full response
-    JL->>DB: UPDATE job → COMPLETED
+    JL->>DB: UPDATE job - COMPLETED
 
     FE->>SC: GET /api/search/{jobId}
-    SC->>DB: findById → COMPLETED
-    SC-->>FE: HTTP 200 { result: SearchResponse }
+    SC->>DB: findById - COMPLETED
+    SC-->>FE: "HTTP 200 { result: SearchResponse }"
     FE->>FE: Render VerdictCard, MetricsGrid, ShareCard
 ```
 
@@ -1132,12 +1136,12 @@ The core problem: Reddit scraping + OpenAI takes **30–60 seconds**. HTTP reque
 ```mermaid
 flowchart TD
     subgraph Without["Without Redis (Synchronous)"]
-        U1["User sends request"] -->|waits 60s| TO["Vercel timeout\n❌ Error after 30s"]
+        U1["User sends request"] -->|waits 60s| TO["Vercel timeout<br>Error after 30s"]
     end
     subgraph With["With Redis (Async)"]
         U2["User sends request"] -->|< 1s| ACK["HTTP 202 + jobId"]
         ACK --> POLL["Frontend polls every 2s"]
-        BG["Background worker\ndoes 60s work"] --> DONE["COMPLETED"]
+        BG["Background worker<br>does 60s work"] --> DONE["COMPLETED"]
         POLL --> DONE
     end
 ```
@@ -1179,9 +1183,9 @@ RQueue handles: serialization, deserialization, retry policies, concurrency, dea
 
 ```mermaid
 flowchart LR
-    JOB1["Job 1\n(running)"] --> JOB2["Job 2\n(queued)"]
-    JOB2 --> JOB3["Job 3\n(queued)"]
-    JOB3 --> JOB4["Job 4\n(queued)"]
+    JOB1["Job 1<br>(running)"] --> JOB2["Job 2<br>(queued)"]
+    JOB2 --> JOB3["Job 3<br>(queued)"]
+    JOB3 --> JOB4["Job 4<br>(queued)"]
 ```
 
 **Why not run 2 or 3 jobs in parallel?**
@@ -1228,17 +1232,17 @@ spring.ai.openai.chat.options.model: mistral-large
 
 ```mermaid
 graph LR
-    subgraph OpenAI["OpenAI — Primary (gpt-4o)"]
+    subgraph OpenAI["OpenAI - Primary (gpt-4o)"]
         O1["10-step product analysis"]
         O2["4 dynamic metrics"]
         O3["Competitor scoring"]
         O4["Image URL validation"]
     end
-    subgraph Gemini["Gemini — Secondary (gemini-2.0-flash)"]
-        G1["Loading hints\n4-5 short messages"]
+    subgraph Gemini["Gemini - Secondary (gemini-2.0-flash)"]
+        G1["Loading hints<br>4-5 short messages"]
     end
     OpenAI -->|paid quota, high-value| ANA["Main pipeline"]
-    Gemini -->|free tier, non-critical| UX["UI loading UX\n(degrades gracefully if down)"]
+    Gemini -->|free tier, non-critical| UX["UI loading UX<br>(degrades gracefully if down)"]
 ```
 
 Loading hints are a UI nicety — if Gemini is down, generic hints appear. Using OpenAI for this would waste premium quota on a non-critical feature.
@@ -1286,20 +1290,18 @@ A product image at `https://m.media-amazon.com/images/...` → the browser Canva
 
 ### The Database Decision Landscape
 
-```mermaid
-quadrantChart
-    title Database Choice by Access Pattern
-    x-axis Simple Key Lookup --> Complex Queries
-    y-axis Schema Flexible --> Schema Fixed
-    quadrant-1 "Relational SQL"
-    quadrant-2 "NewSQL"
-    quadrant-3 "Key-Value / Document NoSQL"
-    quadrant-4 "Document with indexes"
-    "search_results (competitor queries)": [0.75, 0.8]
-    "search_jobs (status updates)": [0.4, 0.85]
-    "social_posts (dedup lookups)": [0.3, 0.8]
-    "DynamoDB cache (our use)": [0.1, 0.2]
-```
+| Axis / Quadrant / Data Point | Details / Coordinates |
+|---|---|
+| **X-Axis** | Simple Key Lookup $\to$ Complex Queries |
+| **Y-Axis** | Schema Flexible $\to$ Schema Fixed |
+| **Quadrant 1 (Top-Right)** | Relational SQL |
+| **Quadrant 2 (Top-Left)** | NewSQL |
+| **Quadrant 3 (Bottom-Left)** | Key-Value / Document NoSQL |
+| **Quadrant 4 (Bottom-Right)** | Document with indexes |
+| **search_results (competitor queries)** | (0.75, 0.8) — Complex queries, fixed schema |
+| **search_jobs (status updates)** | (0.4, 0.85) — Moderate queries, fixed schema |
+| **social_posts (dedup lookups)** | (0.3, 0.8) — Simple queries, fixed schema |
+| **DynamoDB cache (our use)** | (0.1, 0.2) — Key lookup, flexible schema |
 
 ### SQL vs NoSQL — Core Trade-offs
 
@@ -1319,9 +1321,9 @@ quadrantChart
 
 ```mermaid
 erDiagram
-    search_jobs ||--o| search_results : "links to on COMPLETE"
-    search_results ||--o{ social_posts : "has many deduped posts"
-    search_results ||--o{ search_results : "seeds competitor rows\n(same table, self-referencing by subcategory)"
+    search_jobs ||--o| search_results : links
+    search_results ||--o{ social_posts : contains
+    search_results ||--o{ search_results : seeds
 ```
 
 **We run real relational queries:**
@@ -1383,12 +1385,12 @@ This is **polyglot persistence** — use the right database for each access patt
 ```mermaid
 graph LR
     subgraph Phase1["Phase 1: Local Dev (PostgreSQL)"]
-        PG["PostgreSQL in Docker\nFull ACID, rich tooling\npgAdmin, EXPLAIN ANALYZE\nHikariCP connection pool"]
+        PG["PostgreSQL in Docker<br>Full ACID, rich tooling<br>pgAdmin, EXPLAIN ANALYZE<br>HikariCP connection pool"]
     end
     subgraph Phase2["Phase 2: Production (SQLite)"]
-        SQ["SQLite WAL mode\nZero-ops, zero RAM overhead\nSingle file in Docker volume\npool-size=1"]
+        SQ["SQLite WAL mode<br>Zero-ops, zero RAM overhead<br>Single file in Docker volume<br>pool-size=1"]
     end
-    Phase1 -->|"Production deployment\ndecision"| Phase2
+    Phase1 -->|"Production deployment<br>decision"| Phase2
 ```
 
 **Why PostgreSQL initially:**
