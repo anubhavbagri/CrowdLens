@@ -129,10 +129,10 @@ public class AIAnalysisEngine {
 
             if (errorMsg != null && (errorMsg.contains("authentication") ||
                     errorMsg.contains("401") || errorMsg.contains("invalid_api_key"))) {
-                return new HealthStatus(false, "Invalid API key", "Check OPENAI_API_KEY in .env");
+                return new HealthStatus(false, "Invalid API key", "Check OPENAI_API_KEY (DeepSeek key) in .env");
             } else if (errorMsg != null && (errorMsg.contains("429") || errorMsg.contains("quota"))) {
                 return new HealthStatus(false, "Rate limit or quota exceeded",
-                        "Check usage at https://platform.openai.com/usage");
+                        "Check usage at https://platform.deepseek.com/usage");
             }
             return new HealthStatus(false, e.getClass().getSimpleName() + ": " + errorMsg, null);
         }

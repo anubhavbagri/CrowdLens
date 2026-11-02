@@ -1,0 +1,763 @@
+# CrowdLens: Technical Interview Preparation & Codebase Deep-Dive
+
+## System Design Overview
+CrowdLens leverages a multi-tier backend built on **Spring Boot 3.2** and **Java 17** designed to scrape social platforms (Reddit), analyze sentiment patterns using LLMs (OpenAI gpt-4o), and serve structured product reviews asynchronously. To support a low-cost virtual private server deployment with high query throughput, it implements a polyglot data layer separating relational SQLite indices from bulk cached NoSQL JSON documents in AWS DynamoDB, mediated by an asynchronous job queue via Redis + Rqueue.
+
+---
+
+## API Contracts & Interface Specs
+
+### 1. Submit Product Analysis
+* **Endpoint:** `POST /api/search`
+* **Method:** `POST`
+* **Content-Type:** `application/json`
+* **Description:** Initiates analysis for a search query.
+  * **Cache Hit (Fast Path):** Automatically retrieves the fully compiled analysis from AWS DynamoDB cache. Returns immediately with `200 OK`.
+  * **Cache Miss (Slow Path):** Inserts a task into the local SQLite database as `PENDING`, pushes a job onto the Redis queue, and releases the HTTP request. Returns `202 Accepted` with a job identifier.
+* **Headers:**
+  * `Accept: application/json`
+* **Request Body:**
+```json
+{
+  "query": "Creatine Supplement", // String, Required. Must not be blank.
+  "limit": 15,                     // Integer, Optional. Default: 10. Max post count.
+  "maxComments": 30                // Integer, Optional. Default: 50. Max comments to scrape.
+}
+```
+* **Responses:**
+  * **`200 OK` (Cache Hit):** Returns full `SearchResponse` (see format in polling below).
+  * **`202 Accepted` (Cache Miss / Queued):**
+    ```json
+    {
+      "jobId": "8f828a2a-e9a8-4228-b80c-7b949ab282ea",
+      "status": "PENDING"
+    }
+    ```
+  * **`400 Bad Request`:** Query is missing or validation constraints failed.
+    ```json
+    {
+      "status": 400,
+      "error": "Bad Request",
+      "message": "query: must not be blank"
+    }
+    ```
+
+### 2. Poll Job Status
+* **Endpoint:** `GET /api/search/{jobId}`
+* **Method:** `GET`
+* **Path Parameter:** `jobId` (UUID, Required)
+* **Description:** Checks the execution status of an asynchronous analysis job.
+* **Responses:**
+  * **`200 OK` (Job Pending / In Progress):**
+    ```json
+    {
+      "jobId": "8f828a2a-e9a8-4228-b80c-7b949ab282ea",
+      "status": "IN_PROGRESS" // or "PENDING"
+    }
+    ```
+  * **`200 OK` (Job Completed):** Includes the complete serialized `result` object.
+    ```json
+    {
+      "jobId": "8f828a2a-e9a8-4228-b80c-7b949ab282ea",
+      "status": "COMPLETED",
+      "result": {
+        "id": "23a41bc3-5dfd-4f1b-8ca0-32b0a1d48c8b",
+        "query": "Creatine Supplement",
+        "productCategory": "Health & Nutrition",
+        "productSubCategory": "Supplements",
+        "overallScore": 87,
+        "verdictSentence": "Highly recommended for muscle building, though minor bloating is frequently reported.",
+        "metrics": [
+          {
+            "label": "Efficacy",
+            "score": 9.2,
+            "explanation": "Users consistently report strength gains and improved endurance."
+          },
+          {
+            "label": "Side Effects",
+            "score": 6.8,
+            "explanation": "Mild water retention and stomach discomfort noted by a subset of users."
+          }
+        ],
+        "positives": ["Proven strength increases", "Wide availability", "Cost-effective"],
+        "complaints": ["Bloating during loading phase", "Gritty texture in unflavored options"],
+        "bestFor": ["Weightlifters", "Athletes seeking explosive power"],
+        "avoid": ["People with chronic kidney conditions (consult doctor)"],
+        "evidenceSnippets": [
+          {
+            "text": "Creatine monohydrate has been the single most effective supplement in my stack. Gained 5lbs of water weight but strength is up.",
+            "source": "r/Fitness",
+            "permalink": "https://www.reddit.com/r/Fitness/comments/..."
+          }
+        ],
+        "productImageUrl": "https://images-na.ssl-images-amazon.com/...",
+        "productImageBase64": "data:image/jpeg;base64,...",
+        "competitors": [
+          {
+            "name": "Whey Protein",
+            "estimatedScore": 90
+          }
+        ],
+        "postCount": 42,
+        "sourcePlatforms": ["reddit"],
+        "analyzedAt": "2026-05-29T11:51:11Z",
+        "cached": false
+      }
+    }
+    ```
+  * **`200 OK` (Job Failed):** Returns the execution error description.
+    ```json
+    {
+      "jobId": "8f828a2a-e9a8-4228-b80c-7b949ab282ea",
+      "status": "FAILED",
+      "error": "OpenAI rate limit exceeded"
+    }
+    ```
+  * **`404 Not Found`:** The provided `jobId` does not match any record.
+
+### 3. Get Contextual Loading Hints
+* **Endpoint:** `GET /api/loading-hints`
+* **Method:** `GET`
+* **Query Parameter:** `q` (String, Optional. E.g. `?q=creatine`)
+* **Description:** Fetches 4-5 query-specific loading messages dynamically generated by Google Gemini. Degrades gracefully to an empty list on failure or missing parameter.
+* **Responses:**
+  * **`200 OK` (Success):**
+    ```json
+    {
+      "hints": [
+        "Analyzing athletic forum discussions...",
+        "Evaluating monohydrate vs HCL sentiment...",
+        "Collating reported side effects..."
+      ],
+      "source": "gemini" // or "none" if returning fallback empty list
+    }
+    ```
+
+### 4. Fetch Trending Searches
+* **Endpoint:** `GET /api/trending`
+* **Method:** `GET`
+* **Description:** Retrieves aggregated discovery data for the UI homepage landing dashboard.
+* **Responses:**
+  * **`200 OK` (Success):**
+    ```json
+    {
+      "trending": [
+        {
+          "query": "JBL Flip 6",
+          "score": 85,
+          "category": "Electronics"
+        }
+      ],
+      "popularCategories": [
+        {
+          "name": "Electronics",
+          "count": 14,
+          "products": ["JBL Flip 6", "Sony WH-1000XM4"]
+        }
+      ]
+    }
+    ```
+
+### 5. Check System Component Health
+* **Endpoint:** `GET /api/health`
+* **Method:** `GET`
+* **Description:** Runs real-time diagnostic checks on external service connections (Reddit and OpenAI) and returns the system health status.
+* **Responses:**
+  * **`200 OK` (Success / UP):**
+    ```json
+    {
+      "status": "UP", // or "DEGRADED"
+      "service": "crowdlens-backend",
+      "timestamp": "2026-05-29T12:00:00Z",
+      "platforms": {
+        "reddit": {
+          "status": "UP"
+        }
+      },
+      "ai": {
+        "status": "UP",
+        "message": "AI model is responsive"
+      }
+    }
+    ```
+
+---
+
+## Project Structure Directory Tree
+
+```
+crowdlens-backend/src/main/java/com/crowdlens/
+│
+├── CrowdLensApplication.java              # Bootstraps the Spring Application Context
+│
+├── config/                                # System Infrastructure Configuration
+│   ├── AppConfig.java                     # Beans for WebClient builders, ObjectMappers, and general configs
+│   ├── RedisConfig.java                   # Configures Lettuce Redis template and JVM DNS overrides
+│   ├── OpenAiRestClientConfig.java       # Configures ChatModel connection to OpenAI endpoint
+│   ├── OpenApiConfig.java                 # Configures Swagger OpenAPI UI definitions
+│   ├── RedditProperties.java              # Configuration mapping for Reddit API credentials
+│   ├── RateLimitProperties.java           # Configuration mapping for Bucket4j parameters
+│   └── DynamoDbProperties.java            # Configuration mapping for AWS DynamoDB table rules
+│
+├── controller/                            # REST Controller Entrypoints (HTTP Layer)
+│   ├── SearchController.java              # Handles /search requests, fast-path, slow-path, and status polling
+│   ├── TrendingController.java            # Serves landing page discovery statistics
+│   ├── HealthController.java              # Performs active downstream connectivity checks
+│   └── GlobalExceptionHandler.java        # Central exception handling interceptor for clean JSON error responses
+│
+├── model/                                 # Data Representation Layer
+│   ├── dto/                               # Data Transfer Objects (Records for Serialization)
+│   │   ├── SearchRequest.java             # Incoming search configuration schema
+│   │   ├── SearchResponse.java            # Full compiled analysis response body
+│   │   ├── JobStatusResponse.java         # Polling endpoint state response body
+│   │   ├── TrendingResponse.java          # Aggregated trending data envelope
+│   │   ├── CompetitorDto.java             # Product competitor details record
+│   │   └── SocialPostDto.java             # Flat post payload representation
+│   └── entity/                            # Relational Database Entities (JPA / Hibernate)
+│       ├── SearchJob.java                 # Scoped lifecycle status of an asynchronous job request
+│       ├── SearchResult.java              # Relational search result descriptor index for SQLite query searches
+│       └── SocialPost.java                # Extracted reddit discussion posts mapped to search results
+│
+├── provider/                              # Social Media Crawling and Crawl Implementations
+│   ├── PlatformProvider.java              # Contract for implementing data search components
+│   ├── PlatformRegistry.java              # Registry orchestrating crawling across all active platforms
+│   └── reddit/                            # Reddit Crawl Stack
+│       ├── RedditApiClient.java           # Official OAuth2 REST interface
+│       ├── RedditJsonScraper.java         # Fallback old.reddit.com JSON extractor (unauthenticated)
+│       ├── RedditRateLimiter.java         # Token-bucket rate gate powered by Bucket4j
+│       └── RedditDataAggregator.java      # Consolidates, deduplicates, and filters scraped Reddit posts
+│
+├── repository/                            # SQLite Data Access Layer (Spring Data JPA)
+│   ├── SearchJobRepository.java           # Data queries for SearchJob lifecycle records
+│   ├── SearchResultRepository.java        # Dynamic projections, categories, and competitor analysis scans
+│   └── SocialPostRepository.java          # Deduplication and batch insertions of scraped posts
+│
+├── service/                               # Business Logic Coordination Layer
+│   ├── SearchOrchestrator.java            # Coordinates cache searches, job scheduling, and state lookups
+│   ├── SearchJobListener.java             # Rqueue worker executing crawling, image resolution, and LLM queries
+│   ├── CacheService.java                  # Integrates AWS DynamoDB client with SHA-256 hash checks and Jaccard searches
+│   ├── AIAnalysisEngine.java              # Integrates OpenAI ChatModel prompt calls and maps string outputs to JSON records
+│   ├── GeminiChatService.java             # Interfaces with Google Gemini model to fetch loading hints
+│   ├── LoadingHintsService.java           # Triggers hint generation queries
+│   ├── CompetitorService.java             # Evaluates competitor items from SQLite projections and fallback AI estimation
+│   ├── ImageResolutionService.java        # Resolves product images via Amazon and base64 encodes them CORS-safe
+│   └── PromptBuilder.java                 # Formulates complex sentiment evaluation prompts for LLM
+│
+└── util/                                  # Helper Utilities
+    └── JaccardUtils.java                  # Computes token-set Jaccard similarity indices for cache searches
+```
+
+---
+
+## Design Principles & Patterns
+
+### 1. Design Principles
+
+#### SOLID Principles
+* **Single Responsibility Principle (SRP):** Classes maintain highly focused duties. E.g., `PromptBuilder` only formats system prompts, `RedditRateLimiter` only mediates API access, and `CacheService` isolates DynamoDB interactions.
+* **Open/Closed Principle (OCP):** Extending search platform inputs does not modify core code. By extending the `PlatformProvider` interface, you can plug in additional scrapers (e.g., Twitter or Mastodon) simply by declaring a new class as a `@Component` without modifying `PlatformRegistry` or `SearchJobListener`.
+* **Liskov Substitution Principle (LSP):** Any provider implementing `PlatformProvider` (such as `RedditProvider`) can substitute in place without affecting execution correctness.
+* **Interface Segregation Principle (ISP):** Client-facing interfaces are split to ensure components only know about methods they consume (e.g., separating platform searching from health verification).
+* **Dependency Inversion Principle (DIP):** The AI module connects via Spring AI's `ChatModel` interface, meaning `AIAnalysisEngine` relies on abstraction. Changing models from OpenAI to Anthropic or Gemini requires zero modifications to the core logic; only a properties file override.
+
+#### Fail-Fast & Graceful Degradation
+* **Circuit Breaking:** The OpenAI core analysis relies on Resilience4j circuit breakers. If OpenAI is down, the system trips and blocks further API wastage, falling back to a clean job failure.
+* **Scraper Fallback Chain:** If the official Reddit API gets throttled, a fallback to the unauthenticated JSON scraper ensures the pipeline completes.
+* **Optional Caching:** If DynamoDB is unreachable during startup, the application logs a warning and disables cache calls instead of crashing, continuing to run using direct SQLite executions.
+
+#### Idempotency
+* To prevent duplicate processing and data bloat:
+  * Scraped posts are deduplicated against SQLite using their unique `platformId` (`socialPostRepo.existsByPlatformId`).
+  * Running concurrent duplicate searches is blocked in `SearchJobListener` by evaluating if the active job status is already modified from `PENDING`.
+
+### 2. Design Patterns
+
+#### Strategy Pattern
+The `PlatformRegistry` dynamically gathers all bean classes implementing `PlatformProvider`. When initiating a search, it invokes `.search()` on each registered provider in a generic loop, delegating platform-specific scraping rules cleanly.
+
+#### Chain of Responsibility
+Used in the Reddit acquisition pipeline: `RedditProvider` first attempts to download data from `RedditApiClient` (OAuth2 client). On HTTP 429/403 or circuit breaker open, the request is piped to `RedditJsonScraper` (.json scraper fallback) to guarantee a result.
+
+#### Observer Pattern (Pub/Sub)
+The communication between `SearchController` and `SearchJobListener` is decoupled via an asynchronous Redis queue broker. The controller publishes a job event message, which Rqueue dynamically assigns to the listener's worker thread pool, decoupling thread lifecycles.
+
+#### Builder Pattern
+Constructing complex configurations, responses, and entities is done via Lombok's `@Builder` annotation (e.g., compiling `SearchResponse` fields step-by-step), guaranteeing immutable structures and clean constructor patterns.
+
+#### Static Factory Methods
+Utilized in records for sentinel validation. For example, `AnalysisResult.empty(query)` and `AnalysisResult.error(query, message)` create predefined error records with empty lists, avoiding null checks downstream.
+
+#### Template Method Pattern
+The `SearchJobListener.processJob()` outlines the exact step-by-step sequence of executing a task: scrape $\to$ analyze $\to$ image resolution $\to$ SQLite transactional save $\to$ DynamoDB cache write $\to$ competitor seeding $\to$ status finish. Individual stages can yield varying outputs, but the structure remains invariant.
+
+#### Facade Pattern
+The `PlatformRegistry` acts as a facade. The asynchronous listener only executes a single method: `platformRegistry.searchAll()`, hiding the complexities of client credentials, rate limits, scraping logic, and post collation.
+
+#### Repository Pattern
+Spring Data JPA repositories abstract all SQLite dialect CRUD operations into clean interfaces.
+
+---
+
+## SQLite Database Schema & Models
+
+### 1. Database Configuration
+To optimize SQLite for concurrent reads and writes, CrowdLens overrides the default rollback journal behavior in favor of **Write-Ahead Logging (WAL)**:
+* **Connection String:** `jdbc:sqlite:data/crowdlens.db?journal_mode=WAL&busy_timeout=5000`
+* **Concurrency:** Allows concurrent reads while write actions are active in a separate log file, avoiding database locks. A busy timeout of 5000ms ensures that write transactions will wait for lock release instead of raising immediate exceptions.
+
+### 2. Schema Table Details
+
+```
+  search_jobs                   search_results                 social_posts
++-------------------+         +---------------------+        +--------------------+
+| id (UUID)      PK |         | id (UUID)        PK |        | id (UUID)       PK |
+| query             |         | query               |        | platform           |
+| query_normalized  |         | query_normalized[I] |        | platform_id (UNQ)  |
+| post_limit        |         | overall_score       |        | search_result_id FK|
+| max_comments      |         | product_category [I]|------->| source             |
+| status            |----+    | product_sub_cat  [I]|        | title              |
+| search_result_id  | FK |    | verdict_sentence    |        | body               |
+| result_json       |    +--->| source_platforms    |        | score              |
+| error_message     |         | post_count          |        | permalink          |
+| created_at        |         | image_url           |        | posted_at          |
+| updated_at        |         | created_at       [I]|        | scraped_at         |
++-------------------+         +---------------------+        +--------------------+
+                              [I] = Indexed Column
+```
+
+#### Table: `search_jobs`
+Tracks the execution state of asynchronous search analysis requests.
+* **`id`** `UUID` *(Primary Key)* — Unique job ID returned to the client.
+* **`query`** `TEXT` *(NOT NULL)* — The raw query typed by the user.
+* **`query_normalized`** `TEXT` *(NOT NULL)* — Lowercased, whitespace-collapsed string for lookup.
+* **`post_limit`** `INTEGER` *(NOT NULL)* — Maximum limit of posts to aggregate.
+* **`max_comments`** `INTEGER` *(NOT NULL)* — Maximum comments to process per post.
+* **`status`** `VARCHAR(20)` *(NOT NULL)* — State flag: `PENDING`, `IN_PROGRESS`, `COMPLETED`, `FAILED`.
+* **`search_result_id`** `UUID` *(Foreign Key, Nullable)* — References `search_results.id` upon completion.
+* **`result_json`** `TEXT` *(Nullable)* — The fully serialized `SearchResponse` JSON string.
+* **`error_message`** `TEXT` *(Nullable)* — Holds exception details if status is `FAILED`.
+* **`created_at`** `TIMESTAMP` *(NOT NULL)* — Creation timestamp.
+* **`updated_at`** `TIMESTAMP` *(NOT NULL)* — Modification timestamp.
+
+#### Table: `search_results`
+Indexes completed analysis metrics. Contains both real results and AI-seeded competitor placeholders.
+* **`id`** `UUID` *(Primary Key)* — Unique result ID.
+* **`query`** `VARCHAR(500)` *(NOT NULL)* — Search topic.
+* **`query_normalized`** `VARCHAR(500)` *(NOT NULL)* — Indexed string used to map cached outputs.
+* **`overall_score`** `INTEGER` *(Nullable)* — Sentiment score graded 0–100.
+* **`product_category`** `VARCHAR(100)` *(Nullable)* — Category classification (e.g., "Electronics").
+* **`product_sub_category`** `VARCHAR(100)` *(Nullable)* — Specific subcategory classification.
+* **`verdict_sentence`** `TEXT` *(Nullable)* — Summary verdict. Null for AI-seeded placeholders.
+* **`source_platforms`** `VARCHAR(300)` *(Nullable)* — Comma-separated list of crawled platform names.
+* **`post_count`** `INTEGER` *(Nullable)* — Count of total analyzed posts.
+* **`image_url`** `VARCHAR(2048)` *(Nullable)* — Scraped link to product image.
+* **`created_at`** `TIMESTAMP` *(NOT NULL)* — Creation timestamp.
+* *Indexes:*
+  * `idx_search_query_norm` on `query_normalized`
+  * `idx_search_created` on `created_at`
+  * `idx_search_category` on `product_category`
+  * `idx_search_subcategory` on `product_sub_category`
+
+#### Table: `social_posts`
+Contains individual discussion items collected from scrapers, associated with their parent analysis.
+* **`id`** `UUID` *(Primary Key)* — Unique post ID.
+* **`platform`** `VARCHAR(50)` *(NOT NULL)* — E.g. "reddit".
+* **`platform_id`** `VARCHAR(100)` *(NOT NULL, UNIQUE)* — Social platform post/comment ID to prevent duplicates.
+* **`search_result_id`** `UUID` *(Foreign Key, NOT NULL)* — References `search_results.id` with a lazy load constraint.
+* **`source`** `VARCHAR(200)` *(Nullable)* — Subreddit origin name (e.g., "r/Fitness").
+* **`title`** `TEXT` *(Nullable)* — Post header text.
+* **`body`** `TEXT` *(Nullable)* — Discussion/comment content block.
+* **`score`** `INTEGER` *(Default: 0)* — Aggregated upvote score on Reddit.
+* **`permalink`** `VARCHAR(500)` *(Nullable)* — Direct link url.
+* **`posted_at`** `TIMESTAMP` *(Nullable)* — Timestamp when original poster published.
+* **`scraped_at`** `TIMESTAMP` *(NOT NULL)* — Capture timestamp.
+* *Indexes:*
+  * `idx_posts_platform` on (`platform`, `platform_id`)
+  * `idx_posts_search` on `search_result_id`
+
+---
+
+## 1. Core Java & Concurrency Deep-Dive
+
+### Q1.1: I noticed in `RedditApiClient.java`, you use a `synchronized` block in `ensureAuthenticated()` and run it inside an `AtomicReference`. Why? What concurrency problem are you solving here, and what happens if you remove them?
+**Interviewer Context:**
+```java
+private final AtomicReference<String> accessToken = new AtomicReference<>();
+private final AtomicReference<Instant> tokenExpiry = new AtomicReference<>(Instant.EPOCH);
+
+private synchronized void ensureAuthenticated() {
+    if (accessToken.get() != null && Instant.now().isBefore(tokenExpiry.get())) {
+        return; // Token still valid
+    }
+    // ... logic to call auth API and set token/expiry
+}
+```
+
+#### Answer & Fundamentals:
+* **The Problem:** In a multi-threaded web application, multiple HTTP threads or job executors can concurrently execute a search that requests data from Reddit. If the OAuth token has expired or is null, multiple threads will check `tokenExpiry.get()`, see that it is expired, and trigger a HTTP request to the Reddit token endpoint. This leads to **duplicate API calls, API quota waste, and race conditions** where threads repeatedly overwrite the token.
+* **Why `synchronized`?** It guarantees that only one thread at a time can perform the actual OAuth2 token refresh flow. Other threads will block and wait. Once the active thread completes the refresh and updates the token/expiry, the waiting threads will enter the method, fail the validation check (`Instant.now().isBefore(tokenExpiry.get())` is now true), and exit immediately without calling the Reddit Auth endpoint.
+* **Why `AtomicReference`?** It provides **lock-free thread safety** for reading and writing references. It guarantees that when one thread modifies `accessToken`, all other threads immediately see the updated reference (avoiding CPU cache visibility problems, similar to the `volatile` keyword).
+* **Trade-off:** Synchronization blocks execution, causing a bottleneck. However, since token refresh happens once an hour, this bottleneck is extremely rare and acceptable.
+* **Alternative:** You could use `ReentrantLock` with a `tryLock()` or use an OAuth2 client provider (like Spring Security's OAuth2 Client manager) which handles token refreshes transparently.
+
+---
+
+### Q1.2: Explain why you chose Java 17 `record` types (e.g., `SocialPostDto`, `AnalysisResult`) instead of standard classes. What JVM advantages do they offer?
+#### Answer & Fundamentals:
+* **Immutability by Design:** Java records are final classes. All fields are final, meaning their values cannot change after instantiation. This is perfect for DTOs and API responses, preventing accidental modification of data as it passes through the layers (Controller $\to$ Service $\to$ Repository).
+* **Boilerplate Reduction:** Standard classes require getters, constructors, `equals()`, `hashCode()`, and `toString()`. Records automatically generate all of these at compile-time.
+* **JVM Serialization and Thread Safety:** Because records are immutable, they are inherently thread-safe. They can be shared freely across threads without copying.
+* **Pattern Matching Support:** Records make it easy to use Java 17's pattern-matching switch statements for deconstruction (e.g., handling different types of job responses).
+
+---
+
+### Q1.3: In `RedditJsonScraper.java`, you call `Thread.sleep(jitter)` for stealth. In Java, what is `InterruptedException`? Why is it bad practice to just print a stack trace or swallow this exception? How did you handle it?
+**Interviewer Context:**
+```java
+private void addJitter() {
+    try {
+        int jitter = ThreadLocalRandom.current().nextInt(500, 2001);
+        Thread.sleep(jitter);
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt(); // Restore interrupted status
+    }
+}
+```
+
+#### Answer & Fundamentals:
+* **What is `InterruptedException`?** It is a checked exception thrown when a thread that is sleeping, waiting, or otherwise occupied is interrupted by another thread using `Thread.interrupt()`. It is the JVM's cooperative mechanism to tell a thread to stop what it's doing and clean up.
+* **Why restoring the interrupt status matters:** When `InterruptedException` is thrown, the JVM clears the "interrupted status" flag of the thread. If you just catch it and print the stack trace (or do nothing), the calling thread loses the signal that it was requested to shut down. This can cause background jobs to hang indefinitely during server shutdown.
+* **Correct Practice:** Call `Thread.currentThread().interrupt()`. This sets the flag back to `true`, ensuring that upstream frameworks (like Spring's thread pool executors or Rqueue listeners) know the thread was interrupted and can shut down cleanly.
+
+---
+
+## 2. Spring Boot & Web Architecture
+
+### Q2.1: Walk me through the end-to-end flow of the HTTP 202 & Polling pattern you designed. Why did you use this instead of WebSockets or Server-Sent Events (SSE)?
+```
+[Client]                [SearchController]            [Redis Queue]          [SearchJobListener]
+   |                           |                            |                         |
+   |-- POST /api/search ------>|                            |                         |
+   |   (Cache Miss)            |-- Persist job (SQLite)     |                         |
+   |                           |-- Enqueue job ------------>|                         |
+   |<-- 202 Accepted (Job ID) -|                            |                         |
+   |                           |                            |-- (Dequeues Job) ------>|
+   |                           |                            |                         |-- Scrapes Reddit
+   |                           |                            |                         |-- Runs OpenAI LLM
+   |-- GET /api/search/{id} -->|                            |                         |-- Saves Cache
+   |<-- PENDING/IN_PROGRESS ---|                            |                         |-- Marks Completed
+   |                           |                            |                         |
+   |-- GET /api/search/{id} -->|                            |                         |
+   |<-- 200 COMPLETED (Result)-|                            |                         |
+```
+
+#### Answer & Fundamentals:
+1. **Flow Description:**
+   * User submits a search query via `POST /api/search`.
+   * **Cache Check:** System checks AWS DynamoDB cache. If hit $\to$ returns full response immediately with HTTP 200.
+   * **Job Creation:** If miss, the system generates a unique `UUID jobId`, persists a row in SQLite with status `PENDING`, pushes a message to the Redis-backed Rqueue, and immediately returns **HTTP 202 Accepted** with the `{jobId}`.
+   * **Asynchronous Processing:** The client's connection is closed, freeing up Spring's server thread. In the background, `SearchJobListener` dequeues the message, runs the crawl pipeline, calls the LLM, caches the result in DynamoDB, and marks the SQLite job as `COMPLETED`.
+   * **Polling:** The client makes periodic `GET /api/search/{jobId}` requests. The server returns status `IN_PROGRESS` or `PENDING` until it finishes, at which point it returns `COMPLETED` along with the analyzed payload.
+2. **Why HTTP 202 + Polling over WebSockets / SSE?**
+   * **Resource Constrained Environment:** WebSockets and SSE require keeping persistent, open TCP connections between the client and server. On a low-powered server (e.g., 512MB RAM), maintaining hundreds of idle TCP connections consumes significant file descriptors and memory.
+   * **Stateless Scaling:** HTTP 202 and polling endpoints are completely stateless. A client can poll *any* instance of the backend load-balanced across multiple instances. WebSockets require session affinity or an active pub/sub backplane (like Redis) to route messages to the specific server holding the connection.
+   * **Simplicity & Firewall Friendliness:** Simple HTTP GET requests bypass strict corporate proxies and firewalls that often block WebSockets protocols.
+3. **Trade-offs:** Polling causes overhead on the database (SQLite query on every poll request) and network. This is mitigated by making clients use an exponential backoff polling strategy (e.g., poll at 2s, then 4s, then 8s, up to 1 minute).
+
+---
+
+### Q2.2: Let's discuss transaction boundaries. In `SearchController.java`, you call `persistJob(request)` (which commits to SQLite) and then `enqueueJob(jobId)` outside of a single transaction. Why did you split them? What race condition did you prevent?
+**Interviewer Context:**
+```java
+// Inside SearchController.java:
+UUID jobId = orchestrator.persistJob(request); // @Transactional commits here
+orchestrator.enqueueJob(jobId);                // Redis enqueue happens here
+```
+
+#### Answer & Fundamentals:
+* **The Race Condition:** If both operations were inside a single `@Transactional` method, Spring would open a database transaction, insert the `SearchJob` row in SQLite, and then publish the message to Redis *before* the database transaction commits. Because Redis is extremely fast, the background `SearchJobListener` could dequeue the message and query SQLite for the `jobId` *before* the controller's transaction has finalized the SQLite commit. The listener would get a `null` entity and throw a "SearchJob not found" error.
+* **The Solution:** By splitting them, we ensure that `persistJob()` completes and commits the SQLite row successfully. Only when the transaction is closed does the controller call `enqueueJob()`. This guarantees that the row is visible to the listener as soon as it reads the Redis message.
+* **Alternative:** You can use Spring's `TransactionSynchronizationManager.registerSynchronization` with an `afterCommit` hook to automatically enqueue the Redis job only after the active transaction successfully finishes. This is a cleaner, more declarative way to achieve the same result.
+
+---
+
+### Q2.3: In `SearchJobListener.java`, why is the database transaction scoped with `TransactionTemplate` inside `processJob`, instead of placing `@Transactional` on the entire listener method?
+**Interviewer Context:**
+```java
+// Inside SearchJobListener.java:
+public void onMessage(SearchJobMessage message) {
+    // ...
+    processJob(job);
+}
+
+private void processJob(SearchJob job) {
+    // 1. Scrape platforms (HTTP calls)
+    // 2. AI analysis (HTTP calls)
+    // 3. Resolve images (HTTP calls)
+    txTemplate.executeWithoutResult(status -> {
+        // 4. Save SearchResult to SQLite
+        // 5. Save SocialPosts
+        // 6. Save results to Redis/DynamoDB
+    });
+}
+```
+
+#### Answer & Fundamentals:
+* **The Anti-Pattern (Long Transactions):** Annotating `processJob` or `onMessage` with `@Transactional` would keep a database connection open during the entire lifecycle of the job. This job makes heavy network calls (scraping Reddit, calling OpenAI, crawling Amazon). These calls take anywhere from 10 seconds to a minute.
+* **Database Pool Starvation:** If a database transaction remains open during network calls, that database connection is held hostage. If you have a connection pool of size 10, and 10 background jobs are running, the entire application will freeze because no other threads (including incoming API requests) can obtain a database connection to do simple reads/writes.
+* **The Solution:** Use programmatic transaction boundaries via `TransactionTemplate`. The network calls (scraping, AI model calls) run outside the transaction context. Only when the data is fully ready to be saved do we open a tight, fast transaction using `txTemplate`, write to SQLite, and close it immediately.
+
+---
+
+### Q2.4: You configured `WebClient` for HTTP calls instead of using the traditional `RestTemplate`. What is the fundamental difference in how they handle threads? Why does the code still use `.block()` in some places, and is that okay?
+#### Answer & Fundamentals:
+* **Thread Handling:**
+  * `RestTemplate` uses a **Thread-per-Request** model. For every outbound API request, a thread is blocked waiting for the server response. This does not scale well when making hundreds of concurrent external calls.
+  * `WebClient` is built on top of Project Reactor (Netty). It uses a **non-blocking, event-driven** thread pool (usually equal to the number of CPU cores). When an outbound request is sent, the thread is released immediately to do other work. When the remote server responds, Netty triggers a callback to process the result.
+* **Why did we use `.block()`?** In `RedditApiClient`, we call `.block()` on the WebClient chain because Rqueue's listener execution is designed as a sequential blocking task.
+* **Is it okay?** Yes, because this execution happens inside a dedicated background thread pool allocated by Rqueue, not on Spring Boot's main container threads (Tomcat thread pool). While non-blocking reactive chains (`flatMaps`, `Mono`) are mathematically more efficient, using `.block()` in background worker tasks keeps the codebase easy to read, debug, and maintain.
+
+---
+
+## 3. Asynchronous Processing (Redis & Rqueue)
+
+### Q3.1: How does Rqueue utilize Redis under the hood to ensure message delivery? What happens if the server crashes mid-job? Does Rqueue provide "At-Least-Once" or "At-Most-Once" delivery?
+#### Answer & Fundamentals:
+* **Redis Structures Used:** Rqueue utilizes Redis **Sorted Sets (ZSET)** and **Lists** under the hood:
+  * **Queue List:** Holds active messages waiting to be processed.
+  * **Processing Queue (ZSET):** Holds messages currently being processed by worker threads, keyed by a timestamp.
+* **Crash Handling (At-Least-Once Delivery):** Rqueue guarantees **At-Least-Once** delivery. When a worker thread pulls a message, the message is not deleted from Redis. Instead, it is moved to the processing queue (ZSET) with a visibility timeout (ack timeout).
+  * If the server crashes mid-job, the message remains in the processing queue.
+  * A scheduled background thread in Rqueue (the scheduler) periodically checks this ZSET. If a message has stayed in the processing queue longer than the configured timeout without being explicitly deleted (acknowledged), Rqueue assumes the worker died, retrieves the message, and **re-enqueues it** into the main queue for processing.
+* **Idempotency Requirement:** Because of At-Least-Once delivery, background processes must be idempotent. In your code, you handle this by checking if a job is already in progress or completed (`if (job.getStatus() != SearchJob.Status.PENDING) return;`) and deduplicating incoming posts using `socialPostRepo.existsByPlatformId(dto.platformId())`.
+
+---
+
+### Q3.2: Why did you set `concurrency = "1"` in `@RqueueListener`? What would happen if you scaled it to 10?
+**Interviewer Context:**
+```java
+@RqueueListener(value = "search-jobs", concurrency = "1", numRetries = "0")
+```
+
+#### Answer & Fundamentals:
+* **Resource Optimization:** CrowdLens runs on a single low-powered server instance (possibly a single-core or dual-core VPS). Since the job involves intense CPU/network work (LLM prompt construction, JSON parsing, scraping, and database writes), running multiple parallel threads would lead to severe resource contention, slow CPU execution, database lock issues, and rate limit exhaustion.
+* **Rate Limit Preservation:** Outgoing requests to the Reddit API and OpenAI have strict rate limits. Processing jobs sequentially (concurrency=1) acts as a natural rate-regulating mechanism, ensuring we don't dump 50 requests concurrently onto the Reddit API and hit HTTP 429 bans.
+* **SQLite Write Locks:** SQLite does not handle concurrent write transactions well (it throws `SQLITE_BUSY` exceptions). Sequential job processing ensures that only one thread is trying to write to SQLite at a time, completely avoiding write conflicts.
+* **If scaled to 10:** If we scaled it to 10, jobs would process faster in parallel, but we would immediately see:
+  1. `SQLITE_BUSY` errors when writing to the database.
+  2. Reddit rate limit exhaustion leading to scraper bans.
+  3. High memory usage potentially causing container OOM crashes.
+
+---
+
+## 4. Polyglot Storage & Caching (SQLite vs. AWS DynamoDB)
+
+### Q4.1: Why did you implement a Polyglot Storage architecture? Explain the division of data between SQLite and DynamoDB.
+#### Answer & Fundamentals:
+* **SQLite (Lean Local Database):**
+  * **What goes here:** The structural relations—`SearchResult` (lean indexes, queries, categories, and numeric sentiment scores) and `SearchJob` (state tracking).
+  * **Why:** Fast local relational queries. SQLite is excellent for joining tables, fetching aggregations (like category rankings), and keeping track of state without managing a heavy database like PostgreSQL.
+* **DynamoDB (Heavy Distributed Cache):**
+  * **What goes here:** The raw AI-generated analysis JSON (which contains large arrays of strings, positive/negative reviews, markdown summaries, and evidence snippets).
+  * **Why:** Storing massive, un-normalized JSON strings in relational SQLite would bloat the local disk file and slow down database table scans. DynamoDB, as a NoSQL store, handles document-type key-value operations at scale. By offloading the raw JSON payload to DynamoDB, we keep SQLite clean and lightning-fast.
+* **Trade-off:** Having two databases introduces the challenge of keeping them synchronized. If a write fails in DynamoDB, we could have a mismatch where SQLite claims a search exists but the details are missing. You handle this by updating the SQLite `SearchJob` with `resultJson` on completion as a secondary fallback.
+
+---
+
+### Q4.2: In `CacheService.java`, you manually check TTL (`expires_at`) even though you configured DynamoDB's native TTL. Why?
+**Interviewer Context:**
+```java
+// Inside CacheService.java:
+if (item.containsKey("expires_at")) {
+    long expiresAt = Long.parseLong(item.get("expires_at").n());
+    if (Instant.now().getEpochSecond() > expiresAt) {
+        log.debug("Cache EXPIRED for query: '{}'", queryNormalized);
+        return Optional.empty(); // manual eviction check
+    }
+}
+```
+
+#### Answer & Fundamentals:
+* **The DynamoDB TTL Gotcha:** DynamoDB's native Time-To-Live (TTL) feature does **not** guarantee immediate deletion when the expiration time is reached. Under the hood, DynamoDB runs a background sweeper that marks and deletes expired items. This cleanup process can take **up to 48 hours** to actually remove the item.
+* **The Bug:** If you rely purely on DynamoDB to filter out expired items, a user query on a cached item that expired 5 hours ago would return stale, cached data because DynamoDB hasn't swept the item yet.
+* **The Fix:** Storing a unix timestamp (`expires_at`) and manually verifying `Instant.now().getEpochSecond() > expiresAt` during reading ensures that the cache layer behaves deterministically. Even if the item still physically exists in DynamoDB, the application treats it as a miss and triggers a refresh.
+
+---
+
+### Q4.3: In `CacheService.java`, on a cache miss, you fall back to `findSimilar()` which uses a Jaccard word-similarity scan over the DynamoDB table. What are the severe performance trade-offs of this? How does it impact AWS costs (RCUs), and how would you optimize this for production?
+**Interviewer Context:**
+```java
+ScanResponse scanResponse = dynamoDbClient.scan(ScanRequest.builder()
+        .tableName(props.tableName())
+        .filterExpression("expires_at > :now")
+        // ...
+        .projectionExpression("query_normalized, response_json")
+        .build());
+```
+
+#### Answer & Fundamentals:
+* **The Problem (Table Scan):** A DynamoDB `Scan` operation reads *every single item* in the table to evaluate the filter expression. As the cache grows (e.g., to 10,000+ entries), this operation becomes incredibly slow, blocking the calling thread.
+* **AWS Cost Impact (Read Capacity Units - RCUs):** DynamoDB charges based on data read. A scan consumes RCUs for every single item scanned, regardless of whether a match is found. If every cache miss triggers a full table scan, your AWS bill will skyrocket exponentially with database size.
+* **Production Optimizations:**
+  1. **Vector Embeddings (Semantic Search):** Generate vector embeddings of search queries using an embedding model (like OpenAI `text-embedding-3-small`). Store them in a vector database (like pgvector, Pinecone, or AWS OpenSearch) and perform cosine-similarity queries. This is $O(\log N)$ instead of $O(N)$.
+  2. **Local Lucene Index:** Maintain a small local Lucene index (via Apache Lucene or Hibernate Search) in-memory or on-disk on the backend VPS. Queries are scanned locally in microseconds, costing $0 AWS RCUs.
+  3. **Lexical Normalization:** Improve normalization logic so that queries map to the exact same hash (e.g., stemming words, ordering words alphabetically). This increases exact hash hits and avoids needing similarity lookups entirely.
+
+---
+
+### Q4.4: SQLite is a file-based database. How does it handle concurrency? What is "Write-Ahead Logging" (WAL) mode, and why is it crucial for a Spring Boot app using SQLite?
+#### Answer & Fundamentals:
+* **Default Locking (Rollback Journal):** By default, SQLite allows multiple readers OR one writer, but NOT both at the same time. During a write transaction, the database locks the entire file. Any reader thread trying to query data will receive a `SQLITE_BUSY` error. In a web application where users query while background jobs are saving posts, this causes major service degradation.
+* **Write-Ahead Logging (WAL) Mode:** WAL shifts how writes are done. Writes are appended to a separate `.log-wal` file, leaving the main database file untouched.
+  * **Reader and Writer Separation:** Readers can read the database file while a writer concurrently appends transactions to the WAL file.
+  * **Benefit:** It dramatically increases concurrency, allowing simultaneous reads and writes without thread blocking.
+* **Configuring WAL in Spring Boot:** Set the connection pool init script on your DataSource URL or via Hibernate properties:
+  `jdbc:sqlite:data/crowdlens.db?journal_mode=WAL`
+
+---
+
+## 5. Resilience & Anti-Ban Engineering (Resilience4j & Bucket4j)
+
+### Q5.1: Explain the difference between Rate Limiting (Bucket4j) and Circuit Breakers (Resilience4j). How do they cooperate in your codebase?
+#### Answer & Fundamentals:
+* **Rate Limiting (Proactive Regulation):**
+  * **Role:** Controls the speed of outgoing traffic to stay within known thresholds. Bucket4j regulates outgoing Reddit API calls (e.g., maximum 60 requests per minute) to ensure the server never triggers Reddit's automatic rate limits.
+  * **Behavior:** It blocks or delays requests proactively using a token bucket.
+* **Circuit Breakers (Reactive Protection):**
+  * **Role:** Protects the system from cascading failures when an external dependency is broken or down. If the Reddit API goes down or starts throwing HTTP 500s, Resilience4j opens the circuit.
+  * **Behavior:** It monitors success/failure rates. When failures exceed a threshold (e.g., 50%), it trips, failing fast immediately without executing the network call. This prevents threads from hanging on slow connections and lets the app fall back to the scraper instantly.
+* **Cooperation:**
+  ```
+  [Incoming Job]
+        |
+        v
+  [Rate Limiter (Bucket4j)] ---> Blocks thread to pace calls (prevents 429s)
+        |
+        v
+  [Circuit Breaker (Resilience4j)] ---> Checks if Reddit is currently healthy
+        |                              (Trips and triggers fallback if down)
+        +---> HEALTHY ---> Call Reddit API
+        +---> TRIPPED ---> Fallback to RedditJsonScraper (Stealth Scraper)
+  ```
+
+---
+
+### Q5.2: Walk me through the mechanics of the Token Bucket Algorithm used in `RedditRateLimiter.java`. What is the difference between greedy refilling and interval-based refilling?
+**Interviewer Context:**
+```java
+Bandwidth limit = Bandwidth.builder()
+        .capacity(config.capacity())
+        .refillGreedy(config.refillTokens(), Duration.ofSeconds(config.refillDurationSeconds()))
+        .build();
+```
+
+#### Answer & Fundamentals:
+* **Token Bucket Mechanics:** Imagine a bucket with a maximum capacity of $N$ tokens. Every API call consumes 1 token. If the bucket is empty, the thread blocks (via `apiBucket.asBlocking().consume(1)`) until a new token is added.
+* **Greedy Refill:** Generates tokens continuously over time. If the rule is 60 tokens per 60 seconds (1 token/sec), a greedy refiller will add `0.1` tokens every 100ms. If a thread requests a token 500ms after the last one, the bucket has regenerated a fraction of a token. This results in **smooth outbound traffic** and prevents burstiness.
+* **Interval-Based Refill:** Regenerates tokens in batches at fixed intervals (e.g., adds exactly 60 tokens every 60 seconds). This can result in "bursty" behavior, where the app uses up all 60 tokens in the first 5 seconds, and then starves for the remaining 55 seconds.
+* **CrowdLens Selection:** Greedy refilling is used to keep outbound requests spaced out evenly, mimicking human-like browsing patterns and keeping scraping traffic subtle.
+
+---
+
+### Q5.3: Explain the Resilience4j Circuit Breaker state machine. If the OpenAI API throws a 401 (Invalid Key) vs. a 503 (Temporary Down), how should the Circuit Breaker respond?
+#### Answer & Fundamentals:
+* **The State Machine:**
+  1. **CLOSED:** Normal state. Requests pass through. Failures are tracked.
+  2. **OPEN:** Tripped state. Requests fail-fast immediately, triggering the fallback method without calling the remote service. After a "wait duration", it transitions to Half-Open.
+  3. **HALF-OPEN:** Allows a limited number of test requests. If they succeed, the circuit closes again. If any fail, it trips back to Open.
+* **OpenAI 401 (Invalid API Key) vs. 503 (Server Down):**
+  * **503 Temporary Down:** This is a transient network/server failure. The circuit breaker **should** count this toward the failure rate and trip to protect the system.
+  * **401 Unauthorized:** This is a configuration error (developer forgot to set the API key or it expired). Tripping the circuit breaker for configuration errors is useless because the key will not fix itself over time.
+  * **Optimization:** Configure the circuit breaker to **ignore** specific client exceptions (like 400 Bad Request, 401 Unauthorized, 403 Forbidden) so they don't trip the circuit. Only count connection timeouts, 5xx server errors, and rate limits (429).
+
+---
+
+### Q5.4: Describe the stealth mechanisms built into `RedditJsonScraper.java`. Why are User-Agent rotation and random jitter important?
+#### Answer & Fundamentals:
+* **The Scraper Fallback Strategy:** If the official Reddit API throws 403/429 or hits a circuit breaker, the code falls back to scraping `old.reddit.com/{path}.json`. Because this endpoint does not require authentication, Reddit monitors it aggressively for bot activity.
+* **User-Agent Rotation:** If hundreds of requests are made using the default Java HTTP client User-Agent (e.g., `Java/17`), Reddit's Web Application Firewall (WAF) will block the IP address immediately. The scraper maintains a list of 10 modern browser User-Agents (Chrome, Safari, Firefox, Edge across Windows, Linux, and Mac) and randomly assigns one to each request, making the traffic look like it originates from different browsers.
+* **Random Jitter:** Bot traffic is highly predictable (requests sent exactly every 1000ms). Web application firewalls look for this rhythmic signature. By adding a random sleep delay between 500ms and 2000ms (`ThreadLocalRandom.current().nextInt(500, 2001)`), the request pattern becomes irregular and mimics human reading habits, bypassing heuristic block-filters.
+
+---
+
+## 6. Spring AI & LLM Integration Patterns
+
+### Q6.1: You use the Spring AI `ChatModel` interface instead of calling OpenAI's REST endpoints manually. What are the software engineering benefits of this abstraction?
+#### Answer & Fundamentals:
+* **Provider Agnosticism (Decoupling):** By coding against `ChatModel` instead of a concrete `OpenAiChatModel` instance, you decouple the business logic from the provider. If OpenAI raises prices, you can switch the underlying implementation to Anthropic (Claude), Google (Gemini), or a local llama model (via Ollama) by changing a single dependency and configuration file without editing code.
+* **Structured Output Parsing:** Spring AI provides output parsers (like `BeanOutputConverter`) that handle schema validation, prompting the LLM for JSON, and mapping the response back to Java records automatically.
+* **Built-in Resilience:** It integrates cleanly with standard Spring configuration, properties, and circuit breakers.
+
+---
+
+### Q6.2: How do you handle JSON extraction from LLM outputs? What happens if OpenAI returns half-written JSON, missing brackets, or conversational text?
+**Interviewer Context:**
+```java
+// Inside AIAnalysisEngine.java:
+String json = aiOutput;
+if (json != null && json.contains("```")) {
+    json = json.replaceAll("(?s)```\\w*\\n?", "").replaceAll("```", "");
+}
+// objectMapper.readTree(json) ...
+```
+
+#### Answer & Fundamentals:
+* **The Sanitization Step:** LLMs frequently wrap JSON responses in markdown backticks (e.g., ` ```json { ... } ``` `) and add prefix/suffix conversational text ("Here is your analysis:"). The system handles this by using regex to strip out markdown code fences before feeding the string to Jackson.
+* **Jackson Parsing Safeguard:** If the JSON is completely broken (malformed, missing brackets, truncated), `objectMapper.readTree()` will throw a `JsonProcessingException`. The system catches this, logs the failure, and returns a graceful fallback object (`AnalysisResult.error(query, "Failed to parse AI response")`).
+* **Prompt Hardening:** You prevent this proactively in the system prompt by instructing the LLM: *"Return ONLY a JSON array. No explanation, no markdown"*, and specifying the exact schema.
+* **Production Optimization:** For higher reliability, use OpenAI's **JSON Mode** or **Structured Outputs** (tool calling/function calling). This forces the LLM's decoding process to only select tokens that conform to the defined JSON schema, guaranteeing valid JSON output.
+
+---
+
+### Q6.3: What is the "Competitor Seeding" logic in your background job? Why does it exist, and how does your database structure handle real queries overtaking seeded estimations?
+**Interviewer Context:**
+```java
+// In SearchJobListener.java:
+private void seedCompetitorsIfNeeded(AIAnalysisEngine.AnalysisResult analysis, String currentQueryNormalized) {
+    // ...
+    // Seeds are permanent entries - estimates from AI when category first searched
+    searchResultRepo.save(SearchResult.builder().query(seed.name()).overallScore(seed.estimatedScore())...);
+}
+// In SearchResultRepository.java (findCompetitors query ordering by MAX(createdAt)):
+```
+
+#### Answer & Fundamentals:
+* **Why it exists:** When a user searches for a product (e.g., "Creatine Supplement"), they expect to see a comparison card against competitors (e.g., "Optimum Nutrition", "MyProtein"). However, these competitors might not have been searched by any user yet, meaning they don't exist in the database.
+* **The Seeding Strategy:** When analyzing a query, the LLM is asked to suggest 3 competitors and estimate their scores based on general knowledge. If the subcategory is empty, we write these competitors to SQLite as "seeds".
+* **Real Queries Overtaking Seeds:** Seeded scores are rough estimates. When a user eventually runs a real search for one of those competitors (e.g., "MyProtein"), the backend performs a real crawl and saves a new `SearchResult` row.
+* **Conflict Resolution:** In `SearchResultRepository.java`, the query to fetch competitors filters by category and subcategory but groups by product name and selects the **newest** entry (`ORDER BY createdAt DESC`). Because a real search creates a newer record than the initial seed, the real, accurate score naturally overrides the seeded estimate in all comparison metrics.
+
+---
+
+## 7. DevOps & JVM Container Optimization
+
+### Q7.1: Look at the JVM parameters set in your backend's `Dockerfile`. Explain what each of these does and why they are critical for running Java inside a Docker container.
+**Interviewer Context:**
+```dockerfile
+ENTRYPOINT ["java", "-Xms128m", "-Xmx512m", "-XX:+UseSerialGC", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:ActiveProcessorCount=2", "-Xss512k", "-jar", "app.jar"]
+```
+
+#### Answer & Fundamentals:
+* `-Xms128m` / `-Xmx512m`: Sets the initial heap size to 128MB and maximum heap size to 512MB. This prevents the JVM from growing indefinitely and hitting container resource limits.
+* `-XX:+UseContainerSupport`: Tells the JVM to look at the cgroups limits of the Docker container rather than the host system's resources. Without this, a JVM running on a 64GB host inside a 1GB container would see 64GB of RAM and set its heap size accordingly, leading to the container getting killed by the OS Out-Of-Memory (OOM) killer.
+* `-XX:MaxRAMPercentage=75.0`: Instructs the JVM to allocate a maximum of 75% of the container's allocated memory to the Java Heap. The remaining 25% is reserved for off-heap memory (Metaspace, thread stacks, GC data structures).
+* `-XX:ActiveProcessorCount=2`: Forces the JVM to assume it has 2 CPU cores, optimization for low-core virtual private servers (VPS).
+* `-XX:+UseSerialGC`: Swaps the default parallel Garbage Collector (G1GC) for the Serial Garbage Collector. G1GC uses multiple concurrent threads for collection, which consumes high CPU when resources are scarce. The Serial GC performs all garbage collection on a single thread. For single-core/dual-core micro-services with heap sizes under 4GB, **Serial GC reduces CPU utilization and context-switching overhead dramatically.**
+* `-Xss512k`: Reduces the thread stack size from the default 1MB to 512KB. Since this service uses many worker threads (Tomcat, WebClient, Redis pools), cutting the stack size in half reduces the off-heap memory footprint significantly, allowing more concurrent threads to run in a low-RAM container.
+
+---
+
+### Q7.2: In your multi-stage `Dockerfile`, you copy `pom.xml` and run `mvn dependency:go-offline` before copying `src/`. Why did you structure it this way?
+**Interviewer Context:**
+```dockerfile
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests -B
+```
+
+#### Answer & Fundamentals:
+* **Docker Layer Caching:** Docker builds images layer by layer. If a layer's contents (and previous layers) haven't changed, Docker reuses the cached layer from the previous build.
+* **The Optimization:** Dependencies rarely change, but source code (`src/`) changes on every commit. If we copied `src/` and `pom.xml` together, any code change would invalidate the cache, forcing Maven to download all dependencies from scratch (taking 5-10 minutes).
+* **The Result:** By copying only `pom.xml` first and running `go-offline`, Docker caches all downloaded jar dependencies in a layer. Subsequent builds where only source code changes will bypass the slow download step, packaging the app in seconds.

@@ -1,4 +1,4 @@
-server:
+﻿server:
   port: 8080
   tomcat:
     threads:
@@ -41,14 +41,15 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
-  # Spring AI — OpenAI (primary: main sentiment analysis — injected as @Primary ChatModel)
+  # Spring AI - DeepSeek via OpenAI-compatible API (primary: main sentiment analysis - injected as @Primary ChatModel)
   # HTTP timeouts configured via RestClientCustomizer in OpenAiRestClientConfig.java
   ai:
     openai:
       api-key: ${OPENAI_API_KEY:}
+      base-url: https://api.deepseek.com
       chat:
         options:
-          model: ${AI_MODEL:}
+          model: ${AI_MODEL:deepseek-flash}
           temperature: 0.3
 
     # Google GenAI / Gemini (secondary: loading hints, lightweight tasks)
